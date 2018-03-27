@@ -623,14 +623,14 @@ void MainWindow::on_dial_valueChanged(int Msec)
 {
 	ui->lcdNumber->display(Msec);
 
-	double rangeX0 = ui->lineEditMin->text().toDouble();
-	double interval = ui->lineEditInterval->text().toDouble();
-	double rangeX1 = rangeX0 + interval;
+	double dRangeX0 = ui->lineEditMin->text().toDouble();
+	double dInterval = ui->lineEditInterval->text().toDouble();
+	double dRangeX1 = dRangeX0 + dInterval;
 
-	double delta = Msec*(interval)/200;
-	rangeX0 += delta;
-	rangeX1 += delta;
-	ui->customPlot->xAxis->setRange(rangeX0,rangeX1);
+	double dDelta = Msec*(dInterval)/200;
+	dRangeX0 += dDelta;
+	dRangeX1 += dDelta;
+	ui->customPlot->xAxis->setRange(dRangeX0,dRangeX1);
 	ui->customPlot->replot();
 	//    ui->lineEditInterval->setText(QString::number(rangeX1-rangeX0));
 	//    ui->lineEditMin->setText(QString::number(rangeX0)); Ba
@@ -773,11 +773,12 @@ void MainWindow::on_SaveButton_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameOut.clear();
-	strFileNameOut = QFileDialog::getSaveFileName(this,
-												  "Choose Output filename",
-												  QDir::currentPath()+"/out.txt",
-												  "Text files (*.txt);;All files (*.*)",
-												  &selFilter);
+//	strFileNameOut = QFileDialog::getSaveFileName(this,
+//												  "Choose Output filename",
+//												  QDir::currentPath()+"/out.txt",
+//												  "Text files (*.txt);;All files (*.*)",
+//												  &selFilter);
+	strFileNameOut = QDir::currentPath()+"/out.txt";
 	on_save();
 }
 
