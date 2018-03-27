@@ -36,6 +36,7 @@
 **  way to easily create screenshots of all demos for the website. I.e. a timer is set to successively     **
 **  setup all the demos and make a screenshot of the window area and save it in the ./screenshots          **
 **  directory.                                                                                             **
+**                                                                                                         **
 *************************************************************************************************************/
 
 #include "mainwindow.h"
@@ -215,6 +216,11 @@ void MainWindow::allScreenShots()
 
 
 //------------------------------------------------------------------------------------------------
+// color table " colorcube "
+uint8_t u8aColR[64]={ 85, 85, 85, 170, 170, 170, 255, 255, 255, 0, 0, 0, 85, 85, 85, 85, 170, 170, 170, 170, 255, 255, 255, 255, 0, 0, 0, 85, 85, 85, 85, 170, 170, 170, 170, 255, 255, 255, 42, 85, 127, 170, 212, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 72, 109, 145, 182, 218, 255, };
+uint8_t u8aColG[64]={ 85, 170, 255, 85, 170, 255, 85, 170, 255, 85, 170, 255, 0, 85, 170, 255, 0, 85, 170, 255, 0, 85, 170, 255, 85, 170, 255, 0, 85, 170, 255, 0, 85, 170, 255, 0, 85, 170, 0, 0, 0, 0, 0, 0, 42, 85, 127, 170, 212, 255, 0, 0, 0, 0, 0, 0, 0, 36, 72, 109, 145, 182, 218, 255, };
+uint8_t u8aColB[64]={ 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 85, 127, 170, 212, 255, 0, 36, 72, 109, 145, 182, 218, 255, };
+
 
 void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 {
@@ -234,29 +240,32 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 
 	}
 
+	//  .  .  .  .  .  .  .  .  .  .  .  .
 
 	customPlot->legend->setVisible(true);
-
 	customPlot->legend->setFont(QFont("Helvetica", 9));
 	customPlot->plotLayout()->setColumnStretchFactor (1, 1.1);
 	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
-
+	//  .  .  .  .  .  .  .  .  .  .  .  .
 
 #define ARRAY_DIM 100000
 	QTextStream in(&file);
 	QVector<double>
 			qvTime(ARRAY_DIM), // time array
 			qvIoRaw(ARRAY_DIM*21); // I/O data
-	unsigned long ulDataLen; // legnth of data written in array
+	QVector <QVector <int> > qvMyVect;
+
+
+	unsigned long ulDataLen; // legnth of "photograms" to draw
 	for (ulDataLen=0; ulDataLen<ARRAY_DIM; ulDataLen++)
 	{
 		QString line = in.readLine(); //read one line at a time
 		if (line.isEmpty()) {
-			break;
+			break; // if here means "reached end of file"
 		}
-		QTextStream myteststream(&line);
+		QTextStream myteststream(&line); // cast line into textStream (easier to process)
 		// int *y1;
-
+		// unroll each line into current Time array and into current
 		myteststream >>
 				qvTime[ulDataLen] >>
 				qvIoRaw[ulDataLen+ARRAY_DIM*	1	]  >>
@@ -280,17 +289,34 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 				qvIoRaw[ulDataLen+ARRAY_DIM*	19	]  >>
 				qvIoRaw[ulDataLen+ARRAY_DIM*	20	]  ;
 		UltimoValore = qvTime[ulDataLen];
+		//  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+		QVector<int> tempVector;
+		foreach( QString numStr, line.split(" ", QString::SkipEmptyParts) )
+		{
+			bool bCheck = false; // flag to signalize double value found
+			double dVal = numStr.toDouble(&bCheck);
+			if( !bCheck ){
+				continue;
+			}
+			else {
+				tempVector.push_back(dVal);
+			}
+		}
+		qvMyVect.push_back(tempVector);
+		//  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+
 	}
 	double dX0 =  0 ;
 	y1 = &dX0;
 
-    for (unsigned int jj=0; jj<ulDataLen; jj++)
+	for (uint32_t jj=0; jj<ulDataLen; jj++)
 	{
 		qvTime[jj] = qvTime[jj] - dX0;
 	}
 
 	QVector<double> qvDataArranged(ARRAY_DIM); // data vertically shifted
 
+	//  buildLegend() { =========================================
 	QVector<QString> LegendList;
 	LegendList<< "I PID SDCAL STP     "
 			  << "I PID APPOPEN       "
@@ -314,9 +340,11 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 			  << "STATUS              "
 			  << "ADC CM10            "
 			  << "DAC ABS             ";
-
+	//  } .=========================================
 	for (int iGIndex=0; iGIndex<20; iGIndex++)
 	{
+		//  } .=========================================
+
 		for (int jj=0; jj<ARRAY_DIM; jj++)
 		{
 			qvDataArranged[jj] = qvIoRaw[jj + ARRAY_DIM*iGIndex]*0.5 + (20-iGIndex) ;
@@ -325,13 +353,14 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 
 		customPlot->addGraph();
 		QPen pen;
-		pen.setColor(QColor(qSin(iGIndex*1+1.2)*80+80, qSin(iGIndex*0.3+0)*80+80, qSin(iGIndex*0.3+1.5)*80+80));
+		pen.setColor(QColor(u8aColR[iGIndex], u8aColG[iGIndex], u8aColB[iGIndex]));
 		customPlot->graph()->setPen(pen);
 
 		//customPlot->graph()->setName(QString::number(iGIndex + 1) + " grafico");
 		QString qStr1 = LegendList.at(iGIndex);
 		customPlot->graph()->setName(qStr1);
 		customPlot->graph(iGIndex)->setData(qvTime, qvDataArranged);
+		//  } .=========================================
 	}
 	// give the axes some labels:
 	customPlot->xAxis->setLabel("x");

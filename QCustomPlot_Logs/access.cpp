@@ -49,6 +49,6 @@ void access::on_pushButton_login_clicked()
            QApplication::quit();
            }
         }
-    }
+}
 }
 

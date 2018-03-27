@@ -1,11 +1,11 @@
 #
-#  QCustomPlot_Logs
+#  File Logger Tool
 #
 
 QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = QCustomPlot_Logs
+TARGET = FileLoggerTool
 TEMPLATE = app
 
 SOURCES += access.cpp \
@@ -22,5 +22,3 @@ HEADERS  += access.h \
 
 FORMS    += access.ui \
 			mainwindow.ui
-
-

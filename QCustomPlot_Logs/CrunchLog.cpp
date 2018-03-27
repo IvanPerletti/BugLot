@@ -116,8 +116,8 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 			{ // found <Id = 0652
 				removeCharsUntil(&STRING,"; ");
 				ulTime = unpackTimeString( STRING.data() );
-                removeCharsUntil(&STRING,"DEBUG data = ");
-                removeChars(&STRING,"0X");// replace 0X with blank spaces
+				removeCharsUntil(&STRING,"DEBUG data = ");
+				removeChars(&STRING,"0X");// replace 0X with blank spaces
 				sscanf( STRING.data() , "%x %x %x %x %x %x",
 						&ulaData[0] ,
 						&ulaData[1] ,

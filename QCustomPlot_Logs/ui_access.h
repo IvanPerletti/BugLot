@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'access.ui'
 **
-** Created by: Qt User Interface Compiler version 5.6.3
+** Created by: Qt User Interface Compiler version 5.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -583,11 +583,11 @@ public:
 
     void retranslateUi(QDialog *access)
     {
-        access->setWindowTitle(QApplication::translate("access", "Dialog", Q_NULLPTR));
-        groupBox->setTitle(QApplication::translate("access", "Sign In", Q_NULLPTR));
-        label->setText(QApplication::translate("access", "username", Q_NULLPTR));
-        label_2->setText(QApplication::translate("access", "password", Q_NULLPTR));
-        pushButton_login->setText(QApplication::translate("access", "Login", Q_NULLPTR));
+        access->setWindowTitle(QApplication::translate("access", "Dialog", 0));
+        groupBox->setTitle(QApplication::translate("access", "Sign In", 0));
+        label->setText(QApplication::translate("access", "username", 0));
+        label_2->setText(QApplication::translate("access", "password", 0));
+        pushButton_login->setText(QApplication::translate("access", "Login", 0));
         label_pix->setText(QString());
     } // retranslateUi
 
