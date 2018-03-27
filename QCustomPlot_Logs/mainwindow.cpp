@@ -228,7 +228,7 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 											"Text files(*.txt)",
 											&selFilter);
 	*/
-	QFile file(strFileNameOut);
+    QFile file(strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","file not open");
 		//return
@@ -239,7 +239,7 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 	customPlot->legend->setVisible(true);
 
 	customPlot->legend->setFont(QFont("Helvetica", 9));
-	customPlot->plotLayout()->setColumnStretchFactor (1, 1.1);
+    customPlot->plotLayout()->setColumnStretchFactor (1, 1);
 	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
 
 
@@ -384,131 +384,6 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
 		}
 	}
 }
-
-//  on_pushButtonProcedi_clicked(ui->customPlot);
-
-// FUNZIONE PROVA
-/* void MainWindow::on_pushButton_2_clicked(QCustomPlot *customPlot, int xMin, int xMax)
-	{
-
-		int minFinale = ui->lineEditMin->text().toInt();
-		int maxFinale = ui->lineEditMax->text().toInt();
-		if(minFinale==NULL && maxFinale ==NULL){
-			QMessageBox::warning(this,"","non hai inserito nulla!!");
-
-		}
-		if(minFinale==NULL && maxFinale!=NULL){
-			QMessageBox::warning(this,"","inserire il range inferiore!");
-
-		}
-		if(minFinale!=NULL && maxFinale==NULL){
-			QMessageBox::warning(this,"alt","inserire il range superiore!");
-
-		}
-		if (minFinale < xMin-1 || maxFinale > xMax+1) {
-			QMessageBox::warning(this,"attenzione","range non corretti");
-
-		}
-		else {
-			&customPlot->xAxis->setRange(minFinale, maxFinale );
-	}
-   }
-
-*/
-
-
-
-//}
-
-//    //on_pushButtonProcedi_clicked(ui->customPlot, max-1, min-1, QFile &file(LoadFile));
-//    /*
-//    demoName = "Line Style Demo";
-//    ///    QFile load fabioRules.txt
-//    /// copia da altri prog e leggi una riga alla volta
-//    /// usando scanf() trasforma il testo della riga in numeri
-//    /// il primo numero che trovi è il tempo ed è uguale per tutti i grafi
-//    /// il secondo numero della riga è uno 0 o 1: va messo nelle ordinate
-//    /// dichiara t e y della dimensione delle righe del testo
-//    QString selFilter="Text files(*.txt)";
-//    QString LoadFile;
-//    LoadFile = QFileDialog::getOpenFileName(this,"Open Full Log",
-//                                            QDir::currentPath(),
-//                                            "Text files(*.txt)",
-//                                            &selFilter);
-
-//    QFile file(LoadFile);
-//    if (!file.open(QFile::ReadOnly | QFile::Text)) {
-//        QMessageBox::warning(this,"op","file not open");
-//        return;
-//    }
-
-//    QTextStream in(&file);
-//    QVector<double> vetT(40), vetY0(40), vetY1(40);
-//    //while (!in.atEnd())
-//    for (int ii=0; ii<40; ii++)
-//    {
-//        QString line = in.readLine(); //read one line at a time
-//        QTextStream myteststream(&line);
-//        //int t = 0, y0 = 0;
-//        myteststream >>
-//                vetT[ii] >>
-//                vetY0[ii] >>
-//                vetY1[ii];
-
-//    }
-//    file.close();
-
-
-
-//    customPlot->legend->setVisible(true);
-//    customPlot->legend->setFont(QFont("Helvetica", 9));
-//    customPlot->addGraph();
-//    //customPlot->graph()->setData(vetT, vetY1);
-
-
-//    customPlot->xAxis->setRange(52684367, 53155512);
-//    customPlot->yAxis->setRange(-2, 5);
-//    customPlot->graph(0)->setData(vetT, vetY1);
-//    //QPen pen;
-
-//    QStringList lineNames;
-//    lineNames << "lsLine";
-//    // << "lsLine" << "lsStepLeft" << "lsStepRight" << "lsStepCenter" << "lsImpulse";
-//    // add graphs with different line styles:
-//    for (int i=1; i<2; i++)
-//    {
-//        customPlot->addGraph();
-//        pen.setColor(QColor(0,0,0));
-//        customPlot->graph()->setPen(pen);
-//       // customPlot->graph()->setName(lineNames.at(QCPGraph::lsLine));
-
-//      // customPlot->graph()->setLineStyle((QCPGraph::lsLine));
-//       // customPlot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-//        // generate data:
-////        QVector<double> x(15), y(15);
-////        for (int j=0; j<15; ++j)
-////        {
-////            x[j] = j/15.0 * 5*3.14 + 0.01;
-////            y[j] = 7*qSin(x[j])/x[j] - (i-QCPGraph::lsNone)*5 + (QCPGraph::lsImpulse)*5 + 2;
-////        }
-
-//        customPlot->graph()->setData(vetT, vetY1);
-//     //   customPlot->graph()->rescaleAxes(true);
-//    }
-//    // zoom out a bit:
-//    customPlot->yAxis->scaleRange(1.1, customPlot->yAxis->range().center());
-//    //customPlot->xAxis->scaleRange(1.1000000000, customPlot->xAxis->range().center());
-//    customPlot->xAxis->setRangeLower(52684367);
-//    customPlot->xAxis->setRangeUpper(53155512);
-//    // set blank axis lines:
-//    customPlot->xAxis->setTicks(true);
-//    customPlot->yAxis->setTicks(true);
-//    customPlot->xAxis->setTickLabels(true);
-//    customPlot->yAxis->setTickLabels(true);
-//    // make top right axes clones of bottom left axes:
-//   // customPlot->axisRect()->setupFullAxesBox();
-//   */
-
 
 
 //------------------------------------------------------------------------------------------------
