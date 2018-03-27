@@ -886,8 +886,9 @@ public:
 
         timeEdit = new QTimeEdit(groupBox_2);
         timeEdit->setObjectName(QStringLiteral("timeEdit"));
-        timeEdit->setMinimumSize(QSize(150, 20));
-        timeEdit->setMaximumSize(QSize(150, 20));
+        timeEdit->setMinimumSize(QSize(150, 40));
+        timeEdit->setMaximumSize(QSize(150, 40));
+        timeEdit->setStyleSheet(QStringLiteral("font: 15pt \"MS Shell Dlg 2\";"));
 
         verticalLayout_3->addWidget(timeEdit);
 

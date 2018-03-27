@@ -244,55 +244,26 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 
 	customPlot->legend->setVisible(true);
 	customPlot->legend->setFont(QFont("Helvetica", 9));
-	customPlot->plotLayout()->setColumnStretchFactor (1, 1.1);
+	customPlot->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
+	//	customPlot->plotLayout()->setColumnStretchFactor (1, 1.1);
 	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
 	//  .  .  .  .  .  .  .  .  .  .  .  .
 
-#define ARRAY_DIM 100000
 	QTextStream in(&file);
-	QVector<double>
-			qvTime(ARRAY_DIM), // time array
-			qvIoRaw(ARRAY_DIM*21); // I/O data
 	QVector <QVector <int> > qvMyVect;
 
-
-	unsigned long ulDataLen; // legnth of "photograms" to draw
-	for (ulDataLen=0; ulDataLen<ARRAY_DIM; ulDataLen++)
+#define ARRAY_DIM 200000
+	unsigned long ulMaxLi; // MAX legnth of "photograms" to draw
+	for (ulMaxLi=0; ulMaxLi<ARRAY_DIM; ulMaxLi++) // reached certain num of lines break!
 	{
 		QString line = in.readLine(); //read one line at a time
 		if (line.isEmpty()) {
 			break; // if here means "reached end of file"
 		}
-		QTextStream myteststream(&line); // cast line into textStream (easier to process)
-		// int *y1;
-		// unroll each line into current Time array and into current
-		myteststream >>
-				qvTime[ulDataLen] >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	1	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	2	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	3	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	4	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	5	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	6	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	7	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	8	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	9	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	10	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	11	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	12	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	13	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	14	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	15	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	16	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	17	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	18	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	19	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	20	]  ;
-		UltimoValore = qvTime[ulDataLen];
-		//  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+
 		QVector<int> tempVector;
 		foreach( QString numStr, line.split(" ", QString::SkipEmptyParts) )
-		{
+		{	// unroll each line into current Time array and into current
 			bool bCheck = false; // flag to signalize double value found
 			double dVal = numStr.toDouble(&bCheck);
 			if( !bCheck ){
@@ -304,21 +275,12 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 		}
 		qvMyVect.push_back(tempVector);
 		//  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
-
 	}
-	double dX0 =  0 ;
-	y1 = &dX0;
-
-	for (uint32_t jj=0; jj<ulDataLen; jj++)
-	{
-		qvTime[jj] = qvTime[jj] - dX0;
-	}
-
-	QVector<double> qvDataArranged(ARRAY_DIM); // data vertically shifted
 
 	//  buildLegend() { =========================================
 	QVector<QString> LegendList;
-	LegendList<< "I PID SDCAL STP     "
+	LegendList<< "TIME                "
+			  << "I PID SDCAL STP     "
 			  << "I PID APPOPEN       "
 			  << "I PID READY         "
 			  << "I PID PULSE MODE    "
@@ -340,41 +302,48 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 			  << "STATUS              "
 			  << "ADC CM10            "
 			  << "DAC ABS             ";
+
 	//  } .=========================================
-	for (int iGIndex=0; iGIndex<20; iGIndex++)
-	{
-		//  } .=========================================
+	const int iSzVet = qvMyVect.size(); // array Size
+	const int iNumElem = qvMyVect[0].size(); // num of plots
+	QVector<double> qvTime; // time array
+	QVector<double> qvDataArranged; // data array
+	qvDataArranged.resize(iSzVet); // resize optimze time with memory alloc
+	qvTime.resize(iSzVet); // resize optimze time with memory alloc
 
-		for (int jj=0; jj<ARRAY_DIM; jj++)
-		{
-			qvDataArranged[jj] = qvIoRaw[jj + ARRAY_DIM*iGIndex]*0.5 + (20-iGIndex) ;
+	for (int jj=0; jj<iSzVet; jj++){
+		qvTime[jj] = qvMyVect[jj][0] ;
+	}
+	dLastTimeVal = qvTime[iSzVet-1]; // used for "OnAir option"
+
+	for (int iDataIdx=1; iDataIdx<iNumElem; iDataIdx++)
+	{	// OBS:  index move from 1: data(0,:) are time values
+		for (int jj=0; jj<iSzVet; jj++){
+			qvDataArranged[jj] = qvMyVect[jj][iDataIdx]*0.5 + (20-iDataIdx) ;
 		}
-		// create graph and assign data to it:
 
-		customPlot->addGraph();
+		customPlot->addGraph();// create graph
 		QPen pen;
-		pen.setColor(QColor(u8aColR[iGIndex], u8aColG[iGIndex], u8aColB[iGIndex]));
+		const int iColPos = (iDataIdx*2)%63; // position Color choice
+		pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
 		customPlot->graph()->setPen(pen);
 
-		//customPlot->graph()->setName(QString::number(iGIndex + 1) + " grafico");
-		QString qStr1 = LegendList.at(iGIndex);
-		customPlot->graph()->setName(qStr1);
-		customPlot->graph(iGIndex)->setData(qvTime, qvDataArranged);
-		//  } .=========================================
+		QString qStrLegend = LegendList.at(iDataIdx);
+		customPlot->graph()->setName(qStrLegend);
+		customPlot->graph(iDataIdx-1)->setData(qvTime, qvDataArranged);
 	}
 	// give the axes some labels:
-	customPlot->xAxis->setLabel("x");
+	customPlot->xAxis->setLabel("t [ms]");
 	customPlot->yAxis->setLabel("y");
 	// set axes ranges, so we see all data:
-	double min = *std::min_element(qvTime.constBegin(), qvTime.constEnd());
-	double max = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
+	double dMinXAxis = *std::min_element(qvTime.constBegin(), qvTime.constEnd());
+	double dMaxXAxis = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
 
 	ui->lineEditMin->setText(QString::number(qvTime[0]));
-	ui->lineEditInterval->setText(QString::number(max-min));
-	customPlot->xAxis->setRange(min-1,max+1);
-	max = *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
-	customPlot->yAxis->setRange(-1, 21-max);
-
+	ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
+	customPlot->xAxis->setRange(dMinXAxis-1,dMaxXAxis+1);
+	dMaxXAxis = *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
+	customPlot->yAxis->setRange(-1, iNumElem+1); // Y axis range
 
 	// connect some interaction slots:
 	customPlot->setInteractions(QCP::iSelectLegend);
@@ -387,159 +356,80 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 
 
 
-}
+	connect(ui->customPlot,
+			SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
+			this,
+			SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
 
+}
+//-----------------------------------------------------------------------------
+/**
+ * @brief plotterLegendClick - Slot signal Once I clicked on Legend
+ * @param l  	ptr to legend
+ * @param ai	Legend Item ptr
+ * @param me	Mouse event to capture
+ */
 void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me)
 {
 	Q_UNUSED(me);
 
 	if(NULL != l && NULL != ai)
 	{
-		// Check for selection
-		for(int i=0; i<l->parentPlot()->graphCount(); i++)
+
+		for (int i=0; i<ui->customPlot->graphCount(); ++i)
 		{
+			QCPGraph *graph = ui->customPlot->graph(i);
+			QCPPlottableLegendItem *item = ui->customPlot->legend->itemWithPlottable(graph);
 			QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
-			if("QCPPlottableLegendItem" == QString(ai->metaObject()->className()))
-			{
-				ui->statusBar->showMessage("Selected Graph: \"" + l->parentPlot()->graph(i)->name() + "\"");
-				qpGraphPen.setStyle(Qt::SolidLine);
-			}
-			else
-			{
+
+			if (item->selected() || graph->selected()){
 				qpGraphPen.setStyle(Qt::DotLine);
+				qpGraphPen.setWidth(4);
+			}
+			else{
+				qpGraphPen.setStyle(Qt::SolidLine);
+				qpGraphPen.setWidth(2);
 			}
 			l->parentPlot()->graph(i)->setPen(qpGraphPen);
 		}
+
+		//					// Check for selection
+		//					for(int i=0; i<l->parentPlot()->graphCount(); i++)
+		//					{
+		//						QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
+		//						if("QCPPlottableLegendItem" == QString(ai->metaObject()->className()))
+		//						{
+		//							//				ui->statusBar->showMessage("Selected Graph: \"" + l->parentPlot()->graph(i)->name() + "\"");
+		//							qpGraphPen.setStyle(Qt::DotLine);
+		//						}
+		//						else
+		//						{
+		//							qpGraphPen.setStyle(Qt::SolidLine);
+		//						}
+		//						l->parentPlot()->graph(i)->setPen(qpGraphPen);
+		//					}
 	}
 }
-
-//  on_pushButtonProcedi_clicked(ui->customPlot);
-
-// FUNZIONE PROVA
-/* void MainWindow::on_pushButton_2_clicked(QCustomPlot *customPlot, int xMin, int xMax)
+void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item)
+{
+	// Rename a graph by double clicking on its legend item
+	Q_UNUSED(legend)
+	if (item) // only react if item was clicked (user could have clicked on border padding of legend where there is no item, then item is 0)
 	{
-
-		int minFinale = ui->lineEditMin->text().toInt();
-		int maxFinale = ui->lineEditMax->text().toInt();
-		if(minFinale==NULL && maxFinale ==NULL){
-			QMessageBox::warning(this,"","non hai inserito nulla!!");
-
+		QCPPlottableLegendItem *plItem = qobject_cast<QCPPlottableLegendItem*>(item);
+		bool ok;
+		QString newName = QInputDialog::getText(this, "QCustomPlot example", "New graph name:", QLineEdit::Normal, plItem->plottable()->name(), &ok);
+		if (ok)
+		{
+			plItem->plottable()->setName(newName);
+			ui->customPlot->replot();
 		}
-		if(minFinale==NULL && maxFinale!=NULL){
-			QMessageBox::warning(this,"","inserire il range inferiore!");
-
-		}
-		if(minFinale!=NULL && maxFinale==NULL){
-			QMessageBox::warning(this,"alt","inserire il range superiore!");
-
-		}
-		if (minFinale < xMin-1 || maxFinale > xMax+1) {
-			QMessageBox::warning(this,"attenzione","range non corretti");
-
-		}
-		else {
-			&customPlot->xAxis->setRange(minFinale, maxFinale );
 	}
-   }
-
-*/
-
-
-
-//}
-
-//    //on_pushButtonProcedi_clicked(ui->customPlot, max-1, min-1, QFile &file(LoadFile));
-//    /*
-//    demoName = "Line Style Demo";
-//    ///    QFile load fabioRules.txt
-//    /// copia da altri prog e leggi una riga alla volta
-//    /// usando scanf() trasforma il testo della riga in numeri
-//    /// il primo numero che trovi è il tempo ed è uguale per tutti i grafi
-//    /// il secondo numero della riga è uno 0 o 1: va messo nelle ordinate
-//    /// dichiara t e y della dimensione delle righe del testo
-//    QString selFilter="Text files(*.txt)";
-//    QString LoadFile;
-//    LoadFile = QFileDialog::getOpenFileName(this,"Open Full Log",
-//                                            QDir::currentPath(),
-//                                            "Text files(*.txt)",
-//                                            &selFilter);
-
-//    QFile file(LoadFile);
-//    if (!file.open(QFile::ReadOnly | QFile::Text)) {
-//        QMessageBox::warning(this,"op","file not open");
-//        return;
-//    }
-
-//    QTextStream in(&file);
-//    QVector<double> vetT(40), vetY0(40), vetY1(40);
-//    //while (!in.atEnd())
-//    for (int ii=0; ii<40; ii++)
-//    {
-//        QString line = in.readLine(); //read one line at a time
-//        QTextStream myteststream(&line);
-//        //int t = 0, y0 = 0;
-//        myteststream >>
-//                vetT[ii] >>
-//                vetY0[ii] >>
-//                vetY1[ii];
-
-//    }
-//    file.close();
-
-
-
-//    customPlot->legend->setVisible(true);
-//    customPlot->legend->setFont(QFont("Helvetica", 9));
-//    customPlot->addGraph();
-//    //customPlot->graph()->setData(vetT, vetY1);
-
-
-//    customPlot->xAxis->setRange(52684367, 53155512);
-//    customPlot->yAxis->setRange(-2, 5);
-//    customPlot->graph(0)->setData(vetT, vetY1);
-//    //QPen pen;
-
-//    QStringList lineNames;
-//    lineNames << "lsLine";
-//    // << "lsLine" << "lsStepLeft" << "lsStepRight" << "lsStepCenter" << "lsImpulse";
-//    // add graphs with different line styles:
-//    for (int i=1; i<2; i++)
-//    {
-//        customPlot->addGraph();
-//        pen.setColor(QColor(0,0,0));
-//        customPlot->graph()->setPen(pen);
-//       // customPlot->graph()->setName(lineNames.at(QCPGraph::lsLine));
-
-//      // customPlot->graph()->setLineStyle((QCPGraph::lsLine));
-//       // customPlot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
-//        // generate data:
-////        QVector<double> x(15), y(15);
-////        for (int j=0; j<15; ++j)
-////        {
-////            x[j] = j/15.0 * 5*3.14 + 0.01;
-////            y[j] = 7*qSin(x[j])/x[j] - (i-QCPGraph::lsNone)*5 + (QCPGraph::lsImpulse)*5 + 2;
-////        }
-
-//        customPlot->graph()->setData(vetT, vetY1);
-//     //   customPlot->graph()->rescaleAxes(true);
-//    }
-//    // zoom out a bit:
-//    customPlot->yAxis->scaleRange(1.1, customPlot->yAxis->range().center());
-//    //customPlot->xAxis->scaleRange(1.1000000000, customPlot->xAxis->range().center());
-//    customPlot->xAxis->setRangeLower(52684367);
-//    customPlot->xAxis->setRangeUpper(53155512);
-//    // set blank axis lines:
-//    customPlot->xAxis->setTicks(true);
-//    customPlot->yAxis->setTicks(true);
-//    customPlot->xAxis->setTickLabels(true);
-//    customPlot->yAxis->setTickLabels(true);
-//    // make top right axes clones of bottom left axes:
-//   // customPlot->axisRect()->setupFullAxesBox();
-//   */
-
-
-
-//------------------------------------------------------------------------------------------------
+}
+//------------------------------------------------------------------------------
+/**
+ * @brief MainWindow::MyTimerSlot  Slot for On Air option - temporized event
+ */
 void MainWindow::MyTimerSlot()
 {
 	//    Qui entriamo ogni 500ms
@@ -559,11 +449,10 @@ void MainWindow::MyTimerSlot()
 		//double interval = ui->lineEditInterval->text().toDouble();
 		customPlotVariable = false;
 		on_pushButtonProcess_clicked();
-		ui->lineEditMin->setText(QString::number(UltimoValore-2000));
-		ui->lineEditInterval->setText(QString::number(2000));
-
+		const int iTimWinDispl = 10000; // time win to be displayed
+		ui->lineEditMin->setText(QString::number(dLastTimeVal-iTimWinDispl));
+		ui->lineEditInterval->setText(QString::number(iTimWinDispl));
 		on_UpgradePlot();
-
 	}
 
 }
@@ -715,13 +604,13 @@ void MainWindow::on_pushButtonZoomPiu_clicked()
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomMeno_clicked()
 {
-	double rangeX0 = ui->lineEditMin->text().toDouble();
-	double interval = ui->lineEditInterval->text().toDouble();
-	double newInterval = interval*0.2;
-	double newRangeX0 = rangeX0 - newInterval;
-	ui->lineEditMin->setText(QString::number(newRangeX0, 'd', 3));
+	double dRangeX0 = ui->lineEditMin->text().toDouble();
+	double dInterval = ui->lineEditInterval->text().toDouble();
+	double dNewInterval = dInterval*0.2;
+	double dNewRangeX0 = dRangeX0 - dNewInterval;
+	ui->lineEditMin->setText(QString::number(dNewRangeX0, 'd', 3));
 
-	double finalInterval = interval + 2*newInterval;
+	double finalInterval = dInterval + 2*dNewInterval;
 	ui->lineEditInterval->setText(QString::number(finalInterval, 'd', 3));
 
 	//double newRangeX1 = newRangeX0 + finalInterval;
@@ -737,11 +626,12 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-	strFileNameIn = QFileDialog::getOpenFileName(this,
-												 "Open Full Log",
-												 QDir::currentPath(),
-												 "Text files (*.txt);;All files (*.*)",
-												 &selFilter);
+	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/release/TableLog_2018_03_15.txt";
+	//	strFileNameIn = QFileDialog::getOpenFileName(this,
+	//												 "Open Full Log",
+	//												 QDir::currentPath(),
+	//												 "Text files (*.txt);;All files (*.*)",
+	//												 &selFilter);
 	on_LoadFile();
 }
 //-------------------------------------------------------------------------------------------------
@@ -773,11 +663,11 @@ void MainWindow::on_SaveButton_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameOut.clear();
-//	strFileNameOut = QFileDialog::getSaveFileName(this,
-//												  "Choose Output filename",
-//												  QDir::currentPath()+"/out.txt",
-//												  "Text files (*.txt);;All files (*.*)",
-//												  &selFilter);
+	//	strFileNameOut = QFileDialog::getSaveFileName(this,
+	//												  "Choose Output filename",
+	//												  QDir::currentPath()+"/out.txt",
+	//												  "Text files (*.txt);;All files (*.*)",
+	//												  &selFilter);
 	strFileNameOut = QDir::currentPath()+"/out.txt";
 	on_save();
 }

@@ -996,17 +996,20 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                     <property name="minimumSize">
                      <size>
                       <width>150</width>
-                      <height>20</height>
+                      <height>40</height>
                      </size>
                     </property>
                     <property name="maximumSize">
                      <size>
                       <width>150</width>
-                      <height>20</height>
+                      <height>40</height>
                      </size>
                     </property>
                     <property name="toolTip">
                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Starting time HH:MM:SS to be displayed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">font: 15pt &quot;MS Shell Dlg 2&quot;;</string>
                     </property>
                     <property name="displayFormat">
                      <string>HH:mm:ss</string>

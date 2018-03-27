@@ -76,6 +76,7 @@ class MainWindow : public QMainWindow
 
 	private slots:
 	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);
+	void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);
 	void MyTimerSlot();
 	void on_pushButtonZoomRange_clicked();
 
@@ -125,12 +126,7 @@ class MainWindow : public QMainWindow
 	QString strFileNameIn;
 	bool TimerFlag = false;
 	bool customPlotVariable = true;
-	double UltimoValore;
-
-
-
-
-
+	double dLastTimeVal; // last value of Time
 
 };
 
