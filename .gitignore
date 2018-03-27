@@ -1,0 +1,7 @@
+~*
+/QCustomPlot_Logs/debug
+/QCustomPlot_Logs/release
+/QCustomPlot_Logs/Makefile
+/QCustomPlot_Logs/Makefile.Debug
+/QCustomPlot_Logs/Makefile.Release
+/QCustomPlot_Logs/QCustomPlot_Logs.pro.user
