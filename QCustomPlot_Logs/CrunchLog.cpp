@@ -83,6 +83,14 @@ void CrunchLog::removeChars(string * strProcessed, string strMatchToFind)
 }
 
 //--------------------------------------------------------
+void CrunchLog::unPackDataError_ShortMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
+
+    *iData1 = uiDataArray[*uiIndex];
+
+    *uiIndex ++;
+}
+
+//--------------------------------------------------------
 void CrunchLog::unPackDataError_Msg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
 
     *iData1 = uiDataArray[*uiIndex]<<8;
@@ -92,138 +100,171 @@ void CrunchLog::unPackDataError_Msg(unsigned int* uiDataArray, unsigned int *uiI
 }
 
 //--------------------------------------------------------
-void CrunchLog::unPackDataError_LongMsg(unsigned int* uiDataArray, int *iData1) {
+void CrunchLog::unPackDataError_LongMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
 
-    *iData1 = uiDataArray[2]<<24;
-    *iData1 = uiDataArray[3]<<16;
-    *iData1 = uiDataArray[4]<<8;
-    *iData1 += uiDataArray[5];
+    *iData1 = uiDataArray[*uiIndex]<<24;
+    *iData1 = uiDataArray[*uiIndex + 1]<<16;
+    *iData1 = uiDataArray[*uiIndex + 2]<<8;
+    *iData1 += uiDataArray[*uiIndex + 3];
 
-}
-
-
-//--------------------------------------------------------
-void CrunchLog::unPackDataError_2Msgs(unsigned int* uiDataArray, int *iData1, int *iData2) {
-
-    *iData1 = uiDataArray[2]<<8;
-    *iData1 += uiDataArray[3];
-    *iData2 = uiDataArray[4]<<8;
-    *iData2 += uiDataArray[5];
+    *uiIndex += 4;
 
 }
 
 //--------------------------------------------------------
-void CrunchLog::unPackDataError_3Msgs(unsigned int* uiDataArray, int *iData1, int *iData2, int *iData3) {
+void CrunchLog::setLineError(InfoDataStruct *data) {
 
-    *iData1 = uiDataArray[2]<<8;
-    *iData1 += uiDataArray[3];
-    *iData2 = uiDataArray[4]<<8;
-    *iData2 += uiDataArray[5];
-    *iData3 = uiDataArray[6]<<8;
-    *iData3 += uiDataArray[7];
+    data->uiSize.push_back(2);
+    data->strLabel.push_back("LineOfError: ");
 
 }
 
 //--------------------------------------------------------
-void CrunchLog::setLineError(string* strFile, unsigned int* uiDataArray, unsigned int *uiIndex) {
-    int iData;
-    char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
+void CrunchLog::setNoMotionData(InfoDataStruct *data) {
 
-    unPackDataError_Msg(uiDataArray, uiIndex, &iData);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
 
-    itoa(iData, s8aDummy, 10);
-    strFile->append("LineOfError: ");
-    strFile->append(s8aDummy);
-    strFile->append("\n");
+    data->strLabel.push_back("iActual: ");
+    data->strLabel.push_back(" iTarget: ");
+    data->strLabel.push_back(" iThr: ");
 
 }
 
 //--------------------------------------------------------
-void CrunchLog::setNoMotionData(string* strFile, unsigned int* uiDataArray, unsigned int *uiIndex, vector <string> label) {
-    int iData;
-    char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
+bool CrunchLog::isFirstMessage(unsigned int *arrVal, int type) {
+    unsigned int iVal;
+    bool bFlag = true;
 
-    for(int ii = 0; ii < label.size(); ii++) {
-         unPackDataError_Msg(uiDataArray, uiIndex, &iData);
-         itoa(iData, s8aDummy, 10);
-         strFile->append(label[ii]);
-         strFile->append(s8aDummy);
+    switch(type) {
+    case 1:
+        iVal = 4;
+        break;
+    case 2:
+        iVal = 6;
+        break;
     }
 
-    strFile->append("\n" );
+    for(int ii = iVal; ii < 8; ii++) {
+        bFlag &= (char(arrVal[ii]) == 0xFF);    //TODO check
+    }
 
+    return bFlag;
 }
 
-void CrunchLog::setAutoTargetData(string* strFile, unsigned int* uiDataArray) {
+//--------------------------------------------------------
+void CrunchLog::setAutoTargetData(InfoDataStruct *data, unsigned int *arrVal) {
+
+    if(isFirstMessage(arrVal, 2)) {
+        data->uiSize.push_back(4);
+        data->uiSize.push_back(2);
+
+        data->strLabel.push_back(" iTarget: ");
+        data->strLabel.push_back(" iInitial: ");
+    }
+    else {
+        data->uiSize.push_back(1);
+        data->uiSize.push_back(1);
+        data->uiSize.push_back(2);
+
+        data->strLabel.push_back(" Direction: ");
+        data->strLabel.push_back(" ElementType: ");
+        data->strLabel.push_back(" iActual: ");
+    }
 
 }
 
 //--------------------------------------------------------
-void CrunchLog::setDirectionData(string* strFile, unsigned int* uiDataArray) {
-    int iData1, iData2, iData3;
-    char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
+void CrunchLog::setDirectionData(InfoDataStruct *data, unsigned int *arrVal) {
 
-    unPackDataError_3Msgs(uiDataArray, &iData1, &iData2, &iData3);
+    if(isFirstMessage(arrVal, 1)) {
+        data->uiSize.push_back(2);
+        data->uiSize.push_back(2);
+        data->uiSize.push_back(2);
 
-    itoa(iData1, s8aDummy, 10);
-    strFile->append("iActual: ");
-    strFile->append(s8aDummy);
-    strFile->append(" iPrevPos:" );
-    itoa(iData2, s8aDummy, 10);
-    strFile->append(s8aDummy);
-    strFile->append(" iCheckPos:" );
-    itoa(iData3, s8aDummy, 10);
-    strFile->append(s8aDummy);
-    strFile->append("\n" );
+        data->strLabel.push_back(" iActual: ");
+        data->strLabel.push_back(" iPrevPos: ");
+        data->strLabel.push_back(" iCheckPos: ");
+    }
+    else {
+        data->uiSize.push_back(1);
+        data->uiSize.push_back(1);
+
+        data->strLabel.push_back(" Direction: ");
+        data->strLabel.push_back(" ElementType: ");
+    }
+
 }
 
 //--------------------------------------------------------
-void CrunchLog::setElevixTargetPosData(string* strFile, unsigned int* uiDataArray) {
-    int iData1, iData2, iData3;
-    char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
+void CrunchLog::setElevixTargetPosData(InfoDataStruct *data) {
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
 
-    unPackDataError_3Msgs(uiDataArray, &iData1, &iData2, &iData3);
-
-    itoa(iData1, s8aDummy, 10);
-    strFile->append("Elevix Actual: ");
-    strFile->append(s8aDummy);
-    strFile->append(" Min EEprom:" );
-    itoa(iData2, s8aDummy, 10);
-    strFile->append(s8aDummy);
-    strFile->append(" Max EEprom:" );
-    itoa(iData3, s8aDummy, 10);
-    strFile->append(s8aDummy);
-    strFile->append("\n" );
+    data->strLabel.push_back(" iActual: ");
+    data->strLabel.push_back(" EEpromMin: ");
+    data->strLabel.push_back(" EEpromMax: ");
 }
 
 //--------------------------------------------------------
-void CrunchLog::setSynchroTargetData(string* strFile, unsigned int* uiDataArray) {
-    int iData1, iData2;
+void CrunchLog::setSynchroTargetData(InfoDataStruct *data) {
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
 
-    char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
+    data->strLabel.push_back(" iDelta: ");
+    data->strLabel.push_back(" iTarget: ");
+    data->strLabel.push_back(" iActual: ");
+}
 
-    unPackDataError_2Msgs(uiDataArray, &iData1, &iData2);
+//--------------------------------------------------------
+void CrunchLog::setAutoTargetPosData(InfoDataStruct *data, unsigned int *arrVal) {
 
-    itoa(iData1, s8aDummy, 10);
-    strFile->append("iTarget: ");
-    strFile->append(s8aDummy);
-    strFile->append(" iActual:" );
-    itoa(iData2, s8aDummy, 10);
-    strFile->append(s8aDummy);
-    strFile->append("\n" );
+    data->uiSize.push_back(4);
+
+    if(isFirstMessage(arrVal, 2)) {
+        data->strLabel.push_back(" ElevixTarget ");
+    }
+    else {
+        data->strLabel.push_back(" PensileVertTarget ");
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setSynchroTargetPosData(InfoDataStruct *data) {
+
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
+
+    data->strLabel.push_back(" ElevixActual: ");
+    data->strLabel.push_back(" PensileVertActual: ");
+
+}
+
+void CrunchLog::setUntimelySynchroData(InfoDataStruct *data) {
+
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(1);
+
+    data->strLabel.push_back(" isNewPos: ");
+    data->strLabel.push_back(" EnableSwitch: ");
+    data->strLabel.push_back(" PensileMotionType: ");
+
 }
 
 //--------------------------------------------------------
 void CrunchLog::setDataToErrorType(string* strFile, unsigned int* uiDataArray, unsigned int error) {
     unsigned int uiIndexData = 2;       // First valid byte of data
-    vector <string> vLabel;         // Max number of variables that can be saved
-
-    vLabel.clear();
+    InfoDataStruct dataInfo;
 
     switch(error){
     case 851:
     case 852:
-        setLineError(strFile, uiDataArray, &uiIndexData);
+        setLineError(&dataInfo);
         break;
     case 825:
     case 826:
@@ -245,11 +286,7 @@ void CrunchLog::setDataToErrorType(string* strFile, unsigned int* uiDataArray, u
     case 842:
     case 846:
     case 847:
-        vLabel.push_back("iActual: ");
-        vLabel.push_back(" iTarget: ");
-        vLabel.push_back(" iThr: ");
-
-        setNoMotionData(strFile, uiDataArray, &uiIndexData, vLabel);
+        setNoMotionData(&dataInfo);
         break;
     case 781:
     case 783:
@@ -261,7 +298,7 @@ void CrunchLog::setDataToErrorType(string* strFile, unsigned int* uiDataArray, u
     case 805:
     case 807:
     case 848:
-        setAutoTargetData(strFile, uiDataArray);
+        setAutoTargetData(&dataInfo, uiDataArray);
         break;
     case 782:
     case 784:
@@ -288,24 +325,46 @@ void CrunchLog::setDataToErrorType(string* strFile, unsigned int* uiDataArray, u
     case 820:
     case 849:
     case 850:
-        setDirectionData(strFile, uiDataArray);
+        setDirectionData(&dataInfo, uiDataArray);
         break;
     case 843:
-        setElevixTargetPosData(strFile, uiDataArray);
+        setElevixTargetPosData(&dataInfo);
+        break;
+    case 791:
+    case 801:
+    case 803:
+        setSynchroTargetData(&dataInfo);
+        break;
+    case 853:
+    case 854:
+    case 855:
+        setAutoTargetPosData(&dataInfo, uiDataArray);
+        break;
+    case 856:
+        setSynchroTargetPosData(&dataInfo);
+        break;
+    case 779:
+        setUntimelySynchroData(&dataInfo);
         break;
     case 768:
     case 769:
     case 794:
     case 796:
-        strFile->append("\n" );
+        // No data apart from error ID sent fro these ones
         break;
-    case 791:
-    case 801:
-    case 803:
-        setSynchroTargetData(strFile, uiDataArray);
-        break;
-
     }
+
+    /*
+    for(int ii = 0; ii < label.size(); ii++) {
+         unPackDataError_Msg(uiDataArray, uiIndex, &iData);
+         itoa(iData, s8aDummy, 10);
+         strFile->append(label[ii]);
+         strFile->append(s8aDummy);
+    }
+
+    strFile->append("\n" );
+    */
+
 }
 
 //--------------------------------------------------------
