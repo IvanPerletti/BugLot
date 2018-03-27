@@ -36,7 +36,6 @@
 **  way to easily create screenshots of all demos for the website. I.e. a timer is set to successively     **
 **  setup all the demos and make a screenshot of the window area and save it in the ./screenshots          **
 **  directory.                                                                                             **
-**                                                                                                         **
 *************************************************************************************************************/
 
 #include "mainwindow.h"
