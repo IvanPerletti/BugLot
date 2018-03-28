@@ -165,8 +165,8 @@ bool CrunchLog::isFirstMessage(unsigned int *arrVal, int freeSlots) {
             break;
         }
     }
-
-    return lFlag;
+//lFlag will be 0xFF<=> all the bytes =oxff
+    return (lFlag!=0xFF);
 }
 
 //--------------------------------------------------------
