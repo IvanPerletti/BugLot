@@ -35,7 +35,7 @@ public:
 
 private:
     struct InfoDataStruct {
-        vector <int> iSize;
+        vector <unsigned int> uiSize;
         vector <string> strLabel;
     };
 
@@ -44,12 +44,12 @@ private:
     unsigned long unpackTimeString(const char * u8aData);
     void removeCharsUntil(string * strProcessed, string strMatchToFind);
     void removeChars( string * strProcessed, string strMatchToFind);
-    void unPackDataError_ShortMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
-    void unPackDataError_Msg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
-    void unPackDataError_LongMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
+    void unPackDataError_OneSlotMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
+    void unPackDataError_TwoSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
+    void unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
     void setLineError(InfoDataStruct *data);
     void setNoMotionData(InfoDataStruct *data);
-    bool isFirstMessage(unsigned int *arrVal, int type);
+    bool isFirstMessage(unsigned int *arrVal, int freeSlots);
     void setAutoTargetData(InfoDataStruct *data, unsigned int *arrVal);
     void setDirectionData(InfoDataStruct *data, unsigned int *arrVal);
     void setElevixTargetPosData(InfoDataStruct *data);
