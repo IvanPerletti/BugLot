@@ -83,15 +83,15 @@ void CrunchLog::removeChars(string * strProcessed, string strMatchToFind)
 }
 
 //--------------------------------------------------------
-void CrunchLog::unPackDataError_ShortMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
+void CrunchLog::unPackDataError_OneSlotMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
 
     *iData1 = uiDataArray[*uiIndex];
 
-    *uiIndex ++;
+    *uiIndex += 1;
 }
 
 //--------------------------------------------------------
-void CrunchLog::unPackDataError_Msg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
+void CrunchLog::unPackDataError_TwoSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
 
     *iData1 = uiDataArray[*uiIndex]<<8;
     *iData1 += uiDataArray[*uiIndex + 1];
@@ -100,7 +100,7 @@ void CrunchLog::unPackDataError_Msg(unsigned int* uiDataArray, unsigned int *uiI
 }
 
 //--------------------------------------------------------
-void CrunchLog::unPackDataError_LongMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
+void CrunchLog::unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
 
     *iData1 = uiDataArray[*uiIndex]<<24;
     *iData1 = uiDataArray[*uiIndex + 1]<<16;
@@ -114,7 +114,7 @@ void CrunchLog::unPackDataError_LongMsg(unsigned int* uiDataArray, unsigned int 
 //--------------------------------------------------------
 void CrunchLog::setLineError(InfoDataStruct *data) {
 
-    data->iSize.push_back(2);
+    data->uiSize.push_back(2);
     data->strLabel.push_back("LineOfError: ");
 
 }
@@ -122,9 +122,9 @@ void CrunchLog::setLineError(InfoDataStruct *data) {
 //--------------------------------------------------------
 void CrunchLog::setNoMotionData(InfoDataStruct *data) {
 
-    data->iSize.push_back(2);
-    data->iSize.push_back(2);
-    data->iSize.push_back(2);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
 
     data->strLabel.push_back("iActual: ");
     data->strLabel.push_back(" iTarget: ");
@@ -133,40 +133,56 @@ void CrunchLog::setNoMotionData(InfoDataStruct *data) {
 }
 
 //--------------------------------------------------------
-bool CrunchLog::isFirstMessage(unsigned int *arrVal, int type) {
+bool CrunchLog::isFirstMessage(unsigned int *arrVal, int freeSlots) {
     unsigned int iVal;
-    bool bFlag = true;
+    long lFlag = 0xFF;
 
-    switch(type) {
+    // type indicates how many slots are free in the message
+    switch(freeSlots) {
     case 1:
-        iVal = 4;
+        iVal = 7;
         break;
     case 2:
         iVal = 6;
         break;
+    case 3:
+        iVal = 5;
+    case 4:
+        iVal = 4;
+    case 5:
+        iVal = 3;
+    case 6:
+        iVal = 2;
+    case 7:
+        iVal = 1;
+    default:
+        iVal = 8;
     }
 
     for(int ii = iVal; ii < 8; ii++) {
-        bFlag &= (char(arrVal[ii]) == 0xFF);    //TODO check
+        lFlag &= arrVal[ii];
+        if(lFlag != 0xFF) {
+            break;
+        }
     }
 
-    return bFlag;
+    return lFlag;
 }
 
 //--------------------------------------------------------
 void CrunchLog::setAutoTargetData(InfoDataStruct *data, unsigned int *arrVal) {
 
     if(isFirstMessage(arrVal, 2)) {
-        data->iSize.push_back(4);
-        data->iSize.push_back(2);
+        data->uiSize.push_back(4);
+        data->uiSize.push_back(2);
 
         data->strLabel.push_back(" iTarget: ");
         data->strLabel.push_back(" iInitial: ");
     }
     else {
-        data->iSize.push_back(1);
-        data->iSize.push_back(1);
-        data->iSize.push_back(2);
+        data->uiSize.push_back(1);
+        data->uiSize.push_back(1);
+        data->uiSize.push_back(2);
 
         data->strLabel.push_back(" Direction: ");
         data->strLabel.push_back(" ElementType: ");
@@ -178,18 +194,18 @@ void CrunchLog::setAutoTargetData(InfoDataStruct *data, unsigned int *arrVal) {
 //--------------------------------------------------------
 void CrunchLog::setDirectionData(InfoDataStruct *data, unsigned int *arrVal) {
 
-    if(isFirstMessage(arrVal, 1)) {
-        data->iSize.push_back(2);
-        data->iSize.push_back(2);
-        data->iSize.push_back(2);
+    if(isFirstMessage(arrVal, 4)) {
+        data->uiSize.push_back(2);
+        data->uiSize.push_back(2);
+        data->uiSize.push_back(2);
 
         data->strLabel.push_back(" iActual: ");
         data->strLabel.push_back(" iPrevPos: ");
         data->strLabel.push_back(" iCheckPos: ");
     }
     else {
-        data->iSize.push_back(1);
-        data->iSize.push_back(1);
+        data->uiSize.push_back(1);
+        data->uiSize.push_back(1);
 
         data->strLabel.push_back(" Direction: ");
         data->strLabel.push_back(" ElementType: ");
@@ -199,9 +215,9 @@ void CrunchLog::setDirectionData(InfoDataStruct *data, unsigned int *arrVal) {
 
 //--------------------------------------------------------
 void CrunchLog::setElevixTargetPosData(InfoDataStruct *data) {
-    data->iSize.push_back(2);
-    data->iSize.push_back(2);
-    data->iSize.push_back(2);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
 
     data->strLabel.push_back(" iActual: ");
     data->strLabel.push_back(" EEpromMin: ");
@@ -210,9 +226,9 @@ void CrunchLog::setElevixTargetPosData(InfoDataStruct *data) {
 
 //--------------------------------------------------------
 void CrunchLog::setSynchroTargetData(InfoDataStruct *data) {
-    data->iSize.push_back(1);
-    data->iSize.push_back(2);
-    data->iSize.push_back(2);
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
 
     data->strLabel.push_back(" iDelta: ");
     data->strLabel.push_back(" iTarget: ");
@@ -222,7 +238,7 @@ void CrunchLog::setSynchroTargetData(InfoDataStruct *data) {
 //--------------------------------------------------------
 void CrunchLog::setAutoTargetPosData(InfoDataStruct *data, unsigned int *arrVal) {
 
-    data->iSize.push_back(4);
+    data->uiSize.push_back(4);
 
     if(isFirstMessage(arrVal, 2)) {
         data->strLabel.push_back(" ElevixTarget ");
@@ -236,19 +252,20 @@ void CrunchLog::setAutoTargetPosData(InfoDataStruct *data, unsigned int *arrVal)
 //--------------------------------------------------------
 void CrunchLog::setSynchroTargetPosData(InfoDataStruct *data) {
 
-    data->iSize.push_back(2);
-    data->iSize.push_back(2);
+    data->uiSize.push_back(2);
+    data->uiSize.push_back(2);
 
     data->strLabel.push_back(" ElevixActual: ");
     data->strLabel.push_back(" PensileVertActual: ");
 
 }
 
+//--------------------------------------------------------
 void CrunchLog::setUntimelySynchroData(InfoDataStruct *data) {
 
-    data->iSize.push_back(1);
-    data->iSize.push_back(1);
-    data->iSize.push_back(1);
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(1);
 
     data->strLabel.push_back(" isNewPos: ");
     data->strLabel.push_back(" EnableSwitch: ");
@@ -362,16 +379,16 @@ void CrunchLog::composeLineLog(string *strFile, InfoDataStruct *infoData, unsign
     char s8aDummy[16]={0,};
     int iData;
 
-    for(int ii = 0; ii < infoData->strLabel.size(); ii++) {
-        switch(infoData->iSize[ii]){
+    for(unsigned int ii = 0; ii < infoData->strLabel.size(); ii++) {
+        switch(infoData->uiSize[ii]){
         case 1:
-            unPackDataError_ShortMsg(uiDataArray, &uiIndexDataArray, &iData);
+            unPackDataError_OneSlotMsg(uiDataArray, &uiIndexDataArray, &iData);
             break;
         case 2:
-            unPackDataError_Msg(uiDataArray, &uiIndexDataArray, &iData);
+            unPackDataError_TwoSlotsMsg(uiDataArray, &uiIndexDataArray, &iData);
             break;
         case 4:
-            unPackDataError_LongMsg(uiDataArray, &uiIndexDataArray, &iData);
+            unPackDataError_FourSlotsMsg(uiDataArray, &uiIndexDataArray, &iData);
             break;
         }
 
