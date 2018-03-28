@@ -35,7 +35,7 @@ public:
 
 private:
     struct InfoDataStruct {
-        vector <unsigned int> uiSize;
+        vector <int> iSize;
         vector <string> strLabel;
     };
 
@@ -57,7 +57,8 @@ private:
     void setAutoTargetPosData(InfoDataStruct *data, unsigned int *arrVal);
     void setSynchroTargetPosData(InfoDataStruct *data);
     void setUntimelySynchroData(InfoDataStruct *data);
-    void setDataToErrorType(string* strFile, unsigned int* uiDataArray, unsigned int error);
+    InfoDataStruct setDataToErrorType(unsigned int* uiDataArray, unsigned int error);
+    void composeLineLog(string *strFile, InfoDataStruct *infoData, unsigned int *uiDataArray);
     void finalizeString( string *pStrOut, unsigned long ulTime, long lBitMask, long lMcStatus);
     void strReplaceOccurrence(string *pStrOut,
                               const string csSubStrLook,
