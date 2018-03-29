@@ -499,7 +499,6 @@ void CrunchLog::finalizeString( string *pStrOut, unsigned long ulTime, long lBit
 //--------------------------------------------------------
 void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFileOut)
 {
-    string sIDfile = "<Id = 0657";
     string STRING, strOut, strTime;
 	ifstream infile;
 	ofstream outFile;
@@ -512,6 +511,8 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 	infile.open (ucaNameFileIn);
 	outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
 	int iRowCounter=0;
+    unsigned int uiID = 0;
+    char strID[16];
 	unsigned int
 			lBitMask=0,
             lErrorID=0,
@@ -527,55 +528,63 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 		if (STRING != previousLine)// true in the end of file or file corrupted
 		{
 			previousLine = STRING;
-            std::size_t pos = STRING.find(sIDfile);// if "find" fails then pos  = 4000000
-			if (pos < STRING.size() )
+            std::size_t pos = STRING.find("<Id = ");// if "find" fails then pos  = 4000000
+            if (pos < STRING.size() )
             { // found ID file
 				removeCharsUntil(&STRING,"; ");
 //				ulTime = unpackTimeString( STRING.data() );
                 strTime = createTimeString( STRING.data() );
+                removeCharsUntil(&STRING, "<Id = ");
+                sscanf( STRING.data(), "%X", &uiID);
+                sscanf( STRING.data(), "%s", strID);
                 removeCharsUntil(&STRING,"Data = ");
                 sscanf( STRING.data() , "%x %x %x %x %x %x %x %x",
-						&ulaData[0] ,
+                        &ulaData[0] ,
                         &ulaData[1] ,
                         &ulaData[2] ,
-						&ulaData[3] ,
-						&ulaData[4] ,
+                        &ulaData[3] ,
+                        &ulaData[4] ,
                         &ulaData[5] ,
                         &ulaData[6] ,
                         &ulaData[7] );// extract numbers
-
-                lErrorID = ulaData[0]<<8 ;
-                lErrorID += ulaData[1];
-
                 strOut.clear();
+                strOut.append(strID);
+                strOut.append(" " );
                 strOut.append(strTime);
                 strOut.append(" " );
-                itoa(lErrorID, s8aDummy, 10);
-                strOut.append("ErrorID: ");
-                strOut.append(s8aDummy);
-                strOut.append(" " );
 
-                dataInfo = setDataToErrorType(ulaData, lErrorID);
+                switch(uiID) {
+                case 0x0657:
+                    lErrorID = ulaData[0]<<8 ;
+                    lErrorID += ulaData[1];
+                    itoa(lErrorID, s8aDummy, 10);
+                    strOut.append("ErrorID: ");
+                    strOut.append(s8aDummy);
+                    strOut.append(" " );
+
+                    dataInfo = setDataToErrorType(ulaData, lErrorID);
+                    break;
+                }
+
                 composeLineLog(&strOut, &dataInfo, ulaData);
-
                 outFile << strOut;
-			}
-			else
-			{
-				std::size_t pos = STRING.find("OPERATOR TIMING BOOKMARK");
-				if (pos < STRING.size() )
-				{
-					removeCharsUntil(&STRING,"; ");
-					ulTime = unpackTimeString( STRING.data() );
-					finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus);
-					outFile << strOut;
-					finalizeString(&strOut, ulTime, lBitMask, 20);
-					outFile << strOut;
-					finalizeString(&strOut, ulTime+1, lBitMask, lMcStatus);
-					outFile << strOut;
+            }
+            else
+            {
+                std::size_t pos = STRING.find("OPERATOR TIMING BOOKMARK");
+                if (pos < STRING.size() )
+                {
+                    removeCharsUntil(&STRING,"; ");
+                    ulTime = unpackTimeString( STRING.data() );
+                    finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus);
+                    outFile << strOut;
+                    finalizeString(&strOut, ulTime, lBitMask, 20);
+                    outFile << strOut;
+                    finalizeString(&strOut, ulTime+1, lBitMask, lMcStatus);
+                    outFile << strOut;
 
-				}
-			}
+                }
+            }
 		}
 		iRowCounter++;
 
