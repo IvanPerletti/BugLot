@@ -32,11 +32,15 @@ void CrunchLog::unpackBit(string * pstrOut, unsigned int uiVal)
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::createTimeString copy time string as in Log File
+ * @param u8aData
+ * @return
+ */
 string CrunchLog::createTimeString(const char * u8aData) {
     string strTime, temp;
 
     temp = string(u8aData);
-//    strcpy(&temp, u8aData);
 
     strTime = temp.substr(0,13);
 
@@ -83,6 +87,12 @@ void CrunchLog::removeChars(string * strProcessed, string strMatchToFind)
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::unPackDataError_OneSlotMsg unpack single byte message
+ * @param uiDataArray   data array from log file
+ * @param uiIndex       index of data message from log file
+ * @param iData1        data message coming from correct split of log data
+ */
 void CrunchLog::unPackDataError_OneSlotMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
 
     *iData1 = uiDataArray[*uiIndex];
@@ -91,6 +101,12 @@ void CrunchLog::unPackDataError_OneSlotMsg(unsigned int* uiDataArray, unsigned i
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::unPackDataError_TwoSlotsMsg unpack two bytes message
+ * @param uiDataArray   data array from log file
+ * @param uiIndex       index of data message from log file
+ * @param iData1        data message coming from correct split of log data
+ */
 void CrunchLog::unPackDataError_TwoSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
 
     *iData1 = uiDataArray[*uiIndex]<<8;
@@ -100,6 +116,12 @@ void CrunchLog::unPackDataError_TwoSlotsMsg(unsigned int* uiDataArray, unsigned 
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::unPackDataError_FourSlotsMsg unpack four bytes message
+ * @param uiDataArray   data array from log file
+ * @param uiIndex       index of data message from log file
+ * @param iData1        data message coming from correct split of log data
+ */
 void CrunchLog::unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
 
     *iData1 = uiDataArray[*uiIndex]<<24;
@@ -112,6 +134,10 @@ void CrunchLog::unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, unsigned
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setLineError set message size (in byte) and label for error message requiring line of error
+ * @param data     pointer to struct containing data size and label
+ */
 void CrunchLog::setLineError(InfoDataStruct *data) {
 
     data->uiSize.push_back(2);
@@ -120,6 +146,10 @@ void CrunchLog::setLineError(InfoDataStruct *data) {
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setNoMotionData    set message size (in byte) and label for error message related to no motion errors
+ * @param data      pointer to struct containing data size and label
+ */
 void CrunchLog::setNoMotionData(InfoDataStruct *data) {
 
     data->uiSize.push_back(2);
@@ -133,11 +163,16 @@ void CrunchLog::setNoMotionData(InfoDataStruct *data) {
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::isFirstMessage control if message is first one for that error type.
+ * @param arrVal        data from log file
+ * @param freeSlots     number of unsued data slots in the second message
+ * @return true if message is the first one
+ */
 bool CrunchLog::isFirstMessage(unsigned int *arrVal, int freeSlots) {
     unsigned int iVal;
     long lFlag = 0xFF;
 
-    // type indicates how many slots are free in the message
     switch(freeSlots) {
     case 1:
         iVal = 7;
@@ -159,6 +194,7 @@ bool CrunchLog::isFirstMessage(unsigned int *arrVal, int freeSlots) {
         iVal = 8;
     }
 
+    // Control if remaining bytes are not set. In this case the message is a second message and not a first one.
     for(int ii = iVal; ii < 8; ii++) {
         lFlag &= arrVal[ii];
         if(lFlag != 0xFF) {
@@ -166,11 +202,16 @@ bool CrunchLog::isFirstMessage(unsigned int *arrVal, int freeSlots) {
         }
     }
 
-    //lFlag will be 0xFF<=> all the bytes =oxff
+    // lFlag will be 0xFF <=> all the bytes = 0xFF
     return (lFlag!=0xFF);
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setAutoTargetData  set message size (in byte) and label for auto target element error
+ * @param data
+ * @param arrVal
+ */
 void CrunchLog::setAutoTargetData(InfoDataStruct *data, unsigned int *arrVal) {
 
     if(isFirstMessage(arrVal, 2)) {
@@ -193,6 +234,11 @@ void CrunchLog::setAutoTargetData(InfoDataStruct *data, unsigned int *arrVal) {
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setDirectionData       set message size (in byte) and label for auto, synchro and manual direction element error
+ * @param data
+ * @param arrVal
+ */
 void CrunchLog::setDirectionData(InfoDataStruct *data, unsigned int *arrVal) {
 
     if(isFirstMessage(arrVal, 4)) {
@@ -215,6 +261,10 @@ void CrunchLog::setDirectionData(InfoDataStruct *data, unsigned int *arrVal) {
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setElevixTargetPosData     set message size (in byte) and label for elevix target pos error message
+ * @param data
+ */
 void CrunchLog::setElevixTargetPosData(InfoDataStruct *data) {
     data->uiSize.push_back(2);
     data->uiSize.push_back(2);
@@ -226,6 +276,10 @@ void CrunchLog::setElevixTargetPosData(InfoDataStruct *data) {
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setSynchroTargetData       set message size (in byte) and label for Synchro target error message
+ * @param data
+ */
 void CrunchLog::setSynchroTargetData(InfoDataStruct *data) {
     data->uiSize.push_back(1);
     data->uiSize.push_back(2);
@@ -237,6 +291,11 @@ void CrunchLog::setSynchroTargetData(InfoDataStruct *data) {
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setAutoTargetPosData       set message size (in byte) and label for relative position elevix-pensile vert message error
+ * @param data
+ * @param arrVal
+ */
 void CrunchLog::setAutoTargetPosData(InfoDataStruct *data, unsigned int *arrVal) {
 
     data->uiSize.push_back(4);
@@ -251,6 +310,10 @@ void CrunchLog::setAutoTargetPosData(InfoDataStruct *data, unsigned int *arrVal)
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setSynchroTargetPosData        set message size (in byte) and label for relative synchro position elevix-pensile vert message error
+ * @param data
+ */
 void CrunchLog::setSynchroTargetPosData(InfoDataStruct *data) {
 
     data->uiSize.push_back(2);
@@ -262,6 +325,10 @@ void CrunchLog::setSynchroTargetPosData(InfoDataStruct *data) {
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setUntimelySynchroData     set message size (in byte) and label for untimely synchro error message
+ * @param data
+ */
 void CrunchLog::setUntimelySynchroData(InfoDataStruct *data) {
 
     data->uiSize.push_back(1);
@@ -275,6 +342,12 @@ void CrunchLog::setUntimelySynchroData(InfoDataStruct *data) {
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::setDataToErrorType     set message size and label as function of error happened
+ * @param uiDataArray       log data
+ * @param error         error happened
+ * @return  data struct containing correct message sizes and labels
+ */
 CrunchLog::InfoDataStruct CrunchLog::setDataToErrorType(unsigned int* uiDataArray, unsigned int error) {
     InfoDataStruct dataInfo;
 
@@ -375,6 +448,12 @@ CrunchLog::InfoDataStruct CrunchLog::setDataToErrorType(unsigned int* uiDataArra
 }
 
 //--------------------------------------------------------
+/**
+ * @brief CrunchLog::composeLineLog     compose data to write on file using predefined data sizes and labels
+ * @param strFile
+ * @param infoData
+ * @param uiDataArray
+ */
 void CrunchLog::composeLineLog(string *strFile, InfoDataStruct *infoData, unsigned int *uiDataArray) {
     unsigned int uiIndexDataArray = 2;
     char s8aDummy[16]={0,};
