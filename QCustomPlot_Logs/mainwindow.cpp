@@ -318,7 +318,7 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 
 	for (int iDataIdx=1; iDataIdx<iNumElem; iDataIdx++)
 	{	// OBS:  index move from 1: data(0,:) are time values
-		for (int jj=0; jj<iSzVet; jj++){
+		for ( int jj=0; jj<iSzVet; jj++ ){
 			qvDataArranged[jj] = qvMyVect[jj][iDataIdx]*0.5 + (20-iDataIdx) ;
 		}
 
@@ -326,6 +326,7 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 		QPen pen;
 		const int iColPos = (iDataIdx*2)%63; // position Color choice
 		pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
+		pen.setWidth(2);
 		customPlot->graph()->setPen(pen);
 
 		QString qStrLegend = LegendList.at(iDataIdx);
@@ -806,3 +807,4 @@ void MainWindow::on_timeEdit_timeChanged(const QTime &time)
 
 	ui->lineEditMin->setText(QString::number(sommaMsec*1000));
 }
+
