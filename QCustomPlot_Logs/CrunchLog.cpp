@@ -134,6 +134,320 @@ void CrunchLog::unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, unsigned
 }
 
 //--------------------------------------------------------
+void CrunchLog::setCanLogEsBkData(InfoDataStruct *infoStruct){
+    const int iNumData = 8;
+    string strEsBklabel[iNumData] = {"EnableSwitch: ", " Horns: ", " Move: ", " Homing: ",
+                                     " RemoteEnablewitch: ", " SUPER_ENABLE_SWITCH: ", " BrakeStatus: ", " HW_maintenance: "};
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(1);
+        infoStruct->strLabel.push_back(strEsBklabel[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogAutoData1(InfoDataStruct *infoStruct){
+
+    infoStruct->uiSize.push_back(2);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(2);
+    infoStruct->uiSize.push_back(2);
+
+    infoStruct->strLabel.push_back("Stato_movimento_automatico: ");
+    infoStruct->strLabel.push_back(" Accessorio: ");
+    infoStruct->strLabel.push_back(" Posizione: ");
+    infoStruct->strLabel.push_back(" all_movements_started: ");
+    infoStruct->strLabel.push_back(" all_movements_finished: ");
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogVertData1(InfoDataStruct *infoStruct){
+    const int iNumData = 4;
+    string strVert1abel[iNumData] = {"Stato_motore_pensile_vert: ", " CmdMask[M_PENSILE_VERT]: ", " ExclMask[M_PENSILE_VERT]: ", " CollMask[M_PENSILE_VERT]: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strVert1abel[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogVertData2(InfoDataStruct *infoStruct){
+
+    infoStruct->uiSize.push_back(4);
+    infoStruct->uiSize.push_back(2);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+
+    infoStruct->strLabel.push_back("WSpeed_pensile: ");
+    infoStruct->strLabel.push_back(" WDir_pensile_vert: ");
+    infoStruct->strLabel.push_back(" AKD_drv_status: ");
+    infoStruct->strLabel.push_back(" Op_mode_AKD: ");
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogVertData3(InfoDataStruct *infoStruct){
+
+    infoStruct->uiSize.push_back(2);
+    infoStruct->uiSize.push_back(2);
+    infoStruct->uiSize.push_back(2);
+    infoStruct->uiSize.push_back(1);
+
+    infoStruct->strLabel.push_back("H_AKD_encoder_mm: ");
+    infoStruct->strLabel.push_back(" Rampa_tube_vert_mm: ");
+    infoStruct->strLabel.push_back(" Tube_Target_Verticale_mm: ");
+    infoStruct->strLabel.push_back(" U_Sound_brake: ");
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogVertData4(InfoDataStruct *infoStruct){
+    const int iNumData = 3;
+    string strVert4label[iNumData] = {"EndMMove[M_PENSILE_VERT]: ", " BrkMask[M_PENSILE_VERT]: ", " FcMask[M_PENSILE_VERT]: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strVert4label[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogLatData1(InfoDataStruct *infoStruct){
+    const int iNumData = 4;
+    string strLat1label[iNumData] = {"Stato_motore_pensile_lat: ", " CmdMask[M_PENSILE_LAT]: ", " ExclMask[M_PENSILE_LAT]: ", " CollMask[M_PENSILE_LAT]: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strLat1label[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogLatData2(InfoDataStruct *infoStruct){
+    const int iNumData = 2;
+    string strLat2label[iNumData] = {"WDir_pensile_lat: ", " Pos_pensile_lat_mm: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strLat2label[ii]);
+    }
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogLongData1(InfoDataStruct *infoStruct){
+    const int iNumData = 4;
+    string strLong1label[iNumData] = {"Stato_motore_pensile_long: ", " CmdMask[M_PENSILE_LONG]: ", " ExclMask[M_PENSILE_LONG]: ", " CollMask[M_PENSILE_LONG]: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strLong1label[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogLongData2(InfoDataStruct *infoStruct){
+    const int iNumData = 2;
+    string strLong2label[iNumData] = {"WDir_pensile_long: ", " Pos_pensile_long_mm: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strLong2label[ii]);
+    }
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogRotData1(InfoDataStruct *infoStruct){
+    const int iNumData = 4;
+    string strRot1label[iNumData] = {"Stato_motore_pensile_rot: ", " CmdMask[M_PENSILE_ROT]: ", " ExclMask[M_PENSILE_ROT]: ", " CollMask[M_PENSILE_ROT]: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strRot1label[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogRotData2(InfoDataStruct *infoStruct){
+    const int iNumData = 2;
+    string strRot2label[iNumData] = {"WDir_pensile_rot: ", " Angolo_Rot_decdegree: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strRot2label[ii]);
+    }
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogIncData1(InfoDataStruct *infoStruct){
+    const int iNumData = 4;
+    string strInc1label[iNumData] = {"Stato_motore_pensile_inc: ", " CmdMask[M_PENSILE_INC]: ", " ExclMask[M_PENSILE_INC]: ", " CollMask[M_PENSILE_INC]: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strInc1label[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogIncData2(InfoDataStruct *infoStruct){
+    const int iNumData = 2;
+    string strInc2label[iNumData] = {"WDir_pensile_inc: ", " Angolo_Inc_decdegree: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strInc2label[ii]);
+    }
+
+    infoStruct->uiSize.push_back(4);
+    infoStruct->strLabel.push_back(" pensile_target_inc: ");
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogDetLatData1(InfoDataStruct *infoStruct) {
+    const int iNumData = 4;
+    string strDetLat1label[iNumData] = {"Stato_motore_detettore_lat: ", " CmdMask[M_DETETTORE_LAT]: ", " ExclMask[M_DETETTORE_LAT]: ", " CollMask[M_DETETTORE_LAT]: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strDetLat1label[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogDetLatData2(InfoDataStruct *infoStruct){
+    const int iNumData = 2;
+    string strDetLat2label[iNumData] = {"WDir_detettore_lat: ", " Pos_detettore_lat_mm: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strDetLat2label[ii]);
+    }
+
+    infoStruct->uiSize.push_back(4);
+    infoStruct->strLabel.push_back(" detettore_target_lat: ");
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogDetLongData1(InfoDataStruct *infoStruct) {
+    const int iNumData = 4;
+    string strDetLong1label[iNumData] = {"Stato_motore_detettore_long: ", " CmdMask[M_DETETTORE_LONG]: ", " ExclMask[M_DETETTORE_LONG]: ", " CollMask[M_DETETTORE_LONG]: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strDetLong1label[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogDetLongData2(InfoDataStruct *infoStruct){
+    const int iNumData = 2;
+    string strDetLong2label[iNumData] = {"WDir_detettore_long: ", " Pos_detettore_long_mm: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(2);
+        infoStruct->strLabel.push_back(strDetLong2label[ii]);
+    }
+
+    infoStruct->uiSize.push_back(4);
+    infoStruct->strLabel.push_back(" detettore_target_long: ");
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogSyncData(InfoDataStruct *infoStruct){
+
+    infoStruct->uiSize.push_back(2);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+
+    infoStruct->strLabel.push_back("Syncro_status: ");
+    infoStruct->strLabel.push_back(" ok_to_synchronize: ");
+    infoStruct->strLabel.push_back(" is_synchronized: ");
+    infoStruct->strLabel.push_back(" exit_from_synchro: ");
+    infoStruct->strLabel.push_back(" sync_error_position: ");
+    infoStruct->strLabel.push_back(" Dead_zone_sync: ");
+    infoStruct->strLabel.push_back(" Syncro_pensile_error: ");
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogTargetData1(InfoDataStruct *infoStruct){
+    const int iNumData = 2;
+    string strTarget1label[iNumData] = {"pensile_target_vert: ", " pensile_target_lat: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(4);
+        infoStruct->strLabel.push_back(strTarget1label[ii]);
+    }
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogTargetData2(InfoDataStruct *infoStruct){
+    const int iNumData = 2;
+    string strTarget2label[iNumData] = {"pensile_target_long: ", " pensile_target_rot: "};
+
+    for(int ii = 0; ii < iNumData; ii++) {
+        infoStruct->uiSize.push_back(4);
+        infoStruct->strLabel.push_back(strTarget2label[ii]);
+    }
+
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogDetLatSyncData(InfoDataStruct *infoStruct){
+
+    infoStruct->uiSize.push_back(2);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+
+    infoStruct->strLabel.push_back("FM713_detettore_lat_loop_speed: ");
+    infoStruct->strLabel.push_back(" Syncro_detettore_lat_error: ");
+    infoStruct->strLabel.push_back(" orobix_error_position_detettore_lat_before: ");
+    infoStruct->strLabel.push_back(" orobix_error_position_detettore_lat_after: ");
+    infoStruct->strLabel.push_back(" orobix_dead_zone_sync_lat_before: ");
+    infoStruct->strLabel.push_back(" orobix_dead_zone_sync_lat_after: ");
+    infoStruct->strLabel.push_back(" Corsa_detettore_lat: ");
+}
+
+//--------------------------------------------------------
+void CrunchLog::setCanLogDetLongSyncData(InfoDataStruct *infoStruct){
+
+    infoStruct->uiSize.push_back(2);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
+
+    infoStruct->strLabel.push_back("FM713_detettore_long_loop_speed: ");
+    infoStruct->strLabel.push_back(" Syncro_detettore_long_error: ");
+    infoStruct->strLabel.push_back(" orobix_error_position_detettore_long_before: ");
+    infoStruct->strLabel.push_back(" orobix_error_position_detettore_long_after: ");
+    infoStruct->strLabel.push_back(" orobix_dead_zone_sync_long_before: ");
+    infoStruct->strLabel.push_back(" orobix_dead_zone_sync_long_after: ");
+    infoStruct->strLabel.push_back(" Corsa_detettore_long: ");
+}
+
+//--------------------------------------------------------
 /**
  * @brief CrunchLog::setLineError set message size (in byte) and label for error message requiring line of error
  * @param data     pointer to struct containing data size and label
@@ -454,10 +768,18 @@ CrunchLog::InfoDataStruct CrunchLog::setDataToErrorType(unsigned int* uiDataArra
  * @param infoData
  * @param uiDataArray
  */
-void CrunchLog::composeLineLog(string *strFile, InfoDataStruct *infoData, unsigned int *uiDataArray) {
-    unsigned int uiIndexDataArray = 2;
+void CrunchLog::composeLineLog(string *strFile, InfoDataStruct *infoData, unsigned int dataID, unsigned int *uiDataArray) {
+    unsigned int uiIndexDataArray;
     char s8aDummy[16]={0,};
     int iData;
+
+    // Since for Motion Monitoring Logs we have already written error type, we have already used first two message slots
+    if(dataID == 0x0657) {
+        uiIndexDataArray = 2;
+    }
+    else {
+        uiIndexDataArray = 0;
+    }
 
     for(unsigned int ii = 0; ii < infoData->strLabel.size(); ii++) {
         switch(infoData->uiSize[ii]){
@@ -524,6 +846,9 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 	string previousLine="";
 	while(iRowCounter<1000000) // To get you all the lines.
 	{
+        bool bLogID = TRUE;
+        dataInfo.strLabel.clear();
+        dataInfo.uiSize.clear();
 		getline(infile,STRING); // Saves the line in STRING.
 		if (STRING != previousLine)// true in the end of file or file corrupted
 		{
@@ -554,7 +879,76 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
                 strOut.append(" " );
 
                 switch(uiID) {
-                case 0x0657:
+                case 0x0600:    // OX_CANLOG_ID_ES_BK1
+                    setCanLogEsBkData(&dataInfo);
+                    break;
+                case 0x0610:    // OX_CANLOG_ID_AUTO1
+                    setCanLogAutoData1(&dataInfo);
+                    break;
+                case 0x0620:    // OX_CANLOG_ID_VERT1
+                    setCanLogVertData1(&dataInfo);
+                    break;
+                case 0x0621:    // OX_CANLOG_ID_VERT2
+                     setCanLogVertData2(&dataInfo);
+                    break;
+                case 0x0622:    // OX_CANLOG_ID_VERT3
+                    setCanLogVertData3(&dataInfo);
+                    break;
+                case 0x0623:    // OX_CANLOG_ID_VERT4
+                    setCanLogVertData4(&dataInfo);
+                    break;
+                case 0x0630:    // OX_CANLOG_ID_LAT1
+                    setCanLogLatData1(&dataInfo);
+                    break;
+                case 0x0631:    // OX_CANLOG_ID_LAT2
+                    setCanLogLatData2(&dataInfo);
+                    break;
+                case 0x0640:    // OX_CANLOG_ID_LONG1
+                    setCanLogLongData1(&dataInfo);
+                    break;
+                case 0x0641:    // OX_CANLOG_ID_LONG2
+                    setCanLogLongData2(&dataInfo);
+                    break;
+                case 0x0644:    // OX_CANLOG_ID_ROT1
+                    setCanLogRotData1(&dataInfo);
+                    break;
+                case 0x0645:    // OX_CANLOG_ID_ROT2
+                    setCanLogRotData2(&dataInfo);
+                    break;
+                case 0x0647:    // OX_CANLOG_ID_INC1
+                    setCanLogIncData1(&dataInfo);
+                    break;
+                case 0x0648:    // OX_CANLOG_ID_INC2
+                    setCanLogIncData2(&dataInfo);
+                    break;
+                case 0x064A:    // OX_CANLOG_ID_DET_LAT1
+                    setCanLogDetLatData1(&dataInfo);
+                    break;
+                case 0x064B:    // OX_CANLOG_ID_DET_LAT2
+                    setCanLogDetLatData2(&dataInfo);
+                    break;
+                case 0x064D:    // OX_CANLOG_ID_DET_LONG1
+                    setCanLogDetLongData1(&dataInfo);
+                    break;
+                case 0x064E:    // OX_CANLOG_ID_DET_LONG2
+                    setCanLogDetLongData2(&dataInfo);
+                    break;
+                case 0x0650:    // OX_CANLOG_ID_SYNC
+                    setCanLogSyncData(&dataInfo);
+                    break;
+                case 0x0660:    // OX_CANLOG_ID_TARGET1
+                    setCanLogTargetData1(&dataInfo);
+                    break;
+                case 0x0661:    // OX_CANLOG_ID_TARGET2
+                    setCanLogTargetData2(&dataInfo);
+                    break;
+                case 0x0654:    // OX_CANLOG_ID_DET_LAT_SYNC_DATA
+                    setCanLogDetLatSyncData(&dataInfo);
+                    break;
+                case 0x0656:    // OX_CANLOG_ID_DET_LONG_SYNC_DATA
+                    setCanLogDetLongSyncData(&dataInfo);
+                    break;
+                case 0x0657:    // MM_CANLOG_ID
                     lErrorID = ulaData[0]<<8 ;
                     lErrorID += ulaData[1];
                     itoa(lErrorID, s8aDummy, 10);
@@ -564,10 +958,14 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 
                     dataInfo = setDataToErrorType(ulaData, lErrorID);
                     break;
+                default:
+                    bLogID = FALSE;
                 }
 
-                composeLineLog(&strOut, &dataInfo, ulaData);
-                outFile << strOut;
+                if(bLogID) {
+                    composeLineLog(&strOut, &dataInfo, uiID, ulaData);
+                    outFile << strOut;
+                }
             }
             else
             {
@@ -587,15 +985,10 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
             }
 		}
 		iRowCounter++;
-
-
-
-
 	}
 
 	outFile.close();
 	infile.close();
-
 
 }
 

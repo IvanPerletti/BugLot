@@ -47,6 +47,32 @@ private:
     void unPackDataError_OneSlotMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
     void unPackDataError_TwoSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
     void unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
+    // Orobix
+    void setCanLogEsBkData(InfoDataStruct *infoStruct);
+    void setCanLogAutoData1(InfoDataStruct *infoStruct);
+    void setCanLogVertData1(InfoDataStruct *infoStruct);
+    void setCanLogVertData2(InfoDataStruct *infoStruct);
+    void setCanLogVertData3(InfoDataStruct *infoStruct);
+    void setCanLogVertData4(InfoDataStruct *infoStruct);
+    void setCanLogLatData1(InfoDataStruct *infoStruct);
+    void setCanLogLatData2(InfoDataStruct *infoStruct);
+    void setCanLogLongData1(InfoDataStruct *infoStruct);
+    void setCanLogLongData2(InfoDataStruct *infoStruct);
+    void setCanLogRotData1(InfoDataStruct *infoStruct);
+    void setCanLogRotData2(InfoDataStruct *infoStruct);
+    void setCanLogIncData1(InfoDataStruct *infoStruct);
+    void setCanLogIncData2(InfoDataStruct *infoStruct);
+    void setCanLogDetLatData1(InfoDataStruct *infoStruct);
+    void setCanLogDetLatData2(InfoDataStruct *infoStruct);
+    void setCanLogDetLongData1(InfoDataStruct *infoStruct);
+    void setCanLogDetLongData2(InfoDataStruct *infoStruct);
+    void setCanLogSyncData(InfoDataStruct *infoStruct);
+    void setCanLogTargetData1(InfoDataStruct *infoStruct);
+    void setCanLogTargetData2(InfoDataStruct *infoStruct);
+    void setCanLogDetLatSyncData(InfoDataStruct *infoStruct);
+    void setCanLogDetLongSyncData(InfoDataStruct *infoStruct);
+
+    // Motion Monitoring
     void setLineError(InfoDataStruct *data);
     void setNoMotionData(InfoDataStruct *data);
     bool isFirstMessage(unsigned int *arrVal, int freeSlots);
@@ -58,7 +84,7 @@ private:
     void setSynchroTargetPosData(InfoDataStruct *data);
     void setUntimelySynchroData(InfoDataStruct *data);
     InfoDataStruct setDataToErrorType(unsigned int* uiDataArray, unsigned int error);
-    void composeLineLog(string *strFile, InfoDataStruct *infoData, unsigned int *uiDataArray);
+    void composeLineLog(string *strFile, InfoDataStruct *infoData, unsigned int dataID, unsigned int *uiDataArray);
     void finalizeString( string *pStrOut, unsigned long ulTime, long lBitMask, long lMcStatus);
     void strReplaceOccurrence(string *pStrOut,
                               const string csSubStrLook,
