@@ -946,6 +946,38 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                    </layout>
                   </item>
                   <item>
+                   <widget class="QLabel" name="label_2">
+                    <property name="text">
+                     <string>Time Edit</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QTimeEdit" name="timeEdit">
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>150</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Starting time HH:MM:SS to be displayed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">font: 15pt &quot;MS Shell Dlg 2&quot;;</string>
+                    </property>
+                    <property name="displayFormat">
+                     <string>HH:mm:ss</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
                    <widget class="QPushButton" name="pushButtonZoomRange">
                     <property name="font">
                      <font>
@@ -983,38 +1015,6 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                      </size>
                     </property>
                    </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_2">
-                    <property name="text">
-                     <string>Time Edit</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QTimeEdit" name="timeEdit">
-                    <property name="minimumSize">
-                     <size>
-                      <width>150</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>150</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Starting time HH:MM:SS to be displayed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">font: 15pt &quot;MS Shell Dlg 2&quot;;</string>
-                    </property>
-                    <property name="displayFormat">
-                     <string>HH:mm:ss</string>
-                    </property>
-                   </widget>
                   </item>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_8">

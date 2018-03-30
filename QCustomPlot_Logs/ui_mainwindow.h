@@ -88,10 +88,10 @@ public:
     QLineEdit *lineEditMin;
     QLabel *label_4;
     QSpacerItem *horizontalSpacer;
-    QPushButton *pushButtonZoomRange;
-    QSpacerItem *verticalSpacer_6;
     QLabel *label_2;
     QTimeEdit *timeEdit;
+    QPushButton *pushButtonZoomRange;
+    QSpacerItem *verticalSpacer_6;
     QHBoxLayout *horizontalLayout_8;
     QPushButton *pushButtonZoomLeft;
     QPushButton *pushButtonZoomMeno;
@@ -861,6 +861,19 @@ public:
 
         verticalLayout_3->addLayout(horizontalLayout_2);
 
+        label_2 = new QLabel(groupBox_2);
+        label_2->setObjectName(QStringLiteral("label_2"));
+
+        verticalLayout_3->addWidget(label_2);
+
+        timeEdit = new QTimeEdit(groupBox_2);
+        timeEdit->setObjectName(QStringLiteral("timeEdit"));
+        timeEdit->setMinimumSize(QSize(150, 40));
+        timeEdit->setMaximumSize(QSize(150, 40));
+        timeEdit->setStyleSheet(QStringLiteral("font: 15pt \"MS Shell Dlg 2\";"));
+
+        verticalLayout_3->addWidget(timeEdit);
+
         pushButtonZoomRange = new QPushButton(groupBox_2);
         pushButtonZoomRange->setObjectName(QStringLiteral("pushButtonZoomRange"));
         QFont font;
@@ -878,19 +891,6 @@ public:
         verticalSpacer_6 = new QSpacerItem(30, 20, QSizePolicy::Minimum, QSizePolicy::Preferred);
 
         verticalLayout_3->addItem(verticalSpacer_6);
-
-        label_2 = new QLabel(groupBox_2);
-        label_2->setObjectName(QStringLiteral("label_2"));
-
-        verticalLayout_3->addWidget(label_2);
-
-        timeEdit = new QTimeEdit(groupBox_2);
-        timeEdit->setObjectName(QStringLiteral("timeEdit"));
-        timeEdit->setMinimumSize(QSize(150, 40));
-        timeEdit->setMaximumSize(QSize(150, 40));
-        timeEdit->setStyleSheet(QStringLiteral("font: 15pt \"MS Shell Dlg 2\";"));
-
-        verticalLayout_3->addWidget(timeEdit);
 
         horizontalLayout_8 = new QHBoxLayout();
         horizontalLayout_8->setSpacing(6);
@@ -1044,15 +1044,15 @@ public:
         label_3->setText(QApplication::translate("MainWindow", "min Extrem", 0));
         lineEditMin->setText(QString());
         label_4->setText(QApplication::translate("MainWindow", "interval", 0));
-#ifndef QT_NO_TOOLTIP
-        pushButtonZoomRange->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Click to plot current time set</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-        pushButtonZoomRange->setText(QApplication::translate("MainWindow", "Process", 0));
         label_2->setText(QApplication::translate("MainWindow", "Time Edit", 0));
 #ifndef QT_NO_TOOLTIP
         timeEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Starting time HH:MM:SS to be displayed</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         timeEdit->setDisplayFormat(QApplication::translate("MainWindow", "HH:mm:ss", 0));
+#ifndef QT_NO_TOOLTIP
+        pushButtonZoomRange->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Click to plot current time set</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        pushButtonZoomRange->setText(QApplication::translate("MainWindow", "Process", 0));
         pushButtonZoomLeft->setText(QApplication::translate("MainWindow", "<<", 0));
         pushButtonZoomMeno->setText(QApplication::translate("MainWindow", "-", 0));
         pushButtonZoomPiu->setText(QApplication::translate("MainWindow", "+", 0));
