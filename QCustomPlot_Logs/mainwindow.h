@@ -115,6 +115,8 @@ class MainWindow : public QMainWindow
 
 	void on_timeEdit_timeChanged(const QTime &time);
 
+	void on_pbScreenShot_clicked();
+
 	private:
 	Ui::MainWindow *ui;
 	QString demoName;

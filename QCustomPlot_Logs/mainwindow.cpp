@@ -47,6 +47,7 @@
 #include <QMessageBox>
 #include <QMetaEnum>
 #include <QApplication>
+#include <QFileDialog>
 #include "crunchlog.h"
 
 
@@ -70,7 +71,10 @@ void MainWindow::setupDemo(int demoIndex)
 {
 	switch (demoIndex)
 	{
-	case 20: setupLineStyleFabioDemo(ui->customPlot); break;
+	case 20:
+		demoName.append("GmmScope");
+		setupLineStyleFabioDemo(ui->customPlot);
+		break;
 	}
 	setWindowTitle("QCustomPlot: "+demoName);
 	statusBar()->clearMessage();
@@ -166,17 +170,20 @@ MainWindow::~MainWindow()
 
 void MainWindow::screenShot()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	QPixmap pm = QPixmap::grabWindow(qApp->desktop()->winId(), this->x()+2, this->y()+2, this->frameGeometry().width()-4, this->frameGeometry().height()-4);
-#elif QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
-	QPixmap pm = qApp->primaryScreen()->grabWindow(qApp->desktop()->winId(), this->x()+2, this->y()+2, this->frameGeometry().width()-4, this->frameGeometry().height()-4);
-#else
-	QPixmap pm = qApp->primaryScreen()->grabWindow(qApp->desktop()->winId(), this->x()-7, this->y()-7, this->frameGeometry().width()+14, this->frameGeometry().height()+14);
-#endif
-	QString fileName = demoName.toLower()+".png";
-	fileName.replace(" ", "");
-	pm.save("./screenshots/"+fileName);
-	qApp->quit();
+	ui->centralWidget->grab().save("image.png");
+
+//	QScreen *screen = QGuiApplication::primaryScreen();
+//	if (const QWindow *window = windowHandle())
+//		screen = window->screen();
+//	if (!screen)
+//		return;
+//	QPixmap originalPixmap = screen->grabWindow(QWidget::winId());
+
+//	const QString fileName = "img.png";
+//	if (!originalPixmap.save(fileName)) {
+//		QMessageBox::warning(this, tr("Save Error"), tr("The image could not be saved to \"%1\".")
+//							 .arg(QDir::toNativeSeparators(fileName)));
+//	}
 }
 
 void MainWindow::allScreenShots()
@@ -231,6 +238,7 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 											"Text files(*.txt)",
 											&selFilter);
 	*/
+
 	QFile file(strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","file not open");
@@ -245,10 +253,10 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
 	//  .  .  .  .  .  .  .  .  .  .  .  .
 
+#define ARRAY_DIM 200000 /// max number of lines to auto-stop proessing
 	QTextStream in(&file);
 	QVector <QVector <int> > qvMyVect;
 
-#define ARRAY_DIM 200000
 	unsigned long ulMaxLi; // MAX legnth of "photograms" to draw
 	for (ulMaxLi=0; ulMaxLi<ARRAY_DIM; ulMaxLi++) // reached certain num of lines break!
 	{
@@ -300,6 +308,7 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 			  << "DAC ABS             ";
 
 	//  } .=========================================
+
 	const int iSzVet = qvMyVect.size(); // array Size
 	const int iNumElem = qvMyVect[0].size(); // num of plots
 	QVector<double> qvTime; // time array
@@ -317,7 +326,6 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 		for ( int jj=0; jj<iSzVet; jj++ ){
 			qvDataArranged[jj] = qvMyVect[jj][iDataIdx]*0.5 + (20-iDataIdx) ;
 		}
-
 		customPlot->addGraph();// create graph
 		QPen pen;
 		const int iColPos = (iDataIdx*2)%63; // position Color choice
@@ -329,6 +337,7 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 		customPlot->graph()->setName(qStrLegend);
 		customPlot->graph(iDataIdx-1)->setData(qvTime, qvDataArranged);
 	}
+
 	// give the axes some labels:
 	customPlot->xAxis->setLabel("t [ms]");
 	customPlot->yAxis->setLabel("y");
@@ -345,13 +354,9 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 	// connect some interaction slots:
 	customPlot->setInteractions(QCP::iSelectLegend);
 	connect(ui->customPlot,
-			SIGNAL(legendClick(QCPLegend*,
-							   QCPAbstractLegendItem*,
-							   QMouseEvent*)),
+			SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)),
 			this,
 			SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
-
-
 
 	connect(ui->customPlot,
 			SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
@@ -372,7 +377,6 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
 
 	if(NULL != l && NULL != ai)
 	{
-
 		for (int i=0; i<ui->customPlot->graphCount(); ++i)
 		{
 			QCPGraph *graph = ui->customPlot->graph(i);
@@ -391,6 +395,12 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
 		}
 	}
 }
+//------------------------------------------------------------------------------
+/**
+ * @brief once clicked onto legend name can change Text of signal name
+ * @param legend
+ * @param item
+ */
 void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item)
 {
 	// Rename a graph by double clicking on its legend item
@@ -407,7 +417,7 @@ void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *ite
 		}
 	}
 }
-//------------------------------------------------------------------------------
+
 /**
  * @brief MainWindow::MyTimerSlot  Slot for On Air option - temporized event
  */
@@ -714,6 +724,7 @@ void MainWindow::on_pushButtonProcess_clicked()
 	file.close();
 	ui->qlTestoFinito->setText("filter text");
 	//ui->customPlot->replot();
+	demoName.append("GmmScope");
 	setupLineStyleFabioDemo(ui->customPlot);
 	if (customPlotVariable==true){
 		ui->customPlot->replot();
@@ -783,3 +794,8 @@ void MainWindow::on_timeEdit_timeChanged(const QTime &time)
 	ui->lineEditMin->setText(QString::number(sommaMsec*1000));
 }
 
+
+void MainWindow::on_pbScreenShot_clicked()
+{
+	screenShot();
+}

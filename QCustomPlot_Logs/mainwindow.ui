@@ -678,6 +678,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Maximum</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
@@ -975,6 +978,12 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                     <property name="displayFormat">
                      <string>HH:mm:ss</string>
                     </property>
+                    <property name="calendarPopup">
+                     <bool>false</bool>
+                    </property>
+                    <property name="currentSectionIndex">
+                     <number>0</number>
+                    </property>
                    </widget>
                   </item>
                   <item>
@@ -1097,6 +1106,13 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                    <widget class="QPushButton" name="pushButtonDiretta">
                     <property name="text">
                      <string>ON AIR</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pbScreenShot">
+                    <property name="text">
+                     <string>ScreenShot</string>
                     </property>
                    </widget>
                   </item>

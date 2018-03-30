@@ -99,6 +99,7 @@ public:
     QPushButton *pushButtonZoomRight;
     QLabel *label_time;
     QPushButton *pushButtonDiretta;
+    QPushButton *pbScreenShot;
     QSpacerItem *verticalSpacer;
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout;
@@ -701,7 +702,7 @@ public:
 
         horizontalLayout_15->addWidget(textEdit);
 
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Maximum, QSizePolicy::Minimum);
 
         horizontalLayout_15->addItem(horizontalSpacer_2);
 
@@ -871,6 +872,8 @@ public:
         timeEdit->setMinimumSize(QSize(150, 40));
         timeEdit->setMaximumSize(QSize(150, 40));
         timeEdit->setStyleSheet(QStringLiteral("font: 15pt \"MS Shell Dlg 2\";"));
+        timeEdit->setCalendarPopup(false);
+        timeEdit->setCurrentSectionIndex(0);
 
         verticalLayout_3->addWidget(timeEdit);
 
@@ -939,6 +942,11 @@ public:
         pushButtonDiretta->setObjectName(QStringLiteral("pushButtonDiretta"));
 
         verticalLayout_3->addWidget(pushButtonDiretta);
+
+        pbScreenShot = new QPushButton(groupBox_2);
+        pbScreenShot->setObjectName(QStringLiteral("pbScreenShot"));
+
+        verticalLayout_3->addWidget(pbScreenShot);
 
         verticalSpacer = new QSpacerItem(20, 50, QSizePolicy::Minimum, QSizePolicy::Preferred);
 
@@ -1059,6 +1067,7 @@ public:
         pushButtonZoomRight->setText(QApplication::translate("MainWindow", ">>", 0));
         label_time->setText(QString());
         pushButtonDiretta->setText(QApplication::translate("MainWindow", "ON AIR", 0));
+        pbScreenShot->setText(QApplication::translate("MainWindow", "ScreenShot", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_1), QApplication::translate("MainWindow", "Graph", 0));
     } // retranslateUi
 
