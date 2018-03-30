@@ -49,9 +49,6 @@
 #include <QApplication>
 #include "crunchlog.h"
 
-
-
-
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -63,7 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(timer, SIGNAL(timeout()), this, SLOT(MyTimerSlot()));
 	timer->start(1000);    // msec
 }
-
 
 
 void MainWindow::setupDemo(int demoIndex)
@@ -239,7 +235,7 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 	customPlot->legend->setVisible(true);
 
 	customPlot->legend->setFont(QFont("Helvetica", 9));
-    customPlot->plotLayout()->setColumnStretchFactor (1, 1);
+    //customPlot->plotLayout()->setColumnStretchFactor(1, 1.1);
 	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
 
 

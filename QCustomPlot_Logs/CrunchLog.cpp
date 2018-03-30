@@ -14,8 +14,14 @@ CrunchLog::CrunchLog()
 #include <iomanip>
 using namespace std;
 
+QString CrunchLog::strSystemUsed;
 
+//--------------------------------------------------------
+void CrunchLog::saveSystemUsed(QString comboBoxSys){
 
+    strSystemUsed = comboBoxSys;
+
+}
 //--------------------------------------------------------
 void CrunchLog::unpackBit(string * pstrOut, unsigned int uiVal)
 {
@@ -852,135 +858,173 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 		getline(infile,STRING); // Saves the line in STRING.
 		if (STRING != previousLine)// true in the end of file or file corrupted
 		{
+            std::size_t pos;
 			previousLine = STRING;
-            std::size_t pos = STRING.find("<Id = ");// if "find" fails then pos  = 4000000
+            if(strSystemUsed == "Ivan Generator") {
+                pos = STRING.find("<Id = 0652");// if "find" fails then pos  = 4000000
+            }
+            else if(strSystemUsed == "Kalos") {
+                pos = STRING.find("<Id = 06");// if "find" fails then pos  = 4000000
+            }
             if (pos < STRING.size() )
             { // found ID file
 				removeCharsUntil(&STRING,"; ");
-//				ulTime = unpackTimeString( STRING.data() );
-                strTime = createTimeString( STRING.data() );
-                removeCharsUntil(&STRING, "<Id = ");
-                sscanf( STRING.data(), "%X", &uiID);
-                sscanf( STRING.data(), "%s", strID);
-                removeCharsUntil(&STRING,"Data = ");
-                sscanf( STRING.data() , "%x %x %x %x %x %x %x %x",
-                        &ulaData[0] ,
-                        &ulaData[1] ,
-                        &ulaData[2] ,
-                        &ulaData[3] ,
-                        &ulaData[4] ,
-                        &ulaData[5] ,
-                        &ulaData[6] ,
-                        &ulaData[7] );// extract numbers
-                strOut.clear();
-                strOut.append(strID);
-                strOut.append(" " );
-                strOut.append(strTime);
-                strOut.append(" " );
-
-                switch(uiID) {
-                case 0x0600:    // OX_CANLOG_ID_ES_BK1
-                    setCanLogEsBkData(&dataInfo);
-                    break;
-                case 0x0610:    // OX_CANLOG_ID_AUTO1
-                    setCanLogAutoData1(&dataInfo);
-                    break;
-                case 0x0620:    // OX_CANLOG_ID_VERT1
-                    setCanLogVertData1(&dataInfo);
-                    break;
-                case 0x0621:    // OX_CANLOG_ID_VERT2
-                     setCanLogVertData2(&dataInfo);
-                    break;
-                case 0x0622:    // OX_CANLOG_ID_VERT3
-                    setCanLogVertData3(&dataInfo);
-                    break;
-                case 0x0623:    // OX_CANLOG_ID_VERT4
-                    setCanLogVertData4(&dataInfo);
-                    break;
-                case 0x0630:    // OX_CANLOG_ID_LAT1
-                    setCanLogLatData1(&dataInfo);
-                    break;
-                case 0x0631:    // OX_CANLOG_ID_LAT2
-                    setCanLogLatData2(&dataInfo);
-                    break;
-                case 0x0640:    // OX_CANLOG_ID_LONG1
-                    setCanLogLongData1(&dataInfo);
-                    break;
-                case 0x0641:    // OX_CANLOG_ID_LONG2
-                    setCanLogLongData2(&dataInfo);
-                    break;
-                case 0x0644:    // OX_CANLOG_ID_ROT1
-                    setCanLogRotData1(&dataInfo);
-                    break;
-                case 0x0645:    // OX_CANLOG_ID_ROT2
-                    setCanLogRotData2(&dataInfo);
-                    break;
-                case 0x0647:    // OX_CANLOG_ID_INC1
-                    setCanLogIncData1(&dataInfo);
-                    break;
-                case 0x0648:    // OX_CANLOG_ID_INC2
-                    setCanLogIncData2(&dataInfo);
-                    break;
-                case 0x064A:    // OX_CANLOG_ID_DET_LAT1
-                    setCanLogDetLatData1(&dataInfo);
-                    break;
-                case 0x064B:    // OX_CANLOG_ID_DET_LAT2
-                    setCanLogDetLatData2(&dataInfo);
-                    break;
-                case 0x064D:    // OX_CANLOG_ID_DET_LONG1
-                    setCanLogDetLongData1(&dataInfo);
-                    break;
-                case 0x064E:    // OX_CANLOG_ID_DET_LONG2
-                    setCanLogDetLongData2(&dataInfo);
-                    break;
-                case 0x0650:    // OX_CANLOG_ID_SYNC
-                    setCanLogSyncData(&dataInfo);
-                    break;
-                case 0x0660:    // OX_CANLOG_ID_TARGET1
-                    setCanLogTargetData1(&dataInfo);
-                    break;
-                case 0x0661:    // OX_CANLOG_ID_TARGET2
-                    setCanLogTargetData2(&dataInfo);
-                    break;
-                case 0x0654:    // OX_CANLOG_ID_DET_LAT_SYNC_DATA
-                    setCanLogDetLatSyncData(&dataInfo);
-                    break;
-                case 0x0656:    // OX_CANLOG_ID_DET_LONG_SYNC_DATA
-                    setCanLogDetLongSyncData(&dataInfo);
-                    break;
-                case 0x0657:    // MM_CANLOG_ID
-                    lErrorID = ulaData[0]<<8 ;
-                    lErrorID += ulaData[1];
-                    itoa(lErrorID, s8aDummy, 10);
-                    strOut.append("ErrorID: ");
-                    strOut.append(s8aDummy);
+                if(strSystemUsed == "Ivan Generator") {
+                    ulTime = unpackTimeString( STRING.data() );
+                    removeCharsUntil(&STRING,"DEBUG data = ");
+                    removeChars(&STRING,"0X");// replace 0X with blank spaces
+                    sscanf( STRING.data() , "%x %x %x %x %x %x",
+                            &ulaData[0] ,
+                            &ulaData[1] ,
+                            &ulaData[2] ,
+                            &ulaData[3] ,
+                            &ulaData[4] ,
+                            &ulaData[5] );// extract numbers
+                    lBitMask = ulaData[1];
+                    lBitMask+= (ulaData[2]<<8);
+                    lBitMask+= (ulaData[3]<<16);
+                    lBitMask+= (ulaData[4]<<24);
+                    lMcStatus = ulaData[5] ;
+                    switch(ulaData[0])
+                    {
+                    case 6:
+                        finalizeString(&strOut, ulTime, lBitMask, lMcStatus);
+                        cout<<strOut;
+                        outFile << strOut;
+                        break;
+                    }
+                }
+                else if(strSystemUsed == "Kalos") {
+                    strTime = createTimeString( STRING.data() );
+                    removeCharsUntil(&STRING, "<Id = ");
+                    sscanf( STRING.data(), "%X", &uiID);
+                    sscanf( STRING.data(), "%s", strID);
+                    removeCharsUntil(&STRING,"Data = ");
+                    sscanf( STRING.data() , "%x %x %x %x %x %x %x %x",
+                            &ulaData[0] ,
+                            &ulaData[1] ,
+                            &ulaData[2] ,
+                            &ulaData[3] ,
+                            &ulaData[4] ,
+                            &ulaData[5] ,
+                            &ulaData[6] ,
+                            &ulaData[7] );// extract numbers
+                    strOut.clear();
+                    strOut.append(strID);
+                    strOut.append(" " );
+                    strOut.append(strTime);
                     strOut.append(" " );
 
-                    dataInfo = setDataToErrorType(ulaData, lErrorID);
-                    break;
-                default:
-                    bLogID = FALSE;
-                }
+                    switch(uiID) {
+                    case 0x0600:    // OX_CANLOG_ID_ES_BK1
+                        setCanLogEsBkData(&dataInfo);
+                        break;
+                    case 0x0610:    // OX_CANLOG_ID_AUTO1
+                        setCanLogAutoData1(&dataInfo);
+                        break;
+                    case 0x0620:    // OX_CANLOG_ID_VERT1
+                        setCanLogVertData1(&dataInfo);
+                        break;
+                    case 0x0621:    // OX_CANLOG_ID_VERT2
+                         setCanLogVertData2(&dataInfo);
+                        break;
+                    case 0x0622:    // OX_CANLOG_ID_VERT3
+                        setCanLogVertData3(&dataInfo);
+                        break;
+                    case 0x0623:    // OX_CANLOG_ID_VERT4
+                        setCanLogVertData4(&dataInfo);
+                        break;
+                    case 0x0630:    // OX_CANLOG_ID_LAT1
+                        setCanLogLatData1(&dataInfo);
+                        break;
+                    case 0x0631:    // OX_CANLOG_ID_LAT2
+                        setCanLogLatData2(&dataInfo);
+                        break;
+                    case 0x0640:    // OX_CANLOG_ID_LONG1
+                        setCanLogLongData1(&dataInfo);
+                        break;
+                    case 0x0641:    // OX_CANLOG_ID_LONG2
+                        setCanLogLongData2(&dataInfo);
+                        break;
+                    case 0x0644:    // OX_CANLOG_ID_ROT1
+                        setCanLogRotData1(&dataInfo);
+                        break;
+                    case 0x0645:    // OX_CANLOG_ID_ROT2
+                        setCanLogRotData2(&dataInfo);
+                        break;
+                    case 0x0647:    // OX_CANLOG_ID_INC1
+                        setCanLogIncData1(&dataInfo);
+                        break;
+                    case 0x0648:    // OX_CANLOG_ID_INC2
+                        setCanLogIncData2(&dataInfo);
+                        break;
+                    case 0x064A:    // OX_CANLOG_ID_DET_LAT1
+                        setCanLogDetLatData1(&dataInfo);
+                        break;
+                    case 0x064B:    // OX_CANLOG_ID_DET_LAT2
+                        setCanLogDetLatData2(&dataInfo);
+                        break;
+                    case 0x064D:    // OX_CANLOG_ID_DET_LONG1
+                        setCanLogDetLongData1(&dataInfo);
+                        break;
+                    case 0x064E:    // OX_CANLOG_ID_DET_LONG2
+                        setCanLogDetLongData2(&dataInfo);
+                        break;
+                    case 0x0650:    // OX_CANLOG_ID_SYNC
+                        setCanLogSyncData(&dataInfo);
+                        break;
+                    case 0x0660:    // OX_CANLOG_ID_TARGET1
+                        setCanLogTargetData1(&dataInfo);
+                        break;
+                    case 0x0661:    // OX_CANLOG_ID_TARGET2
+                        setCanLogTargetData2(&dataInfo);
+                        break;
+                    case 0x0654:    // OX_CANLOG_ID_DET_LAT_SYNC_DATA
+                        setCanLogDetLatSyncData(&dataInfo);
+                        break;
+                    case 0x0656:    // OX_CANLOG_ID_DET_LONG_SYNC_DATA
+                        setCanLogDetLongSyncData(&dataInfo);
+                        break;
+                    case 0x0657:    // MM_CANLOG_ID
+                        lErrorID = ulaData[0]<<8 ;
+                        lErrorID += ulaData[1];
+                        itoa(lErrorID, s8aDummy, 10);
+                        strOut.append("ErrorID: ");
+                        strOut.append(s8aDummy);
+                        strOut.append(" " );
 
-                if(bLogID) {
-                    composeLineLog(&strOut, &dataInfo, uiID, ulaData);
-                    outFile << strOut;
+                        dataInfo = setDataToErrorType(ulaData, lErrorID);
+                        break;
+                    default:
+                        bLogID = FALSE;
+                    }
+
+                    if(bLogID) {
+                        composeLineLog(&strOut, &dataInfo, uiID, ulaData);
+                        outFile << strOut;
+                    }
                 }
             }
             else
             {
-                std::size_t pos = STRING.find("OPERATOR TIMING BOOKMARK");
-                if (pos < STRING.size() )
-                {
-                    removeCharsUntil(&STRING,"; ");
-                    ulTime = unpackTimeString( STRING.data() );
-                    finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus);
-                    outFile << strOut;
-                    finalizeString(&strOut, ulTime, lBitMask, 20);
-                    outFile << strOut;
-                    finalizeString(&strOut, ulTime+1, lBitMask, lMcStatus);
-                    outFile << strOut;
+                if(strSystemUsed == "Ivan Generator") {
+                    std::size_t pos = STRING.find("OPERATOR TIMING BOOKMARK");
+                    if (pos < STRING.size() )
+                    {
+                        removeCharsUntil(&STRING,"; ");
+                        ulTime = unpackTimeString( STRING.data() );
+                        finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus);
+                        outFile << strOut;
+                        finalizeString(&strOut, ulTime, lBitMask, 20);
+                        outFile << strOut;
+                        finalizeString(&strOut, ulTime+1, lBitMask, lMcStatus);
+                        outFile << strOut;
 
+                    }
+                }
+                else if(strSystemUsed == "Kalos") {
+                    strOut.clear();
+                    strOut.append("ERROR LINE");
                 }
             }
 		}

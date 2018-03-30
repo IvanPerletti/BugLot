@@ -32,12 +32,14 @@ class CrunchLog
 public:
     CrunchLog();
     void processFile(const char *ucaNameFileIn, const char *ucaNameFileOut);
-
+    static void saveSystemUsed(QString comboBoxSys);
 private:
     struct InfoDataStruct {
         vector <unsigned int> uiSize;
         vector <string> strLabel;
     };
+
+    static QString strSystemUsed;
 
     void unpackBit(string * pstrOut, unsigned int uiVal);
     string createTimeString(const char * u8aData);

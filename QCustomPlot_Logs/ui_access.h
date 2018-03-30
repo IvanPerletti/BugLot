@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
@@ -38,13 +39,14 @@ public:
     QLabel *label_2;
     QLineEdit *lineEdit_password;
     QPushButton *pushButton_login;
+    QComboBox *comboBox;
     QLabel *label_pix;
 
     void setupUi(QDialog *access)
     {
         if (access->objectName().isEmpty())
             access->setObjectName(QStringLiteral("access"));
-        access->resize(400, 300);
+        access->resize(479, 300);
         access->setStyleSheet(QLatin1String("QToolTip\n"
 "{\n"
 "     border: 1px solid black;\n"
@@ -569,6 +571,11 @@ public:
 
 
         horizontalLayout_3->addWidget(groupBox);
+
+        comboBox = new QComboBox(access);
+        comboBox->setObjectName(QStringLiteral("comboBox"));
+
+        horizontalLayout_3->addWidget(comboBox);
 
         label_pix = new QLabel(access);
         label_pix->setObjectName(QStringLiteral("label_pix"));

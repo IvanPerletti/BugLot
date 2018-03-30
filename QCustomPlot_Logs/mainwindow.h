@@ -60,7 +60,6 @@ class MainWindow : public QMainWindow
 	~MainWindow();
 
 	void setupDemo(int demoIndex);
-
 	void setupLineStyleFabioDemo(QCustomPlot *customPlot);
 	void setupPlayground(QCustomPlot *customPlot);
 
@@ -68,10 +67,9 @@ class MainWindow : public QMainWindow
 	void bracketDataSlot();
 	void screenShot();
 	void allScreenShots();
-	private:
+
+    private:
 	QTimer *timer;
-
-
 
 
 	private slots:
