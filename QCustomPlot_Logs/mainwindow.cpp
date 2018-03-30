@@ -224,8 +224,6 @@ uint8_t u8aColB[64]={ 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 127, 127, 127, 127, 127, 1
 
 void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 {
-
-
 	/* QString selFilter="Text files(*.txt)";
 	QString LoadFile;
 	LoadFile = QFileDialog::getOpenFileName(this,"Open Full Log",
@@ -236,12 +234,10 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 	QFile file(strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","file not open");
-		//return
-
+		return;
 	}
-
+	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
 	//  .  .  .  .  .  .  .  .  .  .  .  .
-
 	customPlot->legend->setVisible(true);
 	customPlot->legend->setFont(QFont("Helvetica", 9));
 	customPlot->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
@@ -393,22 +389,6 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
 			}
 			l->parentPlot()->graph(i)->setPen(qpGraphPen);
 		}
-
-		//					// Check for selection
-		//					for(int i=0; i<l->parentPlot()->graphCount(); i++)
-		//					{
-		//						QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
-		//						if("QCPPlottableLegendItem" == QString(ai->metaObject()->className()))
-		//						{
-		//							//				ui->statusBar->showMessage("Selected Graph: \"" + l->parentPlot()->graph(i)->name() + "\"");
-		//							qpGraphPen.setStyle(Qt::DotLine);
-		//						}
-		//						else
-		//						{
-		//							qpGraphPen.setStyle(Qt::SolidLine);
-		//						}
-		//						l->parentPlot()->graph(i)->setPen(qpGraphPen);
-		//					}
 	}
 }
 void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item)
@@ -486,16 +466,10 @@ void MainWindow::on_UpgradePlot()
 		//        }
 
 		ui->customPlot->xAxis->setRange(minFinale, minFinale+interval);
-
-
 		ui->customPlot->replot();
 	}
 	//ui->hsInfInterval->setValue(0);
 	//ui->hsSupInterval->setValue(100);
-
-
-
-
 
 }
 //------------------------------------------------------------------------------------------------
@@ -530,6 +504,7 @@ void MainWindow::on_dial_valueChanged(int Msec)
 
 void MainWindow::on_pushButtonZoom_clicked()
 {
+	//	Never interrupt your enemy when he is making a mistake.
 	ui->dial->setValue(0);
 	if (ui->lineEditMin->text().toDouble() <= 0 || ui->lineEditInterval->text().toDouble()<= 0)
 	{
