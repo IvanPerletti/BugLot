@@ -32,6 +32,7 @@ QWidget
 {
     color: #b1b1b1;
     background-color: #323232;
+	font: 10pt &quot;MS Shell Dlg 2&quot;;
 }
 
 QWidget:item:hover
@@ -738,91 +739,6 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_6">
                  <item>
-                  <layout class="QVBoxLayout" name="verticalLayout_5">
-                   <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_10">
-                     <item>
-                      <layout class="QVBoxLayout" name="verticalLayout">
-                       <item>
-                        <layout class="QHBoxLayout" name="horizontalLayout_3">
-                         <item>
-                          <spacer name="horizontalSpacer_3">
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                           <property name="sizeType">
-                            <enum>QSizePolicy::Minimum</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
-                            <size>
-                             <width>40</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                          </spacer>
-                         </item>
-                         <item>
-                          <widget class="QSlider" name="hsInfInterval">
-                           <property name="maximum">
-                            <number>100</number>
-                           </property>
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                       <item>
-                        <layout class="QHBoxLayout" name="horizontalLayout_9">
-                         <item>
-                          <spacer name="horizontalSpacer_9">
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                           <property name="sizeType">
-                            <enum>QSizePolicy::Minimum</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
-                            <size>
-                             <width>40</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                          </spacer>
-                         </item>
-                         <item>
-                          <widget class="QSlider" name="hsSupInterval">
-                           <property name="maximum">
-                            <number>100</number>
-                           </property>
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="pushButtonZoom">
-                       <property name="minimumSize">
-                        <size>
-                         <width>70</width>
-                         <height>30</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>Zoom</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
                   <widget class="QCustomPlot" name="customPlot" native="true">
                    <property name="minimumSize">
                     <size>
@@ -1094,7 +1010,8 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                    <widget class="QLabel" name="label_time">
                     <property name="font">
                      <font>
-                      <pointsize>11</pointsize>
+                      <family>MS Shell Dlg 2</family>
+                      <pointsize>10</pointsize>
                       <weight>50</weight>
                       <italic>false</italic>
                       <bold>false</bold>
@@ -1108,7 +1025,7 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                   <item>
                    <widget class="QPushButton" name="pbScreenShot">
                     <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Take a screen shot&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Take a screen shot CTRL+S&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="text">
                      <string>ScreenShot</string>

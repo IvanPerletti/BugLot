@@ -76,19 +76,16 @@ class MainWindow : public QMainWindow
 
 	private slots:
 	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);
+
 	void showPointToolTip(QMouseEvent *event);
+
 	void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);
+
 	void MyTimerSlot();
+
 	void on_pushButtonZoomRange_clicked();
 
-
 	void on_dial_valueChanged(int Msec);
-
-	void on_pushButtonZoom_clicked();
-
-	int on_hsInfInterval_valueChanged();
-
-	int on_hsSupInterval_valueChanged();
 
 	void on_pushButtonZoomPiu_clicked();
 

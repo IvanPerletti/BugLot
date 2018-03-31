@@ -48,6 +48,7 @@
 #include <QMetaEnum>
 #include <QApplication>
 #include <QFileDialog>
+#include <QShortcut>
 #include "crunchlog.h"
 #include "CDecorator.h"
 
@@ -177,7 +178,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::screenShot()
 {
-	ui->centralWidget->grab().save("image.png");
+
+	QString qsNow = QDate::currentDate().toString("yyyy-MM-dd hh:mm:ss");
+	qsNow.append(".png");
+	ui->centralWidget->grab().save(qsNow);
 
 	//	QScreen *screen = QGuiApplication::primaryScreen();
 	//	if (const QWindow *window = windowHandle())
@@ -275,6 +279,33 @@ void MainWindow::setupPlotLogs(void)
 			SIGNAL(mouseMove(QMouseEvent*)),
 			this,
 			SLOT(showPointToolTip(QMouseEvent*)));
+//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
+
+	QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"),this);
+	connect(shortcut,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pbScreenShot_clicked()));
+	QShortcut *shortcut2 = new QShortcut(QKeySequence(Qt::Key_Right),this);
+	connect(shortcut2,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pushButtonZoomRight_clicked()));
+	QShortcut *shortcut3 = new QShortcut(QKeySequence(Qt::Key_Left),this);
+	connect(shortcut3,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pushButtonZoomLeft_clicked()));
+	QShortcut *shortcut4 = new QShortcut(QKeySequence(Qt::Key_Up),this);
+	connect(shortcut4,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pushButtonZoomPiu_clicked()));
+	QShortcut *shortcut5 = new QShortcut(QKeySequence(Qt::Key_Down),this);
+	connect(shortcut5,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pushButtonZoomMeno_clicked()));
 }
 //-----------------------------------------------------------------------------
 /**
@@ -403,8 +434,7 @@ void MainWindow::on_UpgradePlot()
 		ui->customPlot->xAxis->setRange(minFinale, minFinale+interval);
 		ui->customPlot->replot();
 	}
-	//ui->hsInfInterval->setValue(0);
-	//ui->hsSupInterval->setValue(100);
+
 
 }
 //------------------------------------------------------------------------------
@@ -434,69 +464,13 @@ void MainWindow::on_dial_valueChanged(int Msec)
 	//    ui->lineEditInterval->setText(QString::number(rangeX1-rangeX0));
 	//    ui->lineEditMin->setText(QString::number(rangeX0)); Ba
 }
-
-//------------------------------------------------------------------------------
-
-void MainWindow::on_pushButtonZoom_clicked()
-{
-	//	Never interrupt your enemy when he is making a mistake.
-	ui->dial->setValue(0);
-	if (ui->lineEditMin->text().toDouble() <= 0 || ui->lineEditInterval->text().toDouble()<= 0)
-	{
-		QMessageBox::warning(this, "attenzione", "inserisci il limite inferiore e l'intervallo!!");
-		ui->hsInfInterval->setValue(0);
-		ui->hsSupInterval->setValue(100);
-
-	}else
-	{
-		int numInf = ui->hsInfInterval->value();
-		int numSup = ui->hsSupInterval->value();
-		if (numInf>=numSup){
-			QMessageBox::warning(this,"attenazione","Imposta bene i range!");
-			return;
-		}
-		if (numInf!=0 || numSup!=100)
-		{
-			double rangeX0 = ui->lineEditMin->text().toDouble();
-			double interval=ui->lineEditInterval->text().toDouble();
-			//int rangeX1 = rangeX0 + interval;
-			//int rangeX1 = rangeX0 + interval;
-
-			double rangeX0final = rangeX0 + ((interval*numInf)*0.01);
-			double rangeX1final = rangeX0 + ((interval*numSup)*0.01);
-			double newInterval = rangeX1final - rangeX0final;
-			ui->lineEditInterval->setText(QString::number(newInterval));
-			ui->lineEditMin->setText(QString::number(rangeX0final));
-
-			//ui->customPlot->xAxis->setRange(rangeX0final, (rangeX0final+newInterval));
-			// ui->customPlot->replot();
-			on_UpgradePlot();
-			ui->hsInfInterval->setValue(0);
-			ui->hsSupInterval->setValue(100);
-
-		}
-	}
-
-}
-//------------------------------------------------------------------------------
-int MainWindow::on_hsInfInterval_valueChanged()
-{
-	int numInf = ui->hsInfInterval->value();
-	return numInf;
-}
-//------------------------------------------------------------------------------------------------
-int MainWindow::on_hsSupInterval_valueChanged()
-{
-	int numSup = ui->hsSupInterval->value();
-	return numSup;
-}
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomPiu_clicked()
 
 {
 	double rangeX0 = ui->lineEditMin->text().toDouble();
 	double interval = ui->lineEditInterval->text().toDouble();
-	double newInterval = interval*0.2;
+	double newInterval = interval*0.1;
 	double newRangeX0 = rangeX0 + newInterval;
 	ui->lineEditMin->setText(QString::number(newRangeX0, 'd', 3));
 
@@ -504,9 +478,6 @@ void MainWindow::on_pushButtonZoomPiu_clicked()
 	ui->lineEditInterval->setText(QString::number(finalInterval, 'd', 3));
 
 	// double newRangeX1 = newRangeX0 + finalInterval;
-
-
-
 	// ui->customPlot->xAxis->setRange(newRangeX0, newRangeX1 );
 	// ui->customPlot->replot();
 	on_UpgradePlot();
@@ -517,7 +488,7 @@ void MainWindow::on_pushButtonZoomMeno_clicked()
 {
 	double dRangeX0 = ui->lineEditMin->text().toDouble();
 	double dInterval = ui->lineEditInterval->text().toDouble();
-	double dNewInterval = dInterval*0.2;
+	double dNewInterval = dInterval*0.1;
 	double dNewRangeX0 = dRangeX0 - dNewInterval;
 	ui->lineEditMin->setText(QString::number(dNewRangeX0, 'd', 3));
 
@@ -537,7 +508,7 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/release/TableLog_2018_03_15.txt";
+	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/release/TableLog_2018_03_31.txt";
 	//	strFileNameIn = QFileDialog::getOpenFileName(this,
 	//												 "Open Full Log",
 	//												 QDir::currentPath(),
@@ -653,8 +624,6 @@ void MainWindow::on_pushButtonProcess_clicked()
 	setupPlotLogs();
 	if (customPlotVariable==true){
 		ui->customPlot->replot();
-		ui->hsInfInterval->setValue(0);
-		ui->hsSupInterval->setValue(100);
 	}
 
 
