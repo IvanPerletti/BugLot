@@ -53,6 +53,7 @@
 
 
 
+//-----------------------------------------------------------------------------
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -67,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 
+//-----------------------------------------------------------------------------
 
 void MainWindow::setupDemo(int demoIndex)
 {
@@ -74,7 +76,7 @@ void MainWindow::setupDemo(int demoIndex)
 	{
 	case 20:
 		demoName.append("GmmScope");
-		setupLineStyleFabioDemo();
+		setupPlotLogs();
 		break;
 	}
 	setWindowTitle("QCustomPlot: "+demoName);
@@ -85,7 +87,7 @@ void MainWindow::setupDemo(int demoIndex)
 }
 
 
-
+//-----------------------------------------------------------------------------
 void MainWindow::realtimeDataSlot()
 {
 	static QTime time(QTime::currentTime());
@@ -121,6 +123,7 @@ void MainWindow::realtimeDataSlot()
 		frameCount = 0;
 	}
 }
+//-----------------------------------------------------------------------------
 
 void MainWindow::bracketDataSlot()
 {
@@ -158,16 +161,19 @@ void MainWindow::bracketDataSlot()
 		frameCount = 0;
 	}
 }
+//-----------------------------------------------------------------------------
 
 void MainWindow::setupPlayground(QCustomPlot *customPlot)
 {
 	Q_UNUSED(customPlot)
 }
+//-----------------------------------------------------------------------------
 
 MainWindow::~MainWindow()
 {
 	delete ui;
 }
+//-----------------------------------------------------------------------------
 
 void MainWindow::screenShot()
 {
@@ -186,6 +192,7 @@ void MainWindow::screenShot()
 	//							 .arg(QDir::toNativeSeparators(fileName)));
 	//	}
 }
+//-----------------------------------------------------------------------------
 
 void MainWindow::allScreenShots()
 {
@@ -223,10 +230,11 @@ void MainWindow::allScreenShots()
 }
 
 
-//------------------------------------------------------------------------------------------------
-
-
-void MainWindow::setupLineStyleFabioDemo(void)
+//------------------------------------------------------------------------------
+/**
+ * @brief set the Gui up to process and display result
+ */
+void MainWindow::setupPlotLogs(void)
 {
 	/* QString selFilter="Text files(*.txt)";
 	QString LoadFile;
@@ -242,7 +250,7 @@ void MainWindow::setupLineStyleFabioDemo(void)
 		return;
 	}
 	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
-	//  .  .  .  .  .  .  .  .  .  .  .  .
+
 	cDecorator.buildGraph(ui->customPlot, &file);
 
 	double dMinXAxis = ui->customPlot->xAxis->range().lower;
@@ -642,7 +650,7 @@ void MainWindow::on_pushButtonProcess_clicked()
 	ui->qlTestoFinito->setText("filter text");
 	//ui->customPlot->replot();
 	demoName.append("GmmScope");
-	setupLineStyleFabioDemo();
+	setupPlotLogs();
 	if (customPlotVariable==true){
 		ui->customPlot->replot();
 		ui->hsInfInterval->setValue(0);

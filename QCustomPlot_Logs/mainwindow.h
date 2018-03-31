@@ -61,7 +61,7 @@ class MainWindow : public QMainWindow
 
 	void setupDemo(int demoIndex);
 
-	void setupLineStyleFabioDemo(void);
+	void setupPlotLogs(void);
 	void setupPlayground(QCustomPlot *customPlot);
 
 	void realtimeDataSlot();

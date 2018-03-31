@@ -24,7 +24,8 @@ QToolTip
      background-color: #ffa02f;
      padding: 1px;
      border-radius: 3px;
-     opacity: 100;
+	font: 9pt &quot;MS Shell Dlg 2&quot;;
+     opacity: 200;
 }
 
 QWidget
@@ -837,7 +838,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                 <widget class="QGroupBox" name="groupBox_2">
                  <property name="minimumSize">
                   <size>
-                   <width>100</width>
+                   <width>169</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -850,7 +851,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                  <property name="title">
                   <string>Tools</string>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_9">
+                 <layout class="QVBoxLayout" name="verticalLayout_10">
                   <item>
                    <layout class="QVBoxLayout" name="verticalLayout_8">
                     <item>
@@ -881,7 +882,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                        </size>
                       </property>
                       <property name="toolTip">
-                       <string>Interval Time [ms]</string>
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Graph Interval Time [ms]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                       </property>
                       <property name="text">
                        <string>1000</string>
@@ -925,6 +926,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                         <height>23</height>
                        </size>
                       </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;min time value of the graph [s]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
                       <property name="text">
                        <string/>
                       </property>
@@ -954,7 +958,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                      </size>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Starting time HH:MM:SS to be displayed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Starting time HH:MM:SS to be displayed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="styleSheet">
                      <string notr="true">font: 15pt &quot;MS Shell Dlg 2&quot;;</string>
@@ -982,7 +986,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                      </font>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click to plot current time set&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Click to plot current time set&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="styleSheet">
                      <string notr="true">
@@ -994,24 +998,30 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="pushButtonZoomPiu">
-                    <property name="minimumSize">
-                     <size>
-                      <width>40</width>
-                      <height>30</height>
-                     </size>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">font: 75 11pt &quot;MS Shell Dlg 2&quot;;</string>
-                    </property>
-                    <property name="text">
-                     <string>+</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_2">
-                    <item>
+                   <layout class="QGridLayout" name="gridLayout">
+                    <item row="0" column="1">
+                     <widget class="QPushButton" name="pushButtonZoomPiu">
+                      <property name="minimumSize">
+                       <size>
+                        <width>43</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>20</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">font: 75 11pt &quot;MS Shell Dlg 2&quot;;</string>
+                      </property>
+                      <property name="text">
+                       <string>+</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
                      <widget class="QPushButton" name="pushButtonZoomLeft">
                       <property name="minimumSize">
                        <size>
@@ -1019,12 +1029,28 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                         <height>30</height>
                        </size>
                       </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move time to right&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
                       <property name="text">
                        <string>&lt;&lt;</string>
                       </property>
                      </widget>
                     </item>
-                    <item>
+                    <item row="1" column="1">
+                     <spacer name="horizontalSpacer">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="1" column="2">
                      <widget class="QPushButton" name="pushButtonZoomRight">
                       <property name="minimumSize">
                        <size>
@@ -1032,28 +1058,37 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                         <height>30</height>
                        </size>
                       </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move time to left&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
                       <property name="text">
                        <string>&gt;&gt;</string>
                       </property>
                      </widget>
                     </item>
+                    <item row="2" column="1">
+                     <widget class="QPushButton" name="pushButtonZoomMeno">
+                      <property name="minimumSize">
+                       <size>
+                        <width>43</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>20</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">font: 75 11pt &quot;MS Shell Dlg 2&quot;;</string>
+                      </property>
+                      <property name="text">
+                       <string>-</string>
+                      </property>
+                     </widget>
+                    </item>
                    </layout>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButtonZoomMeno">
-                    <property name="minimumSize">
-                     <size>
-                      <width>40</width>
-                      <height>30</height>
-                     </size>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">font: 75 11pt &quot;MS Shell Dlg 2&quot;;</string>
-                    </property>
-                    <property name="text">
-                     <string>-</string>
-                    </property>
-                   </widget>
                   </item>
                   <item>
                    <widget class="QLabel" name="label_time">
@@ -1072,6 +1107,9 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                   </item>
                   <item>
                    <widget class="QPushButton" name="pbScreenShot">
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Take a screen shot&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
                     <property name="text">
                      <string>ScreenShot</string>
                     </property>
