@@ -14,7 +14,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QDial>
-#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
@@ -80,27 +79,24 @@ public:
     QPushButton *pushButtonZoom;
     QCustomPlot *customPlot;
     QGroupBox *groupBox_2;
-    QVBoxLayout *verticalLayout_3;
-    QHBoxLayout *horizontalLayout_2;
-    QGridLayout *gridLayout_2;
+    QVBoxLayout *verticalLayout_9;
+    QVBoxLayout *verticalLayout_8;
+    QLabel *label_4;
     QLineEdit *lineEditInterval;
+    QVBoxLayout *verticalLayout_3;
     QLabel *label_3;
     QLineEdit *lineEditMin;
-    QLabel *label_4;
-    QSpacerItem *horizontalSpacer;
     QLabel *label_2;
     QTimeEdit *timeEdit;
     QPushButton *pushButtonZoomRange;
-    QSpacerItem *verticalSpacer_6;
-    QHBoxLayout *horizontalLayout_8;
-    QPushButton *pushButtonZoomLeft;
-    QPushButton *pushButtonZoomMeno;
     QPushButton *pushButtonZoomPiu;
+    QHBoxLayout *horizontalLayout_2;
+    QPushButton *pushButtonZoomLeft;
     QPushButton *pushButtonZoomRight;
+    QPushButton *pushButtonZoomMeno;
     QLabel *label_time;
-    QPushButton *pushButtonDiretta;
     QPushButton *pbScreenShot;
-    QSpacerItem *verticalSpacer;
+    QPushButton *pushButtonDiretta;
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout;
     QDial *dial;
@@ -812,31 +808,40 @@ public:
 
         groupBox_2 = new QGroupBox(groupBox);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setMinimumSize(QSize(200, 0));
-        groupBox_2->setMaximumSize(QSize(240, 16777215));
-        verticalLayout_3 = new QVBoxLayout(groupBox_2);
-        verticalLayout_3->setSpacing(6);
-        verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
-        horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setSpacing(6);
-        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        gridLayout_2 = new QGridLayout();
-        gridLayout_2->setSpacing(6);
-        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
+        groupBox_2->setMinimumSize(QSize(100, 0));
+        groupBox_2->setMaximumSize(QSize(170, 16777215));
+        verticalLayout_9 = new QVBoxLayout(groupBox_2);
+        verticalLayout_9->setSpacing(6);
+        verticalLayout_9->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_9->setObjectName(QStringLiteral("verticalLayout_9"));
+        verticalLayout_8 = new QVBoxLayout();
+        verticalLayout_8->setSpacing(6);
+        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
+        label_4 = new QLabel(groupBox_2);
+        label_4->setObjectName(QStringLiteral("label_4"));
+        label_4->setMaximumSize(QSize(16777215, 23));
+
+        verticalLayout_8->addWidget(label_4);
+
         lineEditInterval = new QLineEdit(groupBox_2);
         lineEditInterval->setObjectName(QStringLiteral("lineEditInterval"));
         lineEditInterval->setMinimumSize(QSize(80, 0));
         lineEditInterval->setMaximumSize(QSize(16777215, 23));
 
-        gridLayout_2->addWidget(lineEditInterval, 1, 2, 1, 1);
+        verticalLayout_8->addWidget(lineEditInterval);
 
+
+        verticalLayout_9->addLayout(verticalLayout_8);
+
+        verticalLayout_3 = new QVBoxLayout();
+        verticalLayout_3->setSpacing(6);
+        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         label_3 = new QLabel(groupBox_2);
         label_3->setObjectName(QStringLiteral("label_3"));
         label_3->setMaximumSize(QSize(16777215, 23));
         label_3->setStyleSheet(QStringLiteral(""));
 
-        gridLayout_2->addWidget(label_3, 0, 0, 1, 1);
+        verticalLayout_3->addWidget(label_3);
 
         lineEditMin = new QLineEdit(groupBox_2);
         lineEditMin->setObjectName(QStringLiteral("lineEditMin"));
@@ -844,28 +849,15 @@ public:
         lineEditMin->setMinimumSize(QSize(80, 0));
         lineEditMin->setMaximumSize(QSize(16777215, 23));
 
-        gridLayout_2->addWidget(lineEditMin, 1, 0, 1, 1);
-
-        label_4 = new QLabel(groupBox_2);
-        label_4->setObjectName(QStringLiteral("label_4"));
-        label_4->setMaximumSize(QSize(16777215, 23));
-
-        gridLayout_2->addWidget(label_4, 0, 2, 1, 1);
-
-        horizontalSpacer = new QSpacerItem(65, 20, QSizePolicy::Preferred, QSizePolicy::Minimum);
-
-        gridLayout_2->addItem(horizontalSpacer, 1, 1, 1, 1);
+        verticalLayout_3->addWidget(lineEditMin);
 
 
-        horizontalLayout_2->addLayout(gridLayout_2);
-
-
-        verticalLayout_3->addLayout(horizontalLayout_2);
+        verticalLayout_9->addLayout(verticalLayout_3);
 
         label_2 = new QLabel(groupBox_2);
         label_2->setObjectName(QStringLiteral("label_2"));
 
-        verticalLayout_3->addWidget(label_2);
+        verticalLayout_9->addWidget(label_2);
 
         timeEdit = new QTimeEdit(groupBox_2);
         timeEdit->setObjectName(QStringLiteral("timeEdit"));
@@ -875,7 +867,7 @@ public:
         timeEdit->setCalendarPopup(false);
         timeEdit->setCurrentSectionIndex(0);
 
-        verticalLayout_3->addWidget(timeEdit);
+        verticalLayout_9->addWidget(timeEdit);
 
         pushButtonZoomRange = new QPushButton(groupBox_2);
         pushButtonZoomRange->setObjectName(QStringLiteral("pushButtonZoomRange"));
@@ -889,43 +881,39 @@ public:
         pushButtonZoomRange->setStyleSheet(QLatin1String("\n"
 "font: 75 12pt \"MS Shell Dlg 2\";"));
 
-        verticalLayout_3->addWidget(pushButtonZoomRange);
-
-        verticalSpacer_6 = new QSpacerItem(30, 20, QSizePolicy::Minimum, QSizePolicy::Preferred);
-
-        verticalLayout_3->addItem(verticalSpacer_6);
-
-        horizontalLayout_8 = new QHBoxLayout();
-        horizontalLayout_8->setSpacing(6);
-        horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
-        pushButtonZoomLeft = new QPushButton(groupBox_2);
-        pushButtonZoomLeft->setObjectName(QStringLiteral("pushButtonZoomLeft"));
-        pushButtonZoomLeft->setMinimumSize(QSize(50, 30));
-
-        horizontalLayout_8->addWidget(pushButtonZoomLeft);
-
-        pushButtonZoomMeno = new QPushButton(groupBox_2);
-        pushButtonZoomMeno->setObjectName(QStringLiteral("pushButtonZoomMeno"));
-        pushButtonZoomMeno->setMinimumSize(QSize(40, 30));
-        pushButtonZoomMeno->setStyleSheet(QStringLiteral("font: 75 11pt \"MS Shell Dlg 2\";"));
-
-        horizontalLayout_8->addWidget(pushButtonZoomMeno);
+        verticalLayout_9->addWidget(pushButtonZoomRange);
 
         pushButtonZoomPiu = new QPushButton(groupBox_2);
         pushButtonZoomPiu->setObjectName(QStringLiteral("pushButtonZoomPiu"));
         pushButtonZoomPiu->setMinimumSize(QSize(40, 30));
         pushButtonZoomPiu->setStyleSheet(QStringLiteral("font: 75 11pt \"MS Shell Dlg 2\";"));
 
-        horizontalLayout_8->addWidget(pushButtonZoomPiu);
+        verticalLayout_9->addWidget(pushButtonZoomPiu);
+
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        pushButtonZoomLeft = new QPushButton(groupBox_2);
+        pushButtonZoomLeft->setObjectName(QStringLiteral("pushButtonZoomLeft"));
+        pushButtonZoomLeft->setMinimumSize(QSize(50, 30));
+
+        horizontalLayout_2->addWidget(pushButtonZoomLeft);
 
         pushButtonZoomRight = new QPushButton(groupBox_2);
         pushButtonZoomRight->setObjectName(QStringLiteral("pushButtonZoomRight"));
         pushButtonZoomRight->setMinimumSize(QSize(50, 30));
 
-        horizontalLayout_8->addWidget(pushButtonZoomRight);
+        horizontalLayout_2->addWidget(pushButtonZoomRight);
 
 
-        verticalLayout_3->addLayout(horizontalLayout_8);
+        verticalLayout_9->addLayout(horizontalLayout_2);
+
+        pushButtonZoomMeno = new QPushButton(groupBox_2);
+        pushButtonZoomMeno->setObjectName(QStringLiteral("pushButtonZoomMeno"));
+        pushButtonZoomMeno->setMinimumSize(QSize(40, 30));
+        pushButtonZoomMeno->setStyleSheet(QStringLiteral("font: 75 11pt \"MS Shell Dlg 2\";"));
+
+        verticalLayout_9->addWidget(pushButtonZoomMeno);
 
         label_time = new QLabel(groupBox_2);
         label_time->setObjectName(QStringLiteral("label_time"));
@@ -936,21 +924,17 @@ public:
         font1.setWeight(50);
         label_time->setFont(font1);
 
-        verticalLayout_3->addWidget(label_time);
-
-        pushButtonDiretta = new QPushButton(groupBox_2);
-        pushButtonDiretta->setObjectName(QStringLiteral("pushButtonDiretta"));
-
-        verticalLayout_3->addWidget(pushButtonDiretta);
+        verticalLayout_9->addWidget(label_time);
 
         pbScreenShot = new QPushButton(groupBox_2);
         pbScreenShot->setObjectName(QStringLiteral("pbScreenShot"));
 
-        verticalLayout_3->addWidget(pbScreenShot);
+        verticalLayout_9->addWidget(pbScreenShot);
 
-        verticalSpacer = new QSpacerItem(20, 50, QSizePolicy::Minimum, QSizePolicy::Preferred);
+        pushButtonDiretta = new QPushButton(groupBox_2);
+        pushButtonDiretta->setObjectName(QStringLiteral("pushButtonDiretta"));
 
-        verticalLayout_3->addItem(verticalSpacer);
+        verticalLayout_9->addWidget(pushButtonDiretta);
 
         verticalLayout_2 = new QVBoxLayout();
         verticalLayout_2->setSpacing(6);
@@ -973,7 +957,7 @@ public:
 
         lcdNumber = new QLCDNumber(groupBox_2);
         lcdNumber->setObjectName(QStringLiteral("lcdNumber"));
-        lcdNumber->setMaximumSize(QSize(80, 40));
+        lcdNumber->setMaximumSize(QSize(49, 40));
         lcdNumber->setFrameShape(QFrame::NoFrame);
         lcdNumber->setFrameShadow(QFrame::Raised);
         lcdNumber->setSegmentStyle(QLCDNumber::Flat);
@@ -984,7 +968,7 @@ public:
         verticalLayout_2->addLayout(horizontalLayout);
 
 
-        verticalLayout_3->addLayout(verticalLayout_2);
+        verticalLayout_9->addLayout(verticalLayout_2);
 
 
         horizontalLayout_7->addWidget(groupBox_2);
@@ -1045,13 +1029,13 @@ public:
         groupBox->setTitle(QApplication::translate("MainWindow", "Plot", 0));
         pushButtonZoom->setText(QApplication::translate("MainWindow", "Zoom", 0));
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Tools", 0));
+        label_4->setText(QApplication::translate("MainWindow", "interval", 0));
 #ifndef QT_NO_TOOLTIP
         lineEditInterval->setToolTip(QApplication::translate("MainWindow", "Interval Time [ms]", 0));
 #endif // QT_NO_TOOLTIP
         lineEditInterval->setText(QApplication::translate("MainWindow", "1000", 0));
         label_3->setText(QApplication::translate("MainWindow", "min Extrem", 0));
         lineEditMin->setText(QString());
-        label_4->setText(QApplication::translate("MainWindow", "interval", 0));
         label_2->setText(QApplication::translate("MainWindow", "Time Edit", 0));
 #ifndef QT_NO_TOOLTIP
         timeEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Starting time HH:MM:SS to be displayed</p></body></html>", 0));
@@ -1061,13 +1045,13 @@ public:
         pushButtonZoomRange->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Click to plot current time set</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         pushButtonZoomRange->setText(QApplication::translate("MainWindow", "Process", 0));
-        pushButtonZoomLeft->setText(QApplication::translate("MainWindow", "<<", 0));
-        pushButtonZoomMeno->setText(QApplication::translate("MainWindow", "-", 0));
         pushButtonZoomPiu->setText(QApplication::translate("MainWindow", "+", 0));
+        pushButtonZoomLeft->setText(QApplication::translate("MainWindow", "<<", 0));
         pushButtonZoomRight->setText(QApplication::translate("MainWindow", ">>", 0));
-        label_time->setText(QString());
-        pushButtonDiretta->setText(QApplication::translate("MainWindow", "ON AIR", 0));
+        pushButtonZoomMeno->setText(QApplication::translate("MainWindow", "-", 0));
+        label_time->setText(QApplication::translate("MainWindow", "...", 0));
         pbScreenShot->setText(QApplication::translate("MainWindow", "ScreenShot", 0));
+        pushButtonDiretta->setText(QApplication::translate("MainWindow", "ON AIR", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_1), QApplication::translate("MainWindow", "Graph", 0));
     } // retranslateUi
 

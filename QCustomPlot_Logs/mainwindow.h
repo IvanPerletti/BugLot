@@ -61,7 +61,7 @@ class MainWindow : public QMainWindow
 
 	void setupDemo(int demoIndex);
 
-	void setupLineStyleFabioDemo(QCustomPlot *customPlot);
+	void setupLineStyleFabioDemo(void);
 	void setupPlayground(QCustomPlot *customPlot);
 
 	void realtimeDataSlot();
@@ -76,6 +76,7 @@ class MainWindow : public QMainWindow
 
 	private slots:
 	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);
+	void showPointToolTip(QMouseEvent *event);
 	void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);
 	void MyTimerSlot();
 	void on_pushButtonZoomRange_clicked();
