@@ -80,7 +80,7 @@ void MainWindow::setupDemo(int demoIndex)
 		setupPlotLogs();
 		break;
 	}
-	setWindowTitle("QCustomPlot: "+demoName);
+	setWindowTitle(demoName);
 	statusBar()->clearMessage();
 	currentDemoIndex = demoIndex;
 
@@ -279,7 +279,7 @@ void MainWindow::setupPlotLogs(void)
 			SIGNAL(mouseMove(QMouseEvent*)),
 			this,
 			SLOT(showPointToolTip(QMouseEvent*)));
-//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
+	//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
 
 	QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"),this);
 	connect(shortcut,
@@ -434,17 +434,13 @@ void MainWindow::on_UpgradePlot()
 		ui->customPlot->xAxis->setRange(minFinale, minFinale+interval);
 		ui->customPlot->replot();
 	}
-
-
 }
 //------------------------------------------------------------------------------
-
 void MainWindow::on_pushButtonZoomRange_clicked()
 {
 	on_UpgradePlot();
 
 }
-
 //------------------------------------------------------------------------------------------------
 
 
@@ -466,7 +462,6 @@ void MainWindow::on_dial_valueChanged(int Msec)
 }
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomPiu_clicked()
-
 {
 	double rangeX0 = ui->lineEditMin->text().toDouble();
 	double interval = ui->lineEditInterval->text().toDouble();
@@ -625,7 +620,7 @@ void MainWindow::on_pushButtonProcess_clicked()
 	if (customPlotVariable==true){
 		ui->customPlot->replot();
 	}
-
+	ui->tabWidget->setCurrentIndex(1);
 
 }
 

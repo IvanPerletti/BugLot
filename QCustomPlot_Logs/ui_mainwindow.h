@@ -69,29 +69,28 @@ public:
     QVBoxLayout *verticalLayout_6;
     QCustomPlot *customPlot;
     QGroupBox *groupBox_2;
-    QVBoxLayout *verticalLayout_10;
-    QVBoxLayout *verticalLayout_8;
-    QLabel *label_4;
-    QLineEdit *lineEditInterval;
-    QVBoxLayout *verticalLayout_3;
-    QLabel *label_3;
-    QLineEdit *lineEditMin;
-    QLabel *label_2;
-    QTimeEdit *timeEdit;
-    QPushButton *pushButtonZoomRange;
+    QVBoxLayout *verticalLayout;
     QGridLayout *gridLayout;
     QPushButton *pushButtonZoomPiu;
     QPushButton *pushButtonZoomLeft;
     QSpacerItem *horizontalSpacer;
     QPushButton *pushButtonZoomRight;
     QPushButton *pushButtonZoomMeno;
-    QLabel *label_time;
-    QPushButton *pbScreenShot;
     QPushButton *pushButtonDiretta;
-    QVBoxLayout *verticalLayout_2;
+    QLabel *label_2;
+    QTimeEdit *timeEdit;
+    QPushButton *pushButtonZoomRange;
+    QPushButton *pbScreenShot;
     QHBoxLayout *horizontalLayout;
     QDial *dial;
     QLCDNumber *lcdNumber;
+    QLabel *label_time;
+    QVBoxLayout *verticalLayout_8;
+    QLabel *label_4;
+    QLineEdit *lineEditInterval;
+    QVBoxLayout *verticalLayout_5;
+    QLabel *label_5;
+    QLineEdit *lineEditMin;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -745,79 +744,10 @@ public:
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
         groupBox_2->setMinimumSize(QSize(169, 0));
         groupBox_2->setMaximumSize(QSize(170, 16777215));
-        verticalLayout_10 = new QVBoxLayout(groupBox_2);
-        verticalLayout_10->setSpacing(6);
-        verticalLayout_10->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_10->setObjectName(QStringLiteral("verticalLayout_10"));
-        verticalLayout_8 = new QVBoxLayout();
-        verticalLayout_8->setSpacing(6);
-        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
-        label_4 = new QLabel(groupBox_2);
-        label_4->setObjectName(QStringLiteral("label_4"));
-        label_4->setMaximumSize(QSize(16777215, 23));
-
-        verticalLayout_8->addWidget(label_4);
-
-        lineEditInterval = new QLineEdit(groupBox_2);
-        lineEditInterval->setObjectName(QStringLiteral("lineEditInterval"));
-        lineEditInterval->setMinimumSize(QSize(80, 0));
-        lineEditInterval->setMaximumSize(QSize(16777215, 23));
-
-        verticalLayout_8->addWidget(lineEditInterval);
-
-
-        verticalLayout_10->addLayout(verticalLayout_8);
-
-        verticalLayout_3 = new QVBoxLayout();
-        verticalLayout_3->setSpacing(6);
-        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
-        label_3 = new QLabel(groupBox_2);
-        label_3->setObjectName(QStringLiteral("label_3"));
-        label_3->setMaximumSize(QSize(16777215, 23));
-        label_3->setStyleSheet(QStringLiteral(""));
-
-        verticalLayout_3->addWidget(label_3);
-
-        lineEditMin = new QLineEdit(groupBox_2);
-        lineEditMin->setObjectName(QStringLiteral("lineEditMin"));
-        lineEditMin->setEnabled(true);
-        lineEditMin->setMinimumSize(QSize(80, 0));
-        lineEditMin->setMaximumSize(QSize(16777215, 23));
-
-        verticalLayout_3->addWidget(lineEditMin);
-
-
-        verticalLayout_10->addLayout(verticalLayout_3);
-
-        label_2 = new QLabel(groupBox_2);
-        label_2->setObjectName(QStringLiteral("label_2"));
-
-        verticalLayout_10->addWidget(label_2);
-
-        timeEdit = new QTimeEdit(groupBox_2);
-        timeEdit->setObjectName(QStringLiteral("timeEdit"));
-        timeEdit->setMinimumSize(QSize(150, 40));
-        timeEdit->setMaximumSize(QSize(150, 40));
-        timeEdit->setStyleSheet(QStringLiteral("font: 15pt \"MS Shell Dlg 2\";"));
-        timeEdit->setCalendarPopup(false);
-        timeEdit->setCurrentSectionIndex(0);
-
-        verticalLayout_10->addWidget(timeEdit);
-
-        pushButtonZoomRange = new QPushButton(groupBox_2);
-        pushButtonZoomRange->setObjectName(QStringLiteral("pushButtonZoomRange"));
-        QFont font;
-        font.setFamily(QStringLiteral("MS Shell Dlg 2"));
-        font.setPointSize(12);
-        font.setBold(false);
-        font.setItalic(false);
-        font.setWeight(9);
-        pushButtonZoomRange->setFont(font);
-        pushButtonZoomRange->setStyleSheet(QLatin1String("\n"
-"font: 75 12pt \"MS Shell Dlg 2\";"));
-
-        verticalLayout_10->addWidget(pushButtonZoomRange);
-
+        verticalLayout = new QVBoxLayout(groupBox_2);
+        verticalLayout->setSpacing(6);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         gridLayout = new QGridLayout();
         gridLayout->setSpacing(6);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
@@ -854,33 +784,47 @@ public:
         gridLayout->addWidget(pushButtonZoomMeno, 2, 1, 1, 1);
 
 
-        verticalLayout_10->addLayout(gridLayout);
-
-        label_time = new QLabel(groupBox_2);
-        label_time->setObjectName(QStringLiteral("label_time"));
-        QFont font1;
-        font1.setFamily(QStringLiteral("MS Shell Dlg 2"));
-        font1.setPointSize(10);
-        font1.setBold(false);
-        font1.setItalic(false);
-        font1.setWeight(50);
-        label_time->setFont(font1);
-
-        verticalLayout_10->addWidget(label_time);
-
-        pbScreenShot = new QPushButton(groupBox_2);
-        pbScreenShot->setObjectName(QStringLiteral("pbScreenShot"));
-
-        verticalLayout_10->addWidget(pbScreenShot);
+        verticalLayout->addLayout(gridLayout);
 
         pushButtonDiretta = new QPushButton(groupBox_2);
         pushButtonDiretta->setObjectName(QStringLiteral("pushButtonDiretta"));
 
-        verticalLayout_10->addWidget(pushButtonDiretta);
+        verticalLayout->addWidget(pushButtonDiretta);
 
-        verticalLayout_2 = new QVBoxLayout();
-        verticalLayout_2->setSpacing(6);
-        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+        label_2 = new QLabel(groupBox_2);
+        label_2->setObjectName(QStringLiteral("label_2"));
+
+        verticalLayout->addWidget(label_2);
+
+        timeEdit = new QTimeEdit(groupBox_2);
+        timeEdit->setObjectName(QStringLiteral("timeEdit"));
+        timeEdit->setMinimumSize(QSize(150, 40));
+        timeEdit->setMaximumSize(QSize(150, 40));
+        timeEdit->setStyleSheet(QStringLiteral("font: 15pt \"MS Shell Dlg 2\";"));
+        timeEdit->setCalendarPopup(false);
+        timeEdit->setCurrentSectionIndex(0);
+
+        verticalLayout->addWidget(timeEdit);
+
+        pushButtonZoomRange = new QPushButton(groupBox_2);
+        pushButtonZoomRange->setObjectName(QStringLiteral("pushButtonZoomRange"));
+        QFont font;
+        font.setFamily(QStringLiteral("MS Shell Dlg 2"));
+        font.setPointSize(12);
+        font.setBold(false);
+        font.setItalic(false);
+        font.setWeight(9);
+        pushButtonZoomRange->setFont(font);
+        pushButtonZoomRange->setStyleSheet(QLatin1String("\n"
+"font: 75 12pt \"MS Shell Dlg 2\";"));
+
+        verticalLayout->addWidget(pushButtonZoomRange);
+
+        pbScreenShot = new QPushButton(groupBox_2);
+        pbScreenShot->setObjectName(QStringLiteral("pbScreenShot"));
+
+        verticalLayout->addWidget(pbScreenShot);
+
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -907,10 +851,59 @@ public:
         horizontalLayout->addWidget(lcdNumber);
 
 
-        verticalLayout_2->addLayout(horizontalLayout);
+        verticalLayout->addLayout(horizontalLayout);
+
+        label_time = new QLabel(groupBox_2);
+        label_time->setObjectName(QStringLiteral("label_time"));
+        QFont font1;
+        font1.setFamily(QStringLiteral("MS Shell Dlg 2"));
+        font1.setPointSize(10);
+        font1.setBold(false);
+        font1.setItalic(false);
+        font1.setWeight(50);
+        label_time->setFont(font1);
+
+        verticalLayout->addWidget(label_time);
+
+        verticalLayout_8 = new QVBoxLayout();
+        verticalLayout_8->setSpacing(6);
+        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
+        label_4 = new QLabel(groupBox_2);
+        label_4->setObjectName(QStringLiteral("label_4"));
+        label_4->setMaximumSize(QSize(16777215, 23));
+
+        verticalLayout_8->addWidget(label_4);
+
+        lineEditInterval = new QLineEdit(groupBox_2);
+        lineEditInterval->setObjectName(QStringLiteral("lineEditInterval"));
+        lineEditInterval->setMinimumSize(QSize(80, 0));
+        lineEditInterval->setMaximumSize(QSize(16777215, 23));
+
+        verticalLayout_8->addWidget(lineEditInterval);
 
 
-        verticalLayout_10->addLayout(verticalLayout_2);
+        verticalLayout->addLayout(verticalLayout_8);
+
+        verticalLayout_5 = new QVBoxLayout();
+        verticalLayout_5->setSpacing(6);
+        verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
+        label_5 = new QLabel(groupBox_2);
+        label_5->setObjectName(QStringLiteral("label_5"));
+        label_5->setMaximumSize(QSize(16777215, 23));
+        label_5->setStyleSheet(QStringLiteral(""));
+
+        verticalLayout_5->addWidget(label_5);
+
+        lineEditMin = new QLineEdit(groupBox_2);
+        lineEditMin->setObjectName(QStringLiteral("lineEditMin"));
+        lineEditMin->setEnabled(true);
+        lineEditMin->setMinimumSize(QSize(80, 0));
+        lineEditMin->setMaximumSize(QSize(16777215, 23));
+
+        verticalLayout_5->addWidget(lineEditMin);
+
+
+        verticalLayout->addLayout(verticalLayout_5);
 
 
         horizontalLayout_7->addWidget(groupBox_2);
@@ -935,7 +928,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -970,25 +963,6 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Load", 0));
         groupBox->setTitle(QApplication::translate("MainWindow", "Plot", 0));
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Tools", 0));
-        label_4->setText(QApplication::translate("MainWindow", "interval", 0));
-#ifndef QT_NO_TOOLTIP
-        lineEditInterval->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Graph Interval Time [ms]</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-        lineEditInterval->setText(QApplication::translate("MainWindow", "1000", 0));
-        label_3->setText(QApplication::translate("MainWindow", "min Extrem", 0));
-#ifndef QT_NO_TOOLTIP
-        lineEditMin->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>min time value of the graph [s]</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-        lineEditMin->setText(QString());
-        label_2->setText(QApplication::translate("MainWindow", "Time Edit", 0));
-#ifndef QT_NO_TOOLTIP
-        timeEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:9pt;\">Starting time HH:MM:SS to be displayed</span></p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-        timeEdit->setDisplayFormat(QApplication::translate("MainWindow", "HH:mm:ss", 0));
-#ifndef QT_NO_TOOLTIP
-        pushButtonZoomRange->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:9pt;\">Click to plot current time set</span></p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-        pushButtonZoomRange->setText(QApplication::translate("MainWindow", "Process", 0));
         pushButtonZoomPiu->setText(QApplication::translate("MainWindow", "+", 0));
 #ifndef QT_NO_TOOLTIP
         pushButtonZoomLeft->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Move time to right</p></body></html>", 0));
@@ -999,12 +973,31 @@ public:
 #endif // QT_NO_TOOLTIP
         pushButtonZoomRight->setText(QApplication::translate("MainWindow", ">>", 0));
         pushButtonZoomMeno->setText(QApplication::translate("MainWindow", "-", 0));
-        label_time->setText(QApplication::translate("MainWindow", "...", 0));
+        pushButtonDiretta->setText(QApplication::translate("MainWindow", "ON AIR", 0));
+        label_2->setText(QApplication::translate("MainWindow", "Time Edit", 0));
+#ifndef QT_NO_TOOLTIP
+        timeEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:9pt;\">Starting time HH:MM:SS to be displayed</span></p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        timeEdit->setDisplayFormat(QApplication::translate("MainWindow", "HH:mm:ss", 0));
+#ifndef QT_NO_TOOLTIP
+        pushButtonZoomRange->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:9pt;\">Click to plot current time set</span></p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        pushButtonZoomRange->setText(QApplication::translate("MainWindow", "Process", 0));
 #ifndef QT_NO_TOOLTIP
         pbScreenShot->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Take a screen shot CTRL+S</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         pbScreenShot->setText(QApplication::translate("MainWindow", "ScreenShot", 0));
-        pushButtonDiretta->setText(QApplication::translate("MainWindow", "ON AIR", 0));
+        label_time->setText(QApplication::translate("MainWindow", "...", 0));
+        label_4->setText(QApplication::translate("MainWindow", "interval", 0));
+#ifndef QT_NO_TOOLTIP
+        lineEditInterval->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Graph Interval Time [ms]</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        lineEditInterval->setText(QApplication::translate("MainWindow", "1000", 0));
+        label_5->setText(QApplication::translate("MainWindow", "min Extrem", 0));
+#ifndef QT_NO_TOOLTIP
+        lineEditMin->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>min time value of the graph [s]</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        lineEditMin->setText(QString());
         tabWidget->setTabText(tabWidget->indexOf(tab_1), QApplication::translate("MainWindow", "Graph", 0));
     } // retranslateUi
 
