@@ -115,6 +115,8 @@ class MainWindow : public QMainWindow
 
 	void on_pbScreenShot_clicked();
 
+	void on_timeEdit_editingFinished();
+
 	private:
 	Ui::MainWindow *ui;
 	QString demoName;
