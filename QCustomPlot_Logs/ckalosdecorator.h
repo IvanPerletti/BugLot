@@ -1,5 +1,5 @@
-#ifndef CDECORATOR_H
-#define CDECORATOR_H
+#ifndef CKALOSDECORATOR_H
+#define CKALOSDECORATOR_H
 
 #include <QDebug>
 #include <QDesktopWidget>
@@ -11,13 +11,11 @@
 #include "../../qcustomplot.h"
 #include "cparentdecorator.h"
 
-class CDecorator: public CParentDecorator
+class CKalosDecorator: public CParentDecorator
 {
-	public:
-    CDecorator(QCustomPlot *customPlot, QFile *file);
+public:
+    CKalosDecorator(QCustomPlot *customPlot, QFile *file);
     void buildGraph(QCustomPlot *customPlot, QFile *file);
-	private:
-	QRect qrAxisDim;
 };
 
-#endif // CDECORATOR_H
+#endif // CKALOSDECORATOR_H

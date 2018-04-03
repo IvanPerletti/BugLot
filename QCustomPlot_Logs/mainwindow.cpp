@@ -52,6 +52,7 @@
 #include "crunchlog.h"
 #include "cprocesskaloslogs.h"
 #include "CDecorator.h"
+#include "ckalosdecorator.h"
 
 int MainWindow::iSystemUsed;
 
@@ -246,6 +247,7 @@ void MainWindow::allScreenShots()
  */
 void MainWindow::setupPlotLogs(void)
 {
+    CParentDecorator *pCDecorator = NULL;
 	/* QString selFilter="Text files(*.txt)";
 	QString LoadFile;
 	LoadFile = QFileDialog::getOpenFileName(this,"Open Full Log",
@@ -260,7 +262,19 @@ void MainWindow::setupPlotLogs(void)
 	}
 	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
 
-    cDecorator.buildGraph(ui->customPlot, &file);
+    switch(iSystemUsed) {
+    case 0:         // Kalos
+        pCDecorator = new CKalosDecorator(ui->customPlot, &file);
+        break;
+    case 1:         // Ivan
+        pCDecorator = new CDecorator(ui->customPlot, &file);
+        break;
+//    default:
+        //TODO
+        // Raise error
+    }
+
+//    cDecorator.buildGraph(ui->customPlot, &file);
 
 	double dMinXAxis = ui->customPlot->xAxis->range().lower;
 	double dMaxXAxis = ui->customPlot->xAxis->range().upper;

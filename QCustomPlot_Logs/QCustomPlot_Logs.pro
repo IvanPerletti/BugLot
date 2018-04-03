@@ -15,7 +15,9 @@ SOURCES += access.cpp \
 	CrunchLog.cpp \
     CDecorator.cpp \
     cprocesslogs.cpp \
-    cprocesskaloslogs.cpp
+    cprocesskaloslogs.cpp \
+    cparentdecorator.cpp \
+    ckalosdecorator.cpp
 
 HEADERS  += access.h \
 		  mainwindow.h \
@@ -23,7 +25,9 @@ HEADERS  += access.h \
 	CrunchLog.h \
     CDecorator.h \
     cprocesslogs.h \
-    cprocesskaloslogs.h
+    cprocesskaloslogs.h \
+    cparentdecorator.h \
+    ckalosdecorator.h
 
 
 FORMS    += access.ui \

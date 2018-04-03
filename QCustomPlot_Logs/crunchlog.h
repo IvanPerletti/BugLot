@@ -2,7 +2,6 @@
 #define CRUNCHLOG_H
 #include <string>
 #include <QString>
-#include "mainwindow.h"
 #include "cprocesslogs.h"
 
 using namespace std;
