@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'access.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -46,11 +46,7 @@ public:
     {
         if (access->objectName().isEmpty())
             access->setObjectName(QStringLiteral("access"));
-<<<<<<< HEAD
-        access->resize(479, 300);
-=======
         access->resize(321, 300);
->>>>>>> DynArrayPlot
         access->setStyleSheet(QLatin1String("QToolTip\n"
 "{\n"
 "     border: 1px solid black;\n"
@@ -598,11 +594,11 @@ public:
 
     void retranslateUi(QDialog *access)
     {
-        access->setWindowTitle(QApplication::translate("access", "Dialog", 0));
-        groupBox->setTitle(QApplication::translate("access", "Sign In", 0));
-        label->setText(QApplication::translate("access", "User", 0));
-        label_2->setText(QApplication::translate("access", "Password", 0));
-        pushButton_login->setText(QApplication::translate("access", "Login", 0));
+        access->setWindowTitle(QApplication::translate("access", "Dialog", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("access", "Sign In", Q_NULLPTR));
+        label->setText(QApplication::translate("access", "User", Q_NULLPTR));
+        label_2->setText(QApplication::translate("access", "Password", Q_NULLPTR));
+        pushButton_login->setText(QApplication::translate("access", "Login", Q_NULLPTR));
         label_pix->setText(QString());
     } // retranslateUi
 

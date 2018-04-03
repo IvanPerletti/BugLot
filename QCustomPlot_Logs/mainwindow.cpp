@@ -50,7 +50,10 @@
 #include <QFileDialog>
 #include <QShortcut>
 #include "crunchlog.h"
+#include "cprocesskaloslogs.h"
 #include "CDecorator.h"
+
+int MainWindow::iSystemUsed;
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -170,8 +173,15 @@ MainWindow::~MainWindow()
 {
 	delete ui;
 }
-//-----------------------------------------------------------------------------
 
+//--------------------------------------------------------
+void MainWindow::saveSystemUsed(int comboBoxSys){
+
+    iSystemUsed = comboBoxSys;
+
+}
+
+//-----------------------------------------------------------------------------
 void MainWindow::screenShot()
 {
 
@@ -250,7 +260,7 @@ void MainWindow::setupPlotLogs(void)
 	}
 	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
 
-	cDecorator.buildGraph(ui->customPlot, &file);
+    cDecorator.buildGraph(ui->customPlot, &file);
 
 	double dMinXAxis = ui->customPlot->xAxis->range().lower;
 	double dMaxXAxis = ui->customPlot->xAxis->range().upper;
@@ -498,12 +508,12 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/release/TableLog_2018_03_31.txt";
-	//	strFileNameIn = QFileDialog::getOpenFileName(this,
-	//												 "Open Full Log",
-	//												 QDir::currentPath(),
-	//												 "Text files (*.txt);;All files (*.*)",
-	//												 &selFilter);
+    //strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/release/TableLog_2018_03_31.txt";
+    strFileNameIn = QFileDialog::getOpenFileName(this,
+                                                 "Open Full Log",
+                                                 QDir::currentPath(),
+                                                 "Text files (*.txt);;All files (*.*)",
+                                                 &selFilter);
 	on_LoadFile();
 }
 //-------------------------------------------------------------------------------------------------
@@ -535,12 +545,12 @@ void MainWindow::on_SaveButton_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameOut.clear();
-	//	strFileNameOut = QFileDialog::getSaveFileName(this,
-	//												  "Choose Output filename",
-	//												  QDir::currentPath()+"/out.txt",
-	//												  "Text files (*.txt);;All files (*.*)",
-	//												  &selFilter);
-	strFileNameOut = QDir::currentPath()+"/out.txt";
+    strFileNameOut = QFileDialog::getSaveFileName(this,
+                                                  "Choose Output filename",
+                                                  QDir::currentPath()+"/out.txt",
+                                                  "Text files (*.txt);;All files (*.*)",
+                                                  &selFilter);
+    //strFileNameOut = QDir::currentPath()+"/out.txt";
 	on_save();
 }
 
@@ -587,13 +597,25 @@ void MainWindow::on_PulisciButton_clicked()
 
 void MainWindow::on_pushButtonProcess_clicked()
 {
+    CProcessLogs *pProcLogs = NULL;
 
-	CrunchLog crunchLog;
-	char caDummy[256] = {0,};
-	char caOutfile[256] = {0,};
-	memcpy(caDummy, strFileNameIn.toStdString().c_str() ,sizeof(caDummy));
-	memcpy(caOutfile, strFileNameOut.toStdString().c_str() ,sizeof(caOutfile));
-	crunchLog.processFile(caDummy, caOutfile);
+    char caDummy[256] = {0,};
+    char caOutfile[256] = {0,};
+    memcpy(caDummy, strFileNameIn.toStdString().c_str() ,sizeof(caDummy));
+    memcpy(caOutfile, strFileNameOut.toStdString().c_str() ,sizeof(caOutfile));
+
+    switch(iSystemUsed) {
+    case 0:         // Kalos
+        pProcLogs = new CProcessKalosLogs(caDummy, caOutfile);
+        break;
+    case 1:         // Ivan
+        pProcLogs = new CrunchLog(caDummy, caOutfile);
+        break;
+//    default:
+        //TODO
+        // Raise error
+    }
+
 	QFile file (strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","Cannot open file");

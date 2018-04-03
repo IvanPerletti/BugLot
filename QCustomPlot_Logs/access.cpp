@@ -9,8 +9,8 @@ access::access(QWidget *parent) :
 	ui(new Ui::access)
 {
     ui->setupUi(this);
-    ui->comboBox->addItem("Kalos");
-    ui->comboBox->addItem("Ivan Generator");
+    ui->comboBox->addItem("Kalos");             // Item 0
+    ui->comboBox->addItem("Ivan Generator");    // Item 1
 }
 
 access::~access()
@@ -32,7 +32,7 @@ void access::on_pushButton_login_clicked()
         QMessageBox::warning(this,"alt","non hai inserito nulla!");
     }
     if (password=="a" && username=="a"){
-            CrunchLog::saveSystemUsed(ui->comboBox->currentText());
+            MainWindow::saveSystemUsed(ui->comboBox->currentIndex());
             access::close();
             mainWindow = new MainWindow (this);
             mainWindow->show();

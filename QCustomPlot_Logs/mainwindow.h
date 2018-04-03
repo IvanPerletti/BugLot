@@ -59,6 +59,7 @@ class MainWindow : public QMainWindow
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
+    static void saveSystemUsed(int comboBoxSys);
 	void setupDemo(int demoIndex);
 	void setupPlotLogs(void);
 	void setupPlayground(QCustomPlot *customPlot);
@@ -70,7 +71,7 @@ class MainWindow : public QMainWindow
 
     private:
 	QTimer *timer;
-
+    static int iSystemUsed;
 
 	private slots:
 	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);

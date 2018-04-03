@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include "mainwindow.h"
-#include "crunchlog.h"
+#include "cprocesslogs.h"
 
 namespace Ui {
 class access;

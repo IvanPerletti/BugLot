@@ -13,13 +13,17 @@ SOURCES += access.cpp \
 		   mainwindow.cpp \
 		 ../qcustomplot.cpp \
 	CrunchLog.cpp \
-    CDecorator.cpp
+    CDecorator.cpp \
+    cprocesslogs.cpp \
+    cprocesskaloslogs.cpp
 
 HEADERS  += access.h \
 		  mainwindow.h \
 		 ../qcustomplot.h \
 	CrunchLog.h \
-    CDecorator.h
+    CDecorator.h \
+    cprocesslogs.h \
+    cprocesskaloslogs.h
 
 
 FORMS    += access.ui \

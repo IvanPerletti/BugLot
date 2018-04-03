@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -97,7 +97,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(846, 638);
+        MainWindow->resize(846, 640);
         MainWindow->setStyleSheet(QLatin1String("QLabel{\n"
 "font: 11pt;\n"
 "}\n"
@@ -928,7 +928,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -936,69 +936,69 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QCustomPlot plot examples", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QCustomPlot plot examples", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        LoadFile->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Load file to be processed</p></body></html>", 0));
+        LoadFile->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Load file to be processed</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        LoadFile->setText(QApplication::translate("MainWindow", "Load file", 0));
-        qlFileName->setText(QApplication::translate("MainWindow", "...", 0));
+        LoadFile->setText(QApplication::translate("MainWindow", "Load file", Q_NULLPTR));
+        qlFileName->setText(QApplication::translate("MainWindow", "...", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        SaveButton->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Select file to be used as output-preprocessed file</p></body></html>", 0));
+        SaveButton->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Select file to be used as output-preprocessed file</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        SaveButton->setText(QApplication::translate("MainWindow", "SaveButton", 0));
-        SaveLabel->setText(QApplication::translate("MainWindow", "...", 0));
-        pushButtonProcess->setText(QApplication::translate("MainWindow", "process", 0));
+        SaveButton->setText(QApplication::translate("MainWindow", "SaveButton", Q_NULLPTR));
+        SaveLabel->setText(QApplication::translate("MainWindow", "...", Q_NULLPTR));
+        pushButtonProcess->setText(QApplication::translate("MainWindow", "process", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        PulisciButton->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Clean current processing and start with another one</p></body></html>", 0));
+        PulisciButton->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Clean current processing and start with another one</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        PulisciButton->setText(QApplication::translate("MainWindow", "Clean All", 0));
+        PulisciButton->setText(QApplication::translate("MainWindow", "Clean All", Q_NULLPTR));
         qlTestoFinito->setText(QString());
 #ifndef QT_NO_TOOLTIP
-        textEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Here will be showed preview of the Load File</p></body></html>", 0));
+        textEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Here will be showed preview of the Load File</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
 #ifndef QT_NO_TOOLTIP
-        FinishTextEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Here will be showed preview of the Procesed File to be plot</p></body></html>", 0));
+        FinishTextEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Here will be showed preview of the Procesed File to be plot</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        label->setText(QApplication::translate("MainWindow", "FL Tool rev 1.0.0.1", 0));
-        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Load", 0));
-        groupBox->setTitle(QApplication::translate("MainWindow", "Plot", 0));
-        groupBox_2->setTitle(QApplication::translate("MainWindow", "Tools", 0));
-        pushButtonZoomPiu->setText(QApplication::translate("MainWindow", "+", 0));
+        label->setText(QApplication::translate("MainWindow", "FL Tool rev 1.0.0.1", Q_NULLPTR));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Load", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("MainWindow", "Plot", Q_NULLPTR));
+        groupBox_2->setTitle(QApplication::translate("MainWindow", "Tools", Q_NULLPTR));
+        pushButtonZoomPiu->setText(QApplication::translate("MainWindow", "+", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        pushButtonZoomLeft->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Move time to right</p></body></html>", 0));
+        pushButtonZoomLeft->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Move time to right</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        pushButtonZoomLeft->setText(QApplication::translate("MainWindow", "<<", 0));
+        pushButtonZoomLeft->setText(QApplication::translate("MainWindow", "<<", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        pushButtonZoomRight->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Move time to left</p></body></html>", 0));
+        pushButtonZoomRight->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Move time to left</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        pushButtonZoomRight->setText(QApplication::translate("MainWindow", ">>", 0));
-        pushButtonZoomMeno->setText(QApplication::translate("MainWindow", "-", 0));
-        pushButtonDiretta->setText(QApplication::translate("MainWindow", "ON AIR", 0));
-        label_2->setText(QApplication::translate("MainWindow", "Time Edit", 0));
+        pushButtonZoomRight->setText(QApplication::translate("MainWindow", ">>", Q_NULLPTR));
+        pushButtonZoomMeno->setText(QApplication::translate("MainWindow", "-", Q_NULLPTR));
+        pushButtonDiretta->setText(QApplication::translate("MainWindow", "ON AIR", Q_NULLPTR));
+        label_2->setText(QApplication::translate("MainWindow", "Time Edit", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        timeEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:9pt;\">Starting time HH:MM:SS to be displayed</span></p></body></html>", 0));
+        timeEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:9pt;\">Starting time HH:MM:SS to be displayed</span></p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        timeEdit->setDisplayFormat(QApplication::translate("MainWindow", "HH:mm:ss", 0));
+        timeEdit->setDisplayFormat(QApplication::translate("MainWindow", "HH:mm:ss", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        pushButtonZoomRange->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:9pt;\">Click to plot current time set</span></p></body></html>", 0));
+        pushButtonZoomRange->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:9pt;\">Click to plot current time set</span></p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        pushButtonZoomRange->setText(QApplication::translate("MainWindow", "Process", 0));
+        pushButtonZoomRange->setText(QApplication::translate("MainWindow", "Process", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        pbScreenShot->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Take a screen shot CTRL+S</p></body></html>", 0));
+        pbScreenShot->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Take a screen shot CTRL+S</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        pbScreenShot->setText(QApplication::translate("MainWindow", "ScreenShot", 0));
-        label_time->setText(QApplication::translate("MainWindow", "...", 0));
-        label_4->setText(QApplication::translate("MainWindow", "interval", 0));
+        pbScreenShot->setText(QApplication::translate("MainWindow", "ScreenShot", Q_NULLPTR));
+        label_time->setText(QApplication::translate("MainWindow", "...", Q_NULLPTR));
+        label_4->setText(QApplication::translate("MainWindow", "interval", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        lineEditInterval->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Graph Interval Time [ms]</p></body></html>", 0));
+        lineEditInterval->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Graph Interval Time [ms]</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        lineEditInterval->setText(QApplication::translate("MainWindow", "1000", 0));
-        label_5->setText(QApplication::translate("MainWindow", "min Extrem", 0));
+        lineEditInterval->setText(QApplication::translate("MainWindow", "1000", Q_NULLPTR));
+        label_5->setText(QApplication::translate("MainWindow", "min Extrem", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-        lineEditMin->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>min time value of the graph [s]</p></body></html>", 0));
+        lineEditMin->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>min time value of the graph [s]</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
         lineEditMin->setText(QString());
-        tabWidget->setTabText(tabWidget->indexOf(tab_1), QApplication::translate("MainWindow", "Graph", 0));
+        tabWidget->setTabText(tabWidget->indexOf(tab_1), QApplication::translate("MainWindow", "Graph", Q_NULLPTR));
     } // retranslateUi
 
 };
