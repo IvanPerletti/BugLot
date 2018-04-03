@@ -518,7 +518,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -732,6 +732,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                 <height>16777215</height>
                </size>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plot Page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="title">
                <string>Plot</string>
               </property>
@@ -763,6 +766,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                    <width>170</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Plot tools&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="title">
                   <string>Tools</string>

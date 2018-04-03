@@ -928,7 +928,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -961,7 +961,13 @@ public:
 #endif // QT_NO_TOOLTIP
         label->setText(QApplication::translate("MainWindow", "FL Tool rev 1.0.0.1", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Load", 0));
+#ifndef QT_NO_TOOLTIP
+        groupBox->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Plot Page</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
         groupBox->setTitle(QApplication::translate("MainWindow", "Plot", 0));
+#ifndef QT_NO_TOOLTIP
+        groupBox_2->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Plot tools</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Tools", 0));
         pushButtonZoomPiu->setText(QApplication::translate("MainWindow", "+", 0));
 #ifndef QT_NO_TOOLTIP

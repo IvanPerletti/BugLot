@@ -83,7 +83,7 @@ void MainWindow::setupDemo(int demoIndex)
 	setWindowTitle(demoName);
 	statusBar()->clearMessage();
 	currentDemoIndex = demoIndex;
-
+	ui->tabWidget->setCurrentIndex(0);
 	ui->customPlot->replot();
 }
 
@@ -181,7 +181,7 @@ void MainWindow::screenShot()
 
 	QString qsNow = QDate::currentDate().toString("yyyy-MM-dd hh:mm:ss");
 	qsNow.append(".png");
-	ui->centralWidget->grab().save(qsNow);
+	ui->centralWidget->grab().save("./"+qsNow);
 
 	//	QScreen *screen = QGuiApplication::primaryScreen();
 	//	if (const QWindow *window = windowHandle())
@@ -622,6 +622,7 @@ void MainWindow::on_pushButtonProcess_clicked()
 	}
 	ui->tabWidget->setCurrentIndex(1);
 
+
 }
 
 void MainWindow::on_pushButtonZoomLeft_clicked()
@@ -680,11 +681,16 @@ void MainWindow::on_timeEdit_timeChanged(const QTime &time)
 
 	int sommaMsec = (hour*60*60) + (min*60) + (sec) ;
 
-	ui->lineEditMin->setText(QString::number(sommaMsec*1000));
+	ui->lineEditMin->setText(QString::number(sommaMsec));
 }
 
 
 void MainWindow::on_pbScreenShot_clicked()
 {
 	screenShot();
+}
+
+void MainWindow::on_timeEdit_editingFinished()
+{
+	on_pushButtonProcess_clicked();
 }
