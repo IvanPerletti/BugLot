@@ -47,8 +47,12 @@
 #include <QMessageBox>
 #include <QMetaEnum>
 #include <QApplication>
+#include <QFileDialog>
+#include <QShortcut>
 #include "crunchlog.h"
+#include "CDecorator.h"
 
+//-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -62,13 +66,17 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 
+//-----------------------------------------------------------------------------
 void MainWindow::setupDemo(int demoIndex)
 {
 	switch (demoIndex)
 	{
-	case 20: setupLineStyleFabioDemo(ui->customPlot); break;
+	case 20:
+		demoName.append("GmmScope");
+		setupPlotLogs();
+		break;
 	}
-	setWindowTitle("QCustomPlot: "+demoName);
+	setWindowTitle(demoName);
 	statusBar()->clearMessage();
 	currentDemoIndex = demoIndex;
 
@@ -76,7 +84,7 @@ void MainWindow::setupDemo(int demoIndex)
 }
 
 
-
+//-----------------------------------------------------------------------------
 void MainWindow::realtimeDataSlot()
 {
 	static QTime time(QTime::currentTime());
@@ -112,6 +120,7 @@ void MainWindow::realtimeDataSlot()
 		frameCount = 0;
 	}
 }
+//-----------------------------------------------------------------------------
 
 void MainWindow::bracketDataSlot()
 {
@@ -149,31 +158,41 @@ void MainWindow::bracketDataSlot()
 		frameCount = 0;
 	}
 }
+//-----------------------------------------------------------------------------
 
 void MainWindow::setupPlayground(QCustomPlot *customPlot)
 {
 	Q_UNUSED(customPlot)
 }
+//-----------------------------------------------------------------------------
 
 MainWindow::~MainWindow()
 {
 	delete ui;
 }
+//-----------------------------------------------------------------------------
 
 void MainWindow::screenShot()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	QPixmap pm = QPixmap::grabWindow(qApp->desktop()->winId(), this->x()+2, this->y()+2, this->frameGeometry().width()-4, this->frameGeometry().height()-4);
-#elif QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
-	QPixmap pm = qApp->primaryScreen()->grabWindow(qApp->desktop()->winId(), this->x()+2, this->y()+2, this->frameGeometry().width()-4, this->frameGeometry().height()-4);
-#else
-	QPixmap pm = qApp->primaryScreen()->grabWindow(qApp->desktop()->winId(), this->x()-7, this->y()-7, this->frameGeometry().width()+14, this->frameGeometry().height()+14);
-#endif
-	QString fileName = demoName.toLower()+".png";
-	fileName.replace(" ", "");
-	pm.save("./screenshots/"+fileName);
-	qApp->quit();
+
+	QString qsNow = QDate::currentDate().toString("yyyy-MM-dd hh:mm:ss");
+	qsNow.append(".png");
+	ui->centralWidget->grab().save(qsNow);
+
+	//	QScreen *screen = QGuiApplication::primaryScreen();
+	//	if (const QWindow *window = windowHandle())
+	//		screen = window->screen();
+	//	if (!screen)
+	//		return;
+	//	QPixmap originalPixmap = screen->grabWindow(QWidget::winId());
+
+	//	const QString fileName = "img.png";
+	//	if (!originalPixmap.save(fileName)) {
+	//		QMessageBox::warning(this, tr("Save Error"), tr("The image could not be saved to \"%1\".")
+	//							 .arg(QDir::toNativeSeparators(fileName)));
+	//	}
 }
+//-----------------------------------------------------------------------------
 
 void MainWindow::allScreenShots()
 {
@@ -211,12 +230,12 @@ void MainWindow::allScreenShots()
 }
 
 
-//------------------------------------------------------------------------------------------------
-
-void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
+//------------------------------------------------------------------------------
+/**
+ * @brief set the Gui up to process and display result
+ */
+void MainWindow::setupPlotLogs(void)
 {
-
-
 	/* QString selFilter="Text files(*.txt)";
 	QString LoadFile;
 	LoadFile = QFileDialog::getOpenFileName(this,"Open Full Log",
@@ -224,165 +243,135 @@ void MainWindow::setupLineStyleFabioDemo(QCustomPlot *customPlot)
 											"Text files(*.txt)",
 											&selFilter);
 	*/
-    QFile file(strFileNameOut);
+	QFile file(strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","file not open");
-		//return
-
+		return;
 	}
+	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
 
+	cDecorator.buildGraph(ui->customPlot, &file);
 
-	customPlot->legend->setVisible(true);
+	double dMinXAxis = ui->customPlot->xAxis->range().lower;
+	double dMaxXAxis = ui->customPlot->xAxis->range().upper;
+	dLastTimeVal = dMaxXAxis; // used for "OnAir option"
 
-	customPlot->legend->setFont(QFont("Helvetica", 9));
-    //customPlot->plotLayout()->setColumnStretchFactor(1, 1.1);
-	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
-
-
-#define ARRAY_DIM 100000
-	QTextStream in(&file);
-	QVector<double>
-			qvTime(ARRAY_DIM), // time array
-			qvIoRaw(ARRAY_DIM*21); // I/O data
-	unsigned long ulDataLen; // legnth of data written in array
-	for (ulDataLen=0; ulDataLen<ARRAY_DIM; ulDataLen++)
-	{
-		QString line = in.readLine(); //read one line at a time
-		if (line.isEmpty()) {
-			break;
-		}
-		QTextStream myteststream(&line);
-		// int *y1;
-
-		myteststream >>
-				qvTime[ulDataLen] >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	1	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	2	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	3	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	4	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	5	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	6	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	7	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	8	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	9	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	10	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	11	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	12	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	13	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	14	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	15	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	16	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	17	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	18	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	19	]  >>
-				qvIoRaw[ulDataLen+ARRAY_DIM*	20	]  ;
-		UltimoValore = qvTime[ulDataLen];
-	}
-	double dX0 =  0 ;
-	y1 = &dX0;
-
-    for (unsigned int jj=0; jj<ulDataLen; jj++)
-	{
-		qvTime[jj] = qvTime[jj] - dX0;
-	}
-
-	QVector<double> qvDataArranged(ARRAY_DIM); // data vertically shifted
-
-	QVector<QString> LegendList;
-	LegendList<< "I PID SDCAL STP     "
-			  << "I PID APPOPEN       "
-			  << "I PID READY         "
-			  << "I PID PULSE MODE    "
-			  << "O PID HCF MODE      "
-			  << "I GEN REQ FL HCF    "
-			  << "I GEN PREP RAD      "
-			  << "I GEN COM REQ       "
-			  << "I GEN READY         "
-			  << "I GEN REQ RAD       "
-			  << "O PID CFL           "
-			  << "O PREP PID          "
-			  << "O CRAD PID          "
-			  << "I PID EXP RX        "
-			  << "O PID DOSE ADJ      "
-			  << "O GEN READY ACQ FL  "
-			  << "O READY ACQ RAD HCF "
-			  << "I GEN EXON          "
-			  << "O PID EXON          "
-			  << "STATUS              "
-			  << "ADC CM10            "
-			  << "DAC ABS             ";
-
-	for (int iGIndex=0; iGIndex<20; iGIndex++)
-	{
-		for (int jj=0; jj<ARRAY_DIM; jj++)
-		{
-			qvDataArranged[jj] = qvIoRaw[jj + ARRAY_DIM*iGIndex]*0.5 + (20-iGIndex) ;
-		}
-		// create graph and assign data to it:
-
-		customPlot->addGraph();
-		QPen pen;
-		pen.setColor(QColor(qSin(iGIndex*1+1.2)*80+80, qSin(iGIndex*0.3+0)*80+80, qSin(iGIndex*0.3+1.5)*80+80));
-		customPlot->graph()->setPen(pen);
-
-		//customPlot->graph()->setName(QString::number(iGIndex + 1) + " grafico");
-		QString qStr1 = LegendList.at(iGIndex);
-		customPlot->graph()->setName(qStr1);
-		customPlot->graph(iGIndex)->setData(qvTime, qvDataArranged);
-	}
-	// give the axes some labels:
-	customPlot->xAxis->setLabel("x");
-	customPlot->yAxis->setLabel("y");
-	// set axes ranges, so we see all data:
-	double min = *std::min_element(qvTime.constBegin(), qvTime.constEnd());
-	double max = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
-
-	ui->lineEditMin->setText(QString::number(qvTime[0]));
-	ui->lineEditInterval->setText(QString::number(max-min));
-	customPlot->xAxis->setRange(min-1,max+1);
-	max = *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
-	customPlot->yAxis->setRange(-1, 21-max);
-
+	ui->lineEditMin->setText(QString::number(dMinXAxis));
+	ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
 
 	// connect some interaction slots:
-	customPlot->setInteractions(QCP::iSelectLegend);
 	connect(ui->customPlot,
-			SIGNAL(legendClick(QCPLegend*,
-							   QCPAbstractLegendItem*,
-							   QMouseEvent*)),
+			SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)),
 			this,
 			SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
 
+	connect(ui->customPlot,
+			SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
+			this,
+			SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+	// tooltip on mouse hover
+	connect(ui->customPlot,
+			SIGNAL(mouseMove(QMouseEvent*)),
+			this,
+			SLOT(showPointToolTip(QMouseEvent*)));
+	//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
 
-
+	QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"),this);
+	connect(shortcut,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pbScreenShot_clicked()));
+	QShortcut *shortcut2 = new QShortcut(QKeySequence(Qt::Key_Right),this);
+	connect(shortcut2,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pushButtonZoomRight_clicked()));
+	QShortcut *shortcut3 = new QShortcut(QKeySequence(Qt::Key_Left),this);
+	connect(shortcut3,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pushButtonZoomLeft_clicked()));
+	QShortcut *shortcut4 = new QShortcut(QKeySequence(Qt::Key_Up),this);
+	connect(shortcut4,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pushButtonZoomPiu_clicked()));
+	QShortcut *shortcut5 = new QShortcut(QKeySequence(Qt::Key_Down),this);
+	connect(shortcut5,
+			SIGNAL(activated()),
+			this,
+			SLOT(on_pushButtonZoomMeno_clicked()));
 }
-
+//-----------------------------------------------------------------------------
+/**
+ * @brief plotterLegendClick - Slot signal Once I clicked on Legend
+ * @param l  	ptr to legend
+ * @param ai	Legend Item ptr
+ * @param me	Mouse event to capture
+ */
 void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me)
 {
 	Q_UNUSED(me);
 
 	if(NULL != l && NULL != ai)
 	{
-		// Check for selection
-		for(int i=0; i<l->parentPlot()->graphCount(); i++)
+		for (int i=0; i<ui->customPlot->graphCount(); ++i)
 		{
+			QCPGraph *graph = ui->customPlot->graph(i);
+			QCPPlottableLegendItem *item = ui->customPlot->legend->itemWithPlottable(graph);
 			QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
-			if("QCPPlottableLegendItem" == QString(ai->metaObject()->className()))
-			{
-				ui->statusBar->showMessage("Selected Graph: \"" + l->parentPlot()->graph(i)->name() + "\"");
-				qpGraphPen.setStyle(Qt::SolidLine);
-			}
-			else
-			{
+
+			if (item->selected() || graph->selected()){
 				qpGraphPen.setStyle(Qt::DotLine);
+				qpGraphPen.setWidth(4);
+			}
+			else{
+				qpGraphPen.setStyle(Qt::SolidLine);
+				qpGraphPen.setWidth(2);
 			}
 			l->parentPlot()->graph(i)->setPen(qpGraphPen);
 		}
 	}
 }
+//------------------------------------------------------------------------------
+/**
+ * @brief show Point Tool Tip on mouse hover
+ * @param event mouse event connected
+ */
+void MainWindow::showPointToolTip(QMouseEvent *event)
+{
+	int x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
+	int y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
 
+	setToolTip(QString("%1 , %2").arg(x).arg(y));
 
-//------------------------------------------------------------------------------------------------
+}
+//------------------------------------------------------------------------------
+/**
+ * @brief once clicked onto legend name can change Text of signal name
+ * @param legend
+ * @param item
+ */
+void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item)
+{
+	// Rename a graph by double clicking on its legend item
+	Q_UNUSED(legend)
+	if (item) // only react if item was clicked (user could have clicked on border padding of legend where there is no item, then item is 0)
+	{
+		QCPPlottableLegendItem *plItem = qobject_cast<QCPPlottableLegendItem*>(item);
+		bool ok;
+		QString newName = QInputDialog::getText(this, "QCustomPlot example", "New graph name:", QLineEdit::Normal, plItem->plottable()->name(), &ok);
+		if (ok)
+		{
+			plItem->plottable()->setName(newName);
+			ui->customPlot->replot();
+		}
+	}
+}
+//-----------------------------------------------------------------------------
+/**
+ * @brief MainWindow::MyTimerSlot  Slot for On Air option - temporized event
+ */
 void MainWindow::MyTimerSlot()
 {
 	//    Qui entriamo ogni 500ms
@@ -402,11 +391,10 @@ void MainWindow::MyTimerSlot()
 		//double interval = ui->lineEditInterval->text().toDouble();
 		customPlotVariable = false;
 		on_pushButtonProcess_clicked();
-		ui->lineEditMin->setText(QString::number(UltimoValore-2000));
-		ui->lineEditInterval->setText(QString::number(2000));
-
+		const int iTimWinDispl = 10000; // time win to be displayed
+		ui->lineEditMin->setText(QString::number(dLastTimeVal-iTimWinDispl));
+		ui->lineEditInterval->setText(QString::number(iTimWinDispl));
 		on_UpgradePlot();
-
 	}
 
 }
@@ -439,26 +427,15 @@ void MainWindow::on_UpgradePlot()
 		//        }
 
 		ui->customPlot->xAxis->setRange(minFinale, minFinale+interval);
-
-
 		ui->customPlot->replot();
 	}
-	//ui->hsInfInterval->setValue(0);
-	//ui->hsSupInterval->setValue(100);
-
-
-
-
-
 }
-//------------------------------------------------------------------------------------------------
-
+//------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomRange_clicked()
 {
 	on_UpgradePlot();
 
 }
-
 //------------------------------------------------------------------------------------------------
 
 
@@ -466,80 +443,24 @@ void MainWindow::on_dial_valueChanged(int Msec)
 {
 	ui->lcdNumber->display(Msec);
 
-	double rangeX0 = ui->lineEditMin->text().toDouble();
-	double interval = ui->lineEditInterval->text().toDouble();
-	double rangeX1 = rangeX0 + interval;
+	double dRangeX0 = ui->lineEditMin->text().toDouble();
+	double dInterval = ui->lineEditInterval->text().toDouble();
+	double dRangeX1 = dRangeX0 + dInterval;
 
-	double delta = Msec*(interval)/200;
-	rangeX0 += delta;
-	rangeX1 += delta;
-	ui->customPlot->xAxis->setRange(rangeX0,rangeX1);
+	double dDelta = Msec*(dInterval)/200;
+	dRangeX0 += dDelta;
+	dRangeX1 += dDelta;
+	ui->customPlot->xAxis->setRange(dRangeX0,dRangeX1);
 	ui->customPlot->replot();
 	//    ui->lineEditInterval->setText(QString::number(rangeX1-rangeX0));
 	//    ui->lineEditMin->setText(QString::number(rangeX0)); Ba
 }
-
-//------------------------------------------------------------------------------------------------
-
-void MainWindow::on_pushButtonZoom_clicked()
-{
-	ui->dial->setValue(0);
-	if (ui->lineEditMin->text().toDouble() <= 0 || ui->lineEditInterval->text().toDouble()<= 0)
-	{
-		QMessageBox::warning(this, "attenzione", "inserisci il limite inferiore e l'intervallo!!");
-		ui->hsInfInterval->setValue(0);
-		ui->hsSupInterval->setValue(100);
-
-	}else
-	{
-		int numInf = ui->hsInfInterval->value();
-		int numSup = ui->hsSupInterval->value();
-		if (numInf>=numSup){
-			QMessageBox::warning(this,"attenazione","Imposta bene i range!");
-			return;
-		}
-		if (numInf!=0 || numSup!=100)
-		{
-			double rangeX0 = ui->lineEditMin->text().toDouble();
-			double interval=ui->lineEditInterval->text().toDouble();
-			//int rangeX1 = rangeX0 + interval;
-			//int rangeX1 = rangeX0 + interval;
-
-			double rangeX0final = rangeX0 + ((interval*numInf)*0.01);
-			double rangeX1final = rangeX0 + ((interval*numSup)*0.01);
-			double newInterval = rangeX1final - rangeX0final;
-			ui->lineEditInterval->setText(QString::number(newInterval));
-			ui->lineEditMin->setText(QString::number(rangeX0final));
-
-			//ui->customPlot->xAxis->setRange(rangeX0final, (rangeX0final+newInterval));
-			// ui->customPlot->replot();
-			on_UpgradePlot();
-			ui->hsInfInterval->setValue(0);
-			ui->hsSupInterval->setValue(100);
-
-		}
-	}
-
-}
-//------------------------------------------------------------------------------------------------
-int MainWindow::on_hsInfInterval_valueChanged()
-{
-	int numInf = ui->hsInfInterval->value();
-	return numInf;
-}
-//------------------------------------------------------------------------------------------------
-int MainWindow::on_hsSupInterval_valueChanged()
-{
-	int numSup = ui->hsSupInterval->value();
-	return numSup;
-}
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomPiu_clicked()
-
 {
 	double rangeX0 = ui->lineEditMin->text().toDouble();
 	double interval = ui->lineEditInterval->text().toDouble();
-	double newInterval = interval*0.2;
+	double newInterval = interval*0.1;
 	double newRangeX0 = rangeX0 + newInterval;
 	ui->lineEditMin->setText(QString::number(newRangeX0, 'd', 3));
 
@@ -547,9 +468,6 @@ void MainWindow::on_pushButtonZoomPiu_clicked()
 	ui->lineEditInterval->setText(QString::number(finalInterval, 'd', 3));
 
 	// double newRangeX1 = newRangeX0 + finalInterval;
-
-
-
 	// ui->customPlot->xAxis->setRange(newRangeX0, newRangeX1 );
 	// ui->customPlot->replot();
 	on_UpgradePlot();
@@ -558,13 +476,13 @@ void MainWindow::on_pushButtonZoomPiu_clicked()
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomMeno_clicked()
 {
-	double rangeX0 = ui->lineEditMin->text().toDouble();
-	double interval = ui->lineEditInterval->text().toDouble();
-	double newInterval = interval*0.2;
-	double newRangeX0 = rangeX0 - newInterval;
-	ui->lineEditMin->setText(QString::number(newRangeX0, 'd', 3));
+	double dRangeX0 = ui->lineEditMin->text().toDouble();
+	double dInterval = ui->lineEditInterval->text().toDouble();
+	double dNewInterval = dInterval*0.1;
+	double dNewRangeX0 = dRangeX0 - dNewInterval;
+	ui->lineEditMin->setText(QString::number(dNewRangeX0, 'd', 3));
 
-	double finalInterval = interval + 2*newInterval;
+	double finalInterval = dInterval + 2*dNewInterval;
 	ui->lineEditInterval->setText(QString::number(finalInterval, 'd', 3));
 
 	//double newRangeX1 = newRangeX0 + finalInterval;
@@ -580,11 +498,12 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-	strFileNameIn = QFileDialog::getOpenFileName(this,
-												 "Open Full Log",
-												 QDir::currentPath(),
-												 "Text files (*.txt);;All files (*.*)",
-												 &selFilter);
+	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/release/TableLog_2018_03_31.txt";
+	//	strFileNameIn = QFileDialog::getOpenFileName(this,
+	//												 "Open Full Log",
+	//												 QDir::currentPath(),
+	//												 "Text files (*.txt);;All files (*.*)",
+	//												 &selFilter);
 	on_LoadFile();
 }
 //-------------------------------------------------------------------------------------------------
@@ -616,11 +535,12 @@ void MainWindow::on_SaveButton_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameOut.clear();
-	strFileNameOut = QFileDialog::getSaveFileName(this,
-												  "Choose Output filename",
-												  QDir::currentPath()+"/out.txt",
-												  "Text files (*.txt);;All files (*.*)",
-												  &selFilter);
+	//	strFileNameOut = QFileDialog::getSaveFileName(this,
+	//												  "Choose Output filename",
+	//												  QDir::currentPath()+"/out.txt",
+	//												  "Text files (*.txt);;All files (*.*)",
+	//												  &selFilter);
+	strFileNameOut = QDir::currentPath()+"/out.txt";
 	on_save();
 }
 
@@ -690,13 +610,12 @@ void MainWindow::on_pushButtonProcess_clicked()
 	file.close();
 	ui->qlTestoFinito->setText("filter text");
 	//ui->customPlot->replot();
-	setupLineStyleFabioDemo(ui->customPlot);
+	demoName.append("GmmScope");
+	setupPlotLogs();
 	if (customPlotVariable==true){
 		ui->customPlot->replot();
-		ui->hsInfInterval->setValue(0);
-		ui->hsSupInterval->setValue(100);
 	}
-
+	ui->tabWidget->setCurrentIndex(1);
 
 }
 
@@ -757,4 +676,10 @@ void MainWindow::on_timeEdit_timeChanged(const QTime &time)
 	int sommaMsec = (hour*60*60) + (min*60) + (sec) ;
 
 	ui->lineEditMin->setText(QString::number(sommaMsec*1000));
+}
+
+
+void MainWindow::on_pbScreenShot_clicked()
+{
+	screenShot();
 }

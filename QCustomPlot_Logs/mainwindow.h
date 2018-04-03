@@ -60,7 +60,7 @@ class MainWindow : public QMainWindow
 	~MainWindow();
 
 	void setupDemo(int demoIndex);
-	void setupLineStyleFabioDemo(QCustomPlot *customPlot);
+	void setupPlotLogs(void);
 	void setupPlayground(QCustomPlot *customPlot);
 
 	void realtimeDataSlot();
@@ -74,17 +74,16 @@ class MainWindow : public QMainWindow
 
 	private slots:
 	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);
+
+	void showPointToolTip(QMouseEvent *event);
+
+	void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);
+
 	void MyTimerSlot();
+
 	void on_pushButtonZoomRange_clicked();
 
-
 	void on_dial_valueChanged(int Msec);
-
-	void on_pushButtonZoom_clicked();
-
-	int on_hsInfInterval_valueChanged();
-
-	int on_hsSupInterval_valueChanged();
 
 	void on_pushButtonZoomPiu_clicked();
 
@@ -112,6 +111,8 @@ class MainWindow : public QMainWindow
 
 	void on_timeEdit_timeChanged(const QTime &time);
 
+	void on_pbScreenShot_clicked();
+
 	private:
 	Ui::MainWindow *ui;
 	QString demoName;
@@ -123,12 +124,7 @@ class MainWindow : public QMainWindow
 	QString strFileNameIn;
 	bool TimerFlag = false;
 	bool customPlotVariable = true;
-	double UltimoValore;
-
-
-
-
-
+	double dLastTimeVal; // last value of Time
 
 };
 

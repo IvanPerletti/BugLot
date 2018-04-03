@@ -5,8 +5,8 @@
 #include <QPixmap>
 
 access::access(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::access)
+	QDialog(parent),
+	ui(new Ui::access)
 {
     ui->setupUi(this);
     ui->comboBox->addItem("Kalos");
@@ -15,7 +15,7 @@ access::access(QWidget *parent) :
 
 access::~access()
 {
-    delete ui;
+	delete ui;
 }
 
 void access::on_pushButton_login_clicked()
@@ -36,21 +36,20 @@ void access::on_pushButton_login_clicked()
             access::close();
             mainWindow = new MainWindow (this);
             mainWindow->show();
-
-            }
-    else {
-        if(username!=""&&password!=""){
-        // QMessageBox::warning(this,"attenzione","username e password non corretti");
-        QMessageBox::StandardButton reply = QMessageBox::question(this,"finestra password","utente e password non corretti, riprovare?",QMessageBox::Yes|QMessageBox::No);
-        if(reply==QMessageBox::Yes){
-        new access (this);
-                   ui->lineEdit_password->setText("");
-                   ui->lineEdit_username->setText("");
-            }
-        else{
-           QApplication::quit();
-           }
-        }
-    }
+	}
+	else {
+		if( username!="" && password!="" ){
+			// QMessageBox::warning(this,"attenzione","username e password non corretti");
+			QMessageBox::StandardButton reply = QMessageBox::question(this,"finestra password","utente e password non corretti, riprovare?",QMessageBox::Yes|QMessageBox::No);
+			if(reply==QMessageBox::Yes){
+				new access (this);
+				ui->lineEdit_password->setText("");
+				ui->lineEdit_username->setText("");
+			}
+			else{
+				QApplication::quit();
+			}
+		}
+	}
 }
 

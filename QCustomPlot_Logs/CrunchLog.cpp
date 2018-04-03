@@ -869,6 +869,7 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
             if (pos < STRING.size() )
             { // found ID file
 				removeCharsUntil(&STRING,"; ");
+<<<<<<< HEAD
                 if(strSystemUsed == "Ivan Generator") {
                     ulTime = unpackTimeString( STRING.data() );
                     removeCharsUntil(&STRING,"DEBUG data = ");
@@ -914,7 +915,6 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
                     strOut.append(" " );
                     strOut.append(strTime);
                     strOut.append(" " );
-
                     switch(uiID) {
                     case 0x0600:    // OX_CANLOG_ID_ES_BK1
                         setCanLogEsBkData(&dataInfo);
