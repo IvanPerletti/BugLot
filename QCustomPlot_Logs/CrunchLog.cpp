@@ -869,7 +869,6 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
             if (pos < STRING.size() )
             { // found ID file
 				removeCharsUntil(&STRING,"; ");
-<<<<<<< HEAD
                 if(strSystemUsed == "Ivan Generator") {
                     ulTime = unpackTimeString( STRING.data() );
                     removeCharsUntil(&STRING,"DEBUG data = ");
