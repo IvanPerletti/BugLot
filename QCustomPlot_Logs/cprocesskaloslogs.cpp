@@ -837,7 +837,7 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                         &ulaData[7] );// extract numbers
                 strOut.clear();
                 strOut.append(strID);
-                strOut.append(" " );
+                strOut.append(" - " );
                 strOut.append(strTime);
                 strOut.append(" " );
                 switch(uiID) {

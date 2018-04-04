@@ -17,7 +17,8 @@ SOURCES += access.cpp \
     cprocesslogs.cpp \
     cprocesskaloslogs.cpp \
     cparentdecorator.cpp \
-    ckalosdecorator.cpp
+    ckalosdecorator.cpp \
+    cvariablestoplot.cpp
 
 HEADERS  += access.h \
 		  mainwindow.h \
@@ -27,7 +28,8 @@ HEADERS  += access.h \
     cprocesslogs.h \
     cprocesskaloslogs.h \
     cparentdecorator.h \
-    ckalosdecorator.h
+    ckalosdecorator.h \
+    cvariablestoplot.h
 
 
 FORMS    += access.ui \

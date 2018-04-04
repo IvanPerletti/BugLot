@@ -53,6 +53,7 @@
 #include "cprocesskaloslogs.h"
 #include "CDecorator.h"
 #include "ckalosdecorator.h"
+#include "cvariablestoplot.h"
 
 int MainWindow::iSystemUsed;
 
@@ -724,16 +725,15 @@ void MainWindow::on_pbScreenShot_clicked()
 
 void MainWindow::on_OkToDrawBtn_clicked()
 {
+    CVariablesToPlot *plotVars;
+
     switch(iSystemUsed) {
     case 0:     // Kalos
         // Set Variables to plot
+        plotVars = new CVariablesToPlot(ui->tableWidget, strFileNameOut);
         break;
     case 1:     // Ivan
-        ui->tabWidget->setCurrentIndex(1);
-        setupPlotLogs();
-        if (customPlotVariable==true){
-            ui->customPlot->replot();
-        }
+        // Do nothing
         break;
     }
 
