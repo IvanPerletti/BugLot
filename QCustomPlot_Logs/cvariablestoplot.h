@@ -22,6 +22,10 @@ private:
     unsigned long unpackTimeString(const char * u8aData);
     void removeCharsUntil(string * strProcessed, string strMatchToFind);
     void finalizeString( string *pStrOut, unsigned long ulTime, vector<int> vecVals);
+    void fillPrevVals(vector<vector<int> > *table, int *iVal, int index, int iRow);
+    void controlNullVals(vector<int> *vecVals, vector<int> *lastVals, vector<vector<int> > *table, int row);
+    void finalizeTable(vector<int> *vecVals, vector<int> *lastVals, vector<vector<int> > *table, int row);
+    void writeTableToFile(ofstream *file, vector<unsigned int> time, vector<vector<int>> table);
 };
 
 #endif // CVARIABLESTOPLOT_H

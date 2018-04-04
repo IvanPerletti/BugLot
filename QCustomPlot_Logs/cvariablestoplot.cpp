@@ -56,6 +56,57 @@ void CVariablesToPlot::finalizeString( string *pStrOut, unsigned long ulTime, ve
 }
 
 //--------------------------------------------------------
+void CVariablesToPlot::fillPrevVals(vector<vector<int>> *table, int *iVal, int index, int iRow) {
+
+    for(int ii = 0; ii <= iRow; ii++) {
+        (*table)[ii][index] = *iVal;
+    }
+
+}
+
+//--------------------------------------------------------
+void CVariablesToPlot::controlNullVals(vector<int> *vecVals, vector<int> *lastVals, vector<vector<int>> *table, int row) {
+
+    for(int ii = 0; ii < vecVals->size(); ii++) {
+        if((*vecVals)[ii] == 0) {      // Set last valid if null
+            (*vecVals)[ii] = (*lastVals)[ii];
+        }
+        else {      // Update to most recent val
+            if((*lastVals)[ii] == 0) {
+                (*lastVals)[ii] = (*vecVals)[ii];
+                fillPrevVals(table, lastVals[ii].data(), ii, row);
+                // Need to fill going up til first element of table
+            }
+            else {
+                (*lastVals)[ii] = (*vecVals)[ii];
+            }
+        }
+    }
+
+}
+
+//--------------------------------------------------------
+void CVariablesToPlot::finalizeTable(vector<int> *vecVals, vector<int> *lastVals, vector<vector<int>> *table, int row)
+{
+
+    table->push_back(*vecVals);
+    controlNullVals(vecVals, lastVals, table, row);
+    (*table)[row] = *vecVals;       // repeat for update
+
+}
+
+//--------------------------------------------------------
+void CVariablesToPlot::writeTableToFile(ofstream *file, vector<unsigned int> time, vector<vector<int>> table) {
+    string strOut;
+
+    for(int ii = 0; ii < time.size(); ii++) {
+        finalizeString(&strOut, time[ii], table[ii]);
+        cout<<strOut;// Prints out STRING.;
+        *file << strOut;
+    }
+}
+
+//--------------------------------------------------------
 void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileName) {
     QVector<QString> VarList;
     ifstream infile;
@@ -78,13 +129,20 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileNam
     infile.open (strFileName.toStdString());
     outFile.open (nameFile, std::ofstream::out | std::ofstream::trunc);
     string STRING, strOut;
-    int iRowCounter=0;
-    vector<int> iVecVals;
+    int iRowCounter=0,
+            iRowWritten = 0;
+    vector<vector<int>> iTabVals2D;
+    vector<int> iVecVals, iLastValidVals;
+    vector<unsigned int> uVecTime;
     unsigned int ulTime=0;
 
     string previousLine="";
 
     iVecVals.resize(VarList.size());
+
+    iLastValidVals.resize(VarList.size());
+    fill(iLastValidVals.begin(), iLastValidVals.end(), 0);  // Only once, before starting filling the table
+
     while(iRowCounter<1000000) // To get you all the lines.
     {
         getline(infile,STRING); // Saves the line in STRING.
@@ -106,17 +164,23 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileNam
                 }
             }
             if(any_of(iVecVals.begin(), iVecVals.end(), [](int i) { return i!=0; })) {
-                finalizeString(&strOut, ulTime, iVecVals);
-                cout<<strOut;// Prints out STRING.;
-                outFile << strOut;
+                finalizeTable(&iVecVals, &iLastValidVals, &iTabVals2D, iRowWritten);
+//                controlNullVals(&iVecVals, &iLastValidVals, &iTabVals2D, iRowWritten);
+                uVecTime.push_back(ulTime);
+                iRowWritten++;
+//                finalizeString(&strOut, ulTime, iVecVals);
+//                cout<<strOut;// Prints out STRING.;
+//                outFile << strOut;
             }
         }
         else {
-            strOut.clear();
-            strOut.append("ERROR LINE");
+//            strOut.clear();
+//            strOut.append("ERROR LINE");
         }
         iRowCounter++;
     }
+
+    writeTableToFile(&outFile, uVecTime, iTabVals2D);
 
     outFile.close();
     infile.close();
