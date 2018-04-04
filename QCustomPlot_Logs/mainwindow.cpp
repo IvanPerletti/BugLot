@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 	setGeometry(400, 250, 542, 390);
 	timer = new QTimer(this);
+    ui->tabWidget->setCurrentIndex(0);
 	// setup signal and slot
 	connect(timer, SIGNAL(timeout()), this, SLOT(MyTimerSlot()));
 	timer->start(1000);    // msec
@@ -73,6 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //-----------------------------------------------------------------------------
 void MainWindow::setupDemo(int demoIndex)
 {
+    ui->tabWidget->setCurrentIndex(0);
 	switch (demoIndex)
 	{
 	case 20:
@@ -256,7 +258,8 @@ void MainWindow::setupPlotLogs(void)
 											&selFilter);
 	*/
 	QFile file(strFileNameOut);
-	if (!file.open(QFile::ReadOnly | QFile::Text)) {
+
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","file not open");
 		return;
 	}
@@ -268,39 +271,36 @@ void MainWindow::setupPlotLogs(void)
         break;
     case 1:         // Ivan
         pCDecorator = new CDecorator(ui->customPlot, &file);
+        double dMinXAxis = ui->customPlot->xAxis->range().lower;
+        double dMaxXAxis = ui->customPlot->xAxis->range().upper;
+        dLastTimeVal = dMaxXAxis; // used for "OnAir option"
+
+        ui->lineEditMin->setText(QString::number(dMinXAxis));
+        ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
+
         break;
 //    default:
         //TODO
         // Raise error
     }
 
-//    cDecorator.buildGraph(ui->customPlot, &file);
+    // connect some interaction slots:
+    connect(ui->customPlot,
+            SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)),
+            this,
+            SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
 
-	double dMinXAxis = ui->customPlot->xAxis->range().lower;
-	double dMaxXAxis = ui->customPlot->xAxis->range().upper;
-	dLastTimeVal = dMaxXAxis; // used for "OnAir option"
+    connect(ui->customPlot,
+            SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
+            this,
+            SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+    // tooltip on mouse hover
+    connect(ui->customPlot,
+            SIGNAL(mouseMove(QMouseEvent*)),
+            this,
+            SLOT(showPointToolTip(QMouseEvent*)));
 
-	ui->lineEditMin->setText(QString::number(dMinXAxis));
-	ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
-
-	// connect some interaction slots:
-	connect(ui->customPlot,
-			SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)),
-			this,
-			SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
-
-	connect(ui->customPlot,
-			SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
-			this,
-			SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
-	// tooltip on mouse hover
-	connect(ui->customPlot,
-			SIGNAL(mouseMove(QMouseEvent*)),
-			this,
-			SLOT(showPointToolTip(QMouseEvent*)));
-	//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
-
-	QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"),this);
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"),this);
 	connect(shortcut,
 			SIGNAL(activated()),
 			this,
@@ -398,7 +398,8 @@ void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *ite
  */
 void MainWindow::MyTimerSlot()
 {
-	//    Qui entriamo ogni 500ms
+
+    //    Qui entriamo ogni 500ms
 	if(TimerFlag == true)
 	{
 		QTime time = QTime::currentTime();
@@ -621,9 +622,17 @@ void MainWindow::on_pushButtonProcess_clicked()
     switch(iSystemUsed) {
     case 0:         // Kalos
         pProcLogs = new CProcessKalosLogs(caDummy, caOutfile);
+        ui->tabWidget->setCurrentIndex(2);
+        // Further tab for variable selection
         break;
     case 1:         // Ivan
         pProcLogs = new CrunchLog(caDummy, caOutfile);
+        // Start plotting
+        ui->tabWidget->setCurrentIndex(1);
+        setupPlotLogs();
+        if (customPlotVariable==true){
+            ui->customPlot->replot();
+        }
         break;
 //    default:
         //TODO
@@ -636,7 +645,6 @@ void MainWindow::on_pushButtonProcess_clicked()
 		return;
 	}
 
-
 	//  QTextStream out(&file);
 	//  QString text = ui->textEdit->toPlainText();
 	//  out<<text;
@@ -645,13 +653,7 @@ void MainWindow::on_pushButtonProcess_clicked()
 
 	file.close();
 	ui->qlTestoFinito->setText("filter text");
-	//ui->customPlot->replot();
 	demoName.append("GmmScope");
-	setupPlotLogs();
-	if (customPlotVariable==true){
-		ui->customPlot->replot();
-	}
-	ui->tabWidget->setCurrentIndex(1);
 
 }
 
@@ -718,4 +720,21 @@ void MainWindow::on_timeEdit_timeChanged(const QTime &time)
 void MainWindow::on_pbScreenShot_clicked()
 {
 	screenShot();
+}
+
+void MainWindow::on_OkToDrawBtn_clicked()
+{
+    switch(iSystemUsed) {
+    case 0:     // Kalos
+        // Set Variables to plot
+        break;
+    case 1:     // Ivan
+        ui->tabWidget->setCurrentIndex(1);
+        setupPlotLogs();
+        if (customPlotVariable==true){
+            ui->customPlot->replot();
+        }
+        break;
+    }
+
 }

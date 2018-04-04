@@ -27,6 +27,7 @@
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
+#include <QtWidgets/QTableWidget>
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QTimeEdit>
 #include <QtWidgets/QVBoxLayout>
@@ -91,6 +92,9 @@ public:
     QVBoxLayout *verticalLayout_5;
     QLabel *label_5;
     QLineEdit *lineEditMin;
+    QWidget *tab_2;
+    QTableWidget *tableWidget;
+    QPushButton *OkToDrawBtn;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -918,6 +922,21 @@ public:
         horizontalLayout_14->addLayout(horizontalLayout_13);
 
         tabWidget->addTab(tab_1, QString());
+        tab_2 = new QWidget();
+        tab_2->setObjectName(QStringLiteral("tab_2"));
+        tableWidget = new QTableWidget(tab_2);
+        if (tableWidget->columnCount() < 1)
+            tableWidget->setColumnCount(1);
+        if (tableWidget->rowCount() < 10)
+            tableWidget->setRowCount(10);
+        tableWidget->setObjectName(QStringLiteral("tableWidget"));
+        tableWidget->setGeometry(QRect(0, 0, 131, 192));
+        tableWidget->setRowCount(10);
+        tableWidget->setColumnCount(1);
+        OkToDrawBtn = new QPushButton(tab_2);
+        OkToDrawBtn->setObjectName(QStringLiteral("OkToDrawBtn"));
+        OkToDrawBtn->setGeometry(QRect(250, 80, 80, 31));
+        tabWidget->addTab(tab_2, QString());
 
         verticalLayout_4->addWidget(tabWidget);
 
@@ -925,6 +944,25 @@ public:
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
+        QWidget::setTabOrder(tabWidget, LoadFile);
+        QWidget::setTabOrder(LoadFile, SaveButton);
+        QWidget::setTabOrder(SaveButton, pushButtonProcess);
+        QWidget::setTabOrder(pushButtonProcess, PulisciButton);
+        QWidget::setTabOrder(PulisciButton, textEdit);
+        QWidget::setTabOrder(textEdit, FinishTextEdit);
+        QWidget::setTabOrder(FinishTextEdit, pushButtonZoomPiu);
+        QWidget::setTabOrder(pushButtonZoomPiu, pushButtonZoomLeft);
+        QWidget::setTabOrder(pushButtonZoomLeft, pushButtonZoomRight);
+        QWidget::setTabOrder(pushButtonZoomRight, pushButtonZoomMeno);
+        QWidget::setTabOrder(pushButtonZoomMeno, pushButtonDiretta);
+        QWidget::setTabOrder(pushButtonDiretta, timeEdit);
+        QWidget::setTabOrder(timeEdit, pushButtonZoomRange);
+        QWidget::setTabOrder(pushButtonZoomRange, pbScreenShot);
+        QWidget::setTabOrder(pbScreenShot, dial);
+        QWidget::setTabOrder(dial, lineEditInterval);
+        QWidget::setTabOrder(lineEditInterval, lineEditMin);
+        QWidget::setTabOrder(lineEditMin, tableWidget);
+        QWidget::setTabOrder(tableWidget, OkToDrawBtn);
 
         retranslateUi(MainWindow);
 
@@ -999,6 +1037,8 @@ public:
 #endif // QT_NO_TOOLTIP
         lineEditMin->setText(QString());
         tabWidget->setTabText(tabWidget->indexOf(tab_1), QApplication::translate("MainWindow", "Graph", Q_NULLPTR));
+        OkToDrawBtn->setText(QApplication::translate("MainWindow", "OK", Q_NULLPTR));
+        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Variables", Q_NULLPTR));
     } // retranslateUi
 
 };

@@ -114,7 +114,9 @@ class MainWindow : public QMainWindow
 
 	void on_pbScreenShot_clicked();
 
-	private:
+    void on_OkToDrawBtn_clicked();
+
+private:
 	Ui::MainWindow *ui;
 	QString demoName;
 	QTimer dataTimer;
