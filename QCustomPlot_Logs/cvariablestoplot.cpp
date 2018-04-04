@@ -120,7 +120,7 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileNam
                VarList << cell->text()+ ": ";
            }
            else {
-               goto process;
+               goto process;        // Exit from nested loops
            }
         }
     }
@@ -128,7 +128,7 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileNam
     process:
     infile.open (strFileName.toStdString());
     outFile.open (nameFile, std::ofstream::out | std::ofstream::trunc);
-    string STRING, strOut;
+    string STRING;
     int iRowCounter=0,
             iRowWritten = 0;
     vector<vector<int>> iTabVals2D;
@@ -154,7 +154,7 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileNam
             for(int IdxList = 0; IdxList < VarList.size(); IdxList++) {
                 pos = STRING.find(VarList[IdxList].toStdString());// if "find" fails then pos  = 4000000
                 if (pos < STRING.size() )
-                { // found ID file
+                { // found variable to plot
                     if(all_of(iVecVals.begin(), iVecVals.end(), [](int i) { return i==0; })) {      // Only if no vars has been already set
                         removeCharsUntil(&STRING," - ");
                         ulTime = unpackTimeString( STRING.data() );
@@ -163,14 +163,11 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileNam
                     sscanf( STRING.data(), "%d", &iVecVals[IdxList]);
                 }
             }
+            // if at least one vars have been found
             if(any_of(iVecVals.begin(), iVecVals.end(), [](int i) { return i!=0; })) {
                 finalizeTable(&iVecVals, &iLastValidVals, &iTabVals2D, iRowWritten);
-//                controlNullVals(&iVecVals, &iLastValidVals, &iTabVals2D, iRowWritten);
                 uVecTime.push_back(ulTime);
                 iRowWritten++;
-//                finalizeString(&strOut, ulTime, iVecVals);
-//                cout<<strOut;// Prints out STRING.;
-//                outFile << strOut;
             }
         }
         else {
@@ -180,6 +177,7 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileNam
         iRowCounter++;
     }
 
+    // Write to file
     writeTableToFile(&outFile, uVecTime, iTabVals2D);
 
     outFile.close();
