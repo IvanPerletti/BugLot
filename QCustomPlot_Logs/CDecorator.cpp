@@ -29,11 +29,11 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 	subLayout->setMargins(QMargins(5, 0, 5, 5));
 	subLayout->addElement(0, 0, customPlot->legend);
 	// change the fill order of the legend, so it's filled left to right in columns:
-//	customPlot->legend->setFillOrder(QCPLegend::foColumnsFirst);
+	//	customPlot->legend->setFillOrder(QCPLegend::foColumnsFirst);
 	// set legend's row stretch factor very small so it ends up with minimum height:
-//	customPlot->plotLayout()->setRowStretchFactor(1, 0.001);
+	//	customPlot->plotLayout()->setRowStretchFactor(1, 0.001);
 
-		customPlot->plotLayout()->setColumnStretchFactor (1, 0.001);
+	customPlot->plotLayout()->setColumnStretchFactor (1, 0.001);
 	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
 	//  .  .  .  .  .  .  .  .  .  .  .  .
 
