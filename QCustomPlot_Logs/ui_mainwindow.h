@@ -962,7 +962,7 @@ public:
         label->setText(QApplication::translate("MainWindow", "FL Tool rev 1.0.0.1", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Load", 0));
 #ifndef QT_NO_TOOLTIP
-        groupBox->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Plot Page</p></body></html>", 0));
+        groupBox->setToolTip(QString());
 #endif // QT_NO_TOOLTIP
         groupBox->setTitle(QApplication::translate("MainWindow", "Plot", 0));
 #ifndef QT_NO_TOOLTIP
