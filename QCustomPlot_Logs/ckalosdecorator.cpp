@@ -56,36 +56,9 @@ void CKalosDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
         //  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
     }
 
-    //  buildLegend() { =========================================
     QVector<QString> LegendList = VecPlotList->VarList;
-    LegendList.insert(LegendList.begin(),1, "Time: ");
-    /*
-    LegendList<< "TIME                "
-              << "I PID SDCAL STP     "
-              << "I PID APPOPEN       "
-              << "I PID READY         "
-              << "I PID PULSE MODE    "
-              << "O PID HCF MODE      "
-              << "I GEN REQ FL HCF    "
-              << "I GEN PREP RAD      "
-              << "I GEN COM REQ       "
-              << "I GEN READY         "
-              << "I GEN REQ RAD       "
-              << "O PID CFL           "
-              << "O PREP PID          "
-              << "O CRAD PID          "
-              << "I PID EXP RX        "
-              << "O PID DOSE ADJ      "
-              << "O GEN READY ACQ FL  "
-              << "O READY ACQ RAD HCF "
-              << "I GEN EXON          "
-              << "O PID EXON          "
-              << "STATUS              "
-              << "ADC CM10            "
-              << "DAC ABS             ";
+    LegendList.insert(LegendList.begin(),1, "Time: ");      // Add time to variable labels
 
-    //  } .=========================================
-    */
     const int iSzVet = qvMyVect.size(); // array Size
     const int iNumElem = qvMyVect[0].size(); // num of plots
     QVector<double> qvTime; // time array
