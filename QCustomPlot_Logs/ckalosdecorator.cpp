@@ -63,8 +63,13 @@ void CKalosDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
     const int iNumElem = qvMyVect[0].size(); // num of plots
     QVector<double> qvTime; // time array
     QVector<double> qvDataArranged; // data array
+    QVector<double> qvMinData;
+    QVector<double> qvMaxData;
+
     qvDataArranged.resize(iSzVet); // resize optimze time with memory alloc
     qvTime.resize(iSzVet); // resize optimze time with memory alloc
+    qvMinData.resize(iNumElem);
+    qvMaxData.resize(iNumElem);
 
     for (int jj=0; jj<iSzVet; jj++){
         qvTime[jj] = qvMyVect[jj][0]/1000.0 ;
@@ -75,6 +80,8 @@ void CKalosDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
         for ( int jj=0; jj<iSzVet; jj++ ){
             qvDataArranged[jj] = qvMyVect[jj][iDataIdx];
         }
+        qvMinData.push_back(*std::min_element(qvDataArranged.constBegin(), qvDataArranged.constEnd()));
+        qvMaxData.push_back(*std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd()));
         customPlot->addGraph();// create graph
         QPen pen;
         const int iColPos = (iDataIdx*2)%63; // position Color choice
@@ -95,9 +102,9 @@ void CKalosDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
     double dMaxXAxis = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
 
     customPlot->xAxis->setRange(dMinXAxis-1,dMaxXAxis+1);
+    dMinXAxis = *std::min_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
     dMaxXAxis = *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
-    customPlot->yAxis->setRange(500,2700); // Y axis range
-    // TODO set yAxis range properly!
+    customPlot->yAxis->setRange(dMinXAxis,dMaxXAxis); // Y axis range
 
     customPlot->setInteractions(QCP::iSelectLegend);
 
