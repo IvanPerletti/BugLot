@@ -46,6 +46,7 @@
 #include <QTimer>
 #include "../../qcustomplot.h" // the header file of QCustomPlot. Don't forget to add it to your project, if you use an IDE, so it gets compiled.
 #include "zoomplot.h"
+#include "cvariablestoplot.h"
 
 namespace Ui {
 	class MainWindow;
@@ -121,6 +122,7 @@ private:
 	QString demoName;
 	QTimer dataTimer;
 	QCPItemTracer *itemDemoPhaseTracer;
+    CVariablesToPlot *plotVars;
 	int currentDemoIndex;
 	double *y1;
 	QString strFileNameOut;

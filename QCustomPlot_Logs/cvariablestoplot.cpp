@@ -6,7 +6,7 @@
 
 using namespace std;
 
-CVariablesToPlot::CVariablesToPlot(QTableWidget *table, QString strFileName)
+CVariablesToPlot::CVariablesToPlot(QTableWidget *table, QString *strFileName)
 {
     processVarsToPlot(table, strFileName);
 }
@@ -74,8 +74,8 @@ void CVariablesToPlot::controlNullVals(vector<int> *vecVals, vector<int> *lastVa
         else {      // Update to most recent val
             if((*lastVals)[ii] == 0) {
                 (*lastVals)[ii] = (*vecVals)[ii];
-                fillPrevVals(table, lastVals[ii].data(), ii, row);
-                // Need to fill going up til first element of table
+                // ?? Need to fill going up til first element of table
+                // fillPrevVals(table, lastVals[ii].data(), ii, row);
             }
             else {
                 (*lastVals)[ii] = (*vecVals)[ii];
@@ -107,8 +107,8 @@ void CVariablesToPlot::writeTableToFile(ofstream *file, vector<unsigned int> tim
 }
 
 //--------------------------------------------------------
-void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileName) {
-    QVector<QString> VarList;
+void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString *strFileName) {
+//    QVector<QString> VarList;
     ifstream infile;
     ofstream outFile;
 
@@ -126,7 +126,7 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileNam
     }
 
     process:
-    infile.open (strFileName.toStdString());
+    infile.open (strFileName->toStdString());
     outFile.open (nameFile, std::ofstream::out | std::ofstream::trunc);
     string STRING;
     int iRowCounter=0,
@@ -180,6 +180,10 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString strFileNam
     // Write to file
     writeTableToFile(&outFile, uVecTime, iTabVals2D);
 
+
     outFile.close();
     infile.close();
+
+    *strFileName = QString::fromStdString(nameFile);     // Set correct file name for plotting
+
 }

@@ -9,16 +9,19 @@
 #include <QFileDialog>
 #include <string>
 #include <QString>
-#include "mainwindow.h"
 
 using namespace std;
+
 class CVariablesToPlot
 {
+    friend class CKalosDecorator;       // To have access to private and protected members of this class from kalos decorator
 public:
-    CVariablesToPlot(QTableWidget *table, QString strFileName);
-    void processVarsToPlot(QTableWidget *table, QString strFileName);
+    CVariablesToPlot(QTableWidget *table, QString *strFileName);
+    void processVarsToPlot(QTableWidget *table, QString *strFileName);
 
 private:
+    QVector<QString> VarList;
+
     unsigned long unpackTimeString(const char * u8aData);
     void removeCharsUntil(string * strProcessed, string strMatchToFind);
     void finalizeString( string *pStrOut, unsigned long ulTime, vector<int> vecVals);
