@@ -395,13 +395,9 @@ void CProcessKalosLogs::setCanLogDetLatSyncData(InfoDataStruct *infoStruct){
     infoStruct->uiSize.push_back(1);
     infoStruct->uiSize.push_back(1);
     infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
 
     infoStruct->strLabel.push_back("FM713_detettore_lat_loop_speed: ");
     infoStruct->strLabel.push_back(" Syncro_detettore_lat_error: ");
-    infoStruct->strLabel.push_back(" orobix_error_position_detettore_lat_before: ");
-    infoStruct->strLabel.push_back(" orobix_error_position_detettore_lat_after: ");
     infoStruct->strLabel.push_back(" orobix_dead_zone_sync_lat_before: ");
     infoStruct->strLabel.push_back(" orobix_dead_zone_sync_lat_after: ");
     infoStruct->strLabel.push_back(" Corsa_detettore_lat: ");
@@ -415,13 +411,9 @@ void CProcessKalosLogs::setCanLogDetLongSyncData(InfoDataStruct *infoStruct){
     infoStruct->uiSize.push_back(1);
     infoStruct->uiSize.push_back(1);
     infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
 
     infoStruct->strLabel.push_back("FM713_detettore_long_loop_speed: ");
     infoStruct->strLabel.push_back(" Syncro_detettore_long_error: ");
-    infoStruct->strLabel.push_back(" orobix_error_position_detettore_long_before: ");
-    infoStruct->strLabel.push_back(" orobix_error_position_detettore_long_after: ");
     infoStruct->strLabel.push_back(" orobix_dead_zone_sync_long_before: ");
     infoStruct->strLabel.push_back(" orobix_dead_zone_sync_long_after: ");
     infoStruct->strLabel.push_back(" Corsa_detettore_long: ");

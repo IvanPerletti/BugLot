@@ -227,7 +227,6 @@ void MainWindow::allScreenShots()
 		dataTimer.disconnect();
 		delete ui->customPlot;
 		ui->customPlot = new QCustomPlot(ui->centralWidget);
-
 		setupDemo(currentDemoIndex+1);
 		// setup delay for demos that need time to develop proper look:
 		int delay = 250;
@@ -343,9 +342,9 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
 		for (int i=0; i<ui->customPlot->graphCount(); ++i)
 		{
 			QCPGraph *graph = ui->customPlot->graph(i);
-			QCPPlottableLegendItem *item = ui->customPlot->legend->itemWithPlottable(graph);
-			QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
+            QCPPlottableLegendItem *item = ui->customPlot->legend->itemWithPlottable(graph);
 
+			QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
 			if (item->selected() || graph->selected()){
 				qpGraphPen.setStyle(Qt::DotLine);
 				qpGraphPen.setWidth(4);
