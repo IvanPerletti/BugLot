@@ -271,18 +271,19 @@ void MainWindow::setupPlotLogs(void)
         break;
     case 1:         // Ivan
         pCDecorator = new CDecorator(ui->customPlot, &file);
-        double dMinXAxis = ui->customPlot->xAxis->range().lower;
-        double dMaxXAxis = ui->customPlot->xAxis->range().upper;
-        dLastTimeVal = dMaxXAxis; // used for "OnAir option"
-
-        ui->lineEditMin->setText(QString::number(dMinXAxis));
-        ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
 
         break;
 //    default:
         //TODO
         // Raise error
     }
+
+    double dMinXAxis = ui->customPlot->xAxis->range().lower;
+    double dMaxXAxis = ui->customPlot->xAxis->range().upper;
+    dLastTimeVal = dMaxXAxis; // used for "OnAir option"
+
+    ui->lineEditMin->setText(QString::number(dMinXAxis));
+    ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
 
     // connect some interaction slots:
     connect(ui->customPlot,
