@@ -685,7 +685,6 @@ void MainWindow::on_pushButtonZoomLeft_clicked()
 }
 
 //----------------------------------------------------------------------------
-
 void MainWindow::on_pushButtonZoomRight_clicked()
 {
 	double rangeX0 = ui->lineEditMin->text().toDouble();
@@ -702,7 +701,6 @@ void MainWindow::on_pushButtonZoomRight_clicked()
 }
 
 //--------------------------------------------------------------------------
-
 void MainWindow::on_pushButtonDiretta_clicked()
 {
 	if (TimerFlag == true)
@@ -736,7 +734,6 @@ void MainWindow::on_pbScreenShot_clicked()
 void MainWindow::on_OkToDrawBtn_clicked()
 {
 
-
     switch(iSystemUsed) {
     case 0:     // Kalos
         // Set Variables to plot
@@ -755,7 +752,10 @@ void MainWindow::on_OkToDrawBtn_clicked()
 
 }
 
-
+//--------------------------------------------------------------------------
+/**
+ * @brief MainWindow::on_resetBtn_clicked reset customplot
+ */
 void MainWindow::on_resetBtn_clicked()
 {
     if(bZoomGraph) {
