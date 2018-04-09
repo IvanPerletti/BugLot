@@ -72,9 +72,9 @@ public:
     QGroupBox *groupBox_2;
     QVBoxLayout *verticalLayout;
     QGridLayout *gridLayout;
-    QPushButton *pushButtonZoomPiu;
     QPushButton *pushButtonZoomLeft;
     QSpacerItem *horizontalSpacer;
+    QPushButton *pushButtonZoomPiu;
     QPushButton *pushButtonZoomRight;
     QPushButton *pushButtonZoomMeno;
     QPushButton *pushButtonDiretta;
@@ -86,6 +86,7 @@ public:
     QDial *dial;
     QLCDNumber *lcdNumber;
     QLabel *label_time;
+    QPushButton *resetBtn;
     QVBoxLayout *verticalLayout_8;
     QLabel *label_4;
     QLineEdit *lineEditInterval;
@@ -755,14 +756,6 @@ public:
         gridLayout = new QGridLayout();
         gridLayout->setSpacing(6);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
-        pushButtonZoomPiu = new QPushButton(groupBox_2);
-        pushButtonZoomPiu->setObjectName(QStringLiteral("pushButtonZoomPiu"));
-        pushButtonZoomPiu->setMinimumSize(QSize(43, 30));
-        pushButtonZoomPiu->setMaximumSize(QSize(20, 16777215));
-        pushButtonZoomPiu->setStyleSheet(QStringLiteral("font: 75 11pt \"MS Shell Dlg 2\";"));
-
-        gridLayout->addWidget(pushButtonZoomPiu, 0, 1, 1, 1);
-
         pushButtonZoomLeft = new QPushButton(groupBox_2);
         pushButtonZoomLeft->setObjectName(QStringLiteral("pushButtonZoomLeft"));
         pushButtonZoomLeft->setMinimumSize(QSize(50, 30));
@@ -772,6 +765,14 @@ public:
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         gridLayout->addItem(horizontalSpacer, 1, 1, 1, 1);
+
+        pushButtonZoomPiu = new QPushButton(groupBox_2);
+        pushButtonZoomPiu->setObjectName(QStringLiteral("pushButtonZoomPiu"));
+        pushButtonZoomPiu->setMinimumSize(QSize(43, 30));
+        pushButtonZoomPiu->setMaximumSize(QSize(20, 16777215));
+        pushButtonZoomPiu->setStyleSheet(QStringLiteral("font: 75 11pt \"MS Shell Dlg 2\";"));
+
+        gridLayout->addWidget(pushButtonZoomPiu, 0, 1, 1, 1);
 
         pushButtonZoomRight = new QPushButton(groupBox_2);
         pushButtonZoomRight->setObjectName(QStringLiteral("pushButtonZoomRight"));
@@ -868,6 +869,11 @@ public:
         label_time->setFont(font1);
 
         verticalLayout->addWidget(label_time);
+
+        resetBtn = new QPushButton(groupBox_2);
+        resetBtn->setObjectName(QStringLiteral("resetBtn"));
+
+        verticalLayout->addWidget(resetBtn);
 
         verticalLayout_8 = new QVBoxLayout();
         verticalLayout_8->setSpacing(6);
@@ -1001,11 +1007,11 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Load", Q_NULLPTR));
         groupBox->setTitle(QApplication::translate("MainWindow", "Plot", Q_NULLPTR));
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Tools", Q_NULLPTR));
-        pushButtonZoomPiu->setText(QApplication::translate("MainWindow", "+", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
         pushButtonZoomLeft->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Move time to right</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
         pushButtonZoomLeft->setText(QApplication::translate("MainWindow", "<<", Q_NULLPTR));
+        pushButtonZoomPiu->setText(QApplication::translate("MainWindow", "+", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
         pushButtonZoomRight->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Move time to left</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
@@ -1026,6 +1032,7 @@ public:
 #endif // QT_NO_TOOLTIP
         pbScreenShot->setText(QApplication::translate("MainWindow", "ScreenShot", Q_NULLPTR));
         label_time->setText(QApplication::translate("MainWindow", "...", Q_NULLPTR));
+        resetBtn->setText(QApplication::translate("MainWindow", "Reset Graph", Q_NULLPTR));
         label_4->setText(QApplication::translate("MainWindow", "interval", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
         lineEditInterval->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Graph Interval Time [ms]</p></body></html>", Q_NULLPTR));

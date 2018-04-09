@@ -60,7 +60,7 @@ class MainWindow : public QMainWindow
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
-    static void saveSystemUsed(int comboBoxSys);
+    static void saveSystemUsed(QComboBox *comboBoxSys);
 	void setupDemo(int demoIndex);
 	void setupPlotLogs(void);
 	void setupPlayground(QCustomPlot *customPlot);
@@ -73,8 +73,10 @@ class MainWindow : public QMainWindow
     private:
 	QTimer *timer;
     static int iSystemUsed;
+    static QString strSystemUsed;
+    bool bZoomGraph;
 
-	private slots:
+private slots:
 	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);
 
 	void showPointToolTip(QMouseEvent *event);
@@ -116,6 +118,8 @@ class MainWindow : public QMainWindow
 	void on_pbScreenShot_clicked();
 
     void on_OkToDrawBtn_clicked();
+
+    void on_resetBtn_clicked();
 
 private:
 	Ui::MainWindow *ui;

@@ -32,7 +32,7 @@ void access::on_pushButton_login_clicked()
         QMessageBox::warning(this,"alt","non hai inserito nulla!");
     }
     if (password=="a" && username=="a"){
-            MainWindow::saveSystemUsed(ui->comboBox->currentIndex());
+            MainWindow::saveSystemUsed(ui->comboBox);
             access::close();
             mainWindow = new MainWindow (this);
             mainWindow->show();

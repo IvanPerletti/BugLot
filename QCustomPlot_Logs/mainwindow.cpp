@@ -53,8 +53,10 @@
 #include "cprocesskaloslogs.h"
 #include "CDecorator.h"
 #include "ckalosdecorator.h"
+//#include "selectedgraph.h"
 
 int MainWindow::iSystemUsed;
+QString MainWindow::strSystemUsed;
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -178,9 +180,10 @@ MainWindow::~MainWindow()
 }
 
 //--------------------------------------------------------
-void MainWindow::saveSystemUsed(int comboBoxSys){
+void MainWindow::saveSystemUsed(QComboBox *comboBoxSys){
 
-    iSystemUsed = comboBoxSys;
+    iSystemUsed = comboBoxSys->currentIndex();
+    strSystemUsed = comboBoxSys->currentText();
 
 }
 
@@ -266,6 +269,7 @@ void MainWindow::setupPlotLogs(void)
 
     switch(iSystemUsed) {
     case 0:         // Kalos
+        bZoomGraph = FALSE;         // Initialize variable for Kalos plot zoom
         pCDecorator = new CKalosDecorator(ui->customPlot, &file, plotVars);
         break;
     case 1:         // Ivan
@@ -346,9 +350,14 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
 
 			QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
 			if (item->selected() || graph->selected()){
-				qpGraphPen.setStyle(Qt::DotLine);
-				qpGraphPen.setWidth(4);
-			}
+                qpGraphPen.setStyle(Qt::DotLine);
+                qpGraphPen.setWidth(4);
+                if(strSystemUsed == "Kalos") {
+                    bZoomGraph = TRUE;
+                    ui->resetBtn->setVisible(TRUE);
+                    graph->rescaleAxes();
+                }
+            }
 			else{
 				qpGraphPen.setStyle(Qt::SolidLine);
 				qpGraphPen.setWidth(2);
@@ -655,6 +664,8 @@ void MainWindow::on_pushButtonProcess_clicked()
 	ui->qlTestoFinito->setText("filter text");
 	demoName.append("GmmScope");
 
+    ui->resetBtn->setVisible(FALSE);
+
 }
 
 void MainWindow::on_pushButtonZoomLeft_clicked()
@@ -742,4 +753,23 @@ void MainWindow::on_OkToDrawBtn_clicked()
         break;
     }
 
+}
+
+
+void MainWindow::on_resetBtn_clicked()
+{
+    if(bZoomGraph) {
+        bZoomGraph = FALSE;
+        ui->customPlot->rescaleAxes();
+        for (int i=0; i<ui->customPlot->graphCount(); ++i) {
+            QPen qpGraphPen = ui->customPlot->legend->parentPlot()->graph(i)->pen ();
+            qpGraphPen.setStyle(Qt::SolidLine);
+            qpGraphPen.setWidth(2);
+
+            ui->customPlot->legend->parentPlot()->graph(i)->setPen(qpGraphPen);
+        }
+
+        ui->customPlot->replot();
+        ui->resetBtn->setVisible(FALSE);
+    }
 }
