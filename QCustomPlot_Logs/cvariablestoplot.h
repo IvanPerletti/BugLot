@@ -16,8 +16,8 @@ class CVariablesToPlot
 {
     friend class CKalosDecorator;       // To have access to private and protected members of this class from kalos decorator
 public:
-    CVariablesToPlot(QTableWidget *table, QString *strFileName);
-    void processVarsToPlot(QTableWidget *table, QString *strFileName);
+    CVariablesToPlot(QTableWidget *table, QString *strFileNameIn, QString *strFileNameOut);
+    void processVarsToPlot(QTableWidget *table, QString *strFileNameIn, QString *strFileNameOut);
 
 private:
     QVector<QString> VarList;

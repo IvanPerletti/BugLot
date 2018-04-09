@@ -74,7 +74,8 @@ class MainWindow : public QMainWindow
 	QTimer *timer;
     static int iSystemUsed;
     static QString strSystemUsed;
-    bool bZoomGraph;
+
+    QString setFileName(int item);
 
 private slots:
 	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);
@@ -130,6 +131,7 @@ private:
 	int currentDemoIndex;
 	double *y1;
 	QString strFileNameOut;
+    QString strFileNameParsedOut;
 	QString strFileNameIn;
 	bool TimerFlag = false;
 	bool customPlotVariable = true;

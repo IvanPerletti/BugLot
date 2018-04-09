@@ -107,5 +107,4 @@ void CKalosDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 
     customPlot->setInteractions(QCP::iSelectLegend);
 
-
 }

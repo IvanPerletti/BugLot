@@ -518,7 +518,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1124,9 +1124,27 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>131</width>
-          <height>192</height>
+          <width>271</width>
+          <height>321</height>
          </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
         <property name="rowCount">
          <number>10</number>
@@ -1134,6 +1152,12 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
         <property name="columnCount">
          <number>1</number>
         </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>247</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>30</number>
+        </attribute>
         <row/>
         <row/>
         <row/>
@@ -1149,8 +1173,8 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
        <widget class="QPushButton" name="OkToDrawBtn">
         <property name="geometry">
          <rect>
-          <x>250</x>
-          <y>80</y>
+          <x>340</x>
+          <y>150</y>
           <width>80</width>
           <height>31</height>
          </rect>

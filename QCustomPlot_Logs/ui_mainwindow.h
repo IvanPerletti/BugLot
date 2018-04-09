@@ -936,12 +936,21 @@ public:
         if (tableWidget->rowCount() < 10)
             tableWidget->setRowCount(10);
         tableWidget->setObjectName(QStringLiteral("tableWidget"));
-        tableWidget->setGeometry(QRect(0, 0, 131, 192));
+        tableWidget->setGeometry(QRect(0, 0, 271, 321));
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(tableWidget->sizePolicy().hasHeightForWidth());
+        tableWidget->setSizePolicy(sizePolicy);
+        tableWidget->setMinimumSize(QSize(0, 0));
+        tableWidget->setBaseSize(QSize(0, 0));
         tableWidget->setRowCount(10);
         tableWidget->setColumnCount(1);
+        tableWidget->horizontalHeader()->setDefaultSectionSize(247);
+        tableWidget->verticalHeader()->setDefaultSectionSize(30);
         OkToDrawBtn = new QPushButton(tab_2);
         OkToDrawBtn->setObjectName(QStringLiteral("OkToDrawBtn"));
-        OkToDrawBtn->setGeometry(QRect(250, 80, 80, 31));
+        OkToDrawBtn->setGeometry(QRect(340, 150, 80, 31));
         tabWidget->addTab(tab_2, QString());
 
         verticalLayout_4->addWidget(tabWidget);
@@ -972,7 +981,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(MainWindow);

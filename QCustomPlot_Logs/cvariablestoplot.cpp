@@ -6,9 +6,9 @@
 
 using namespace std;
 
-CVariablesToPlot::CVariablesToPlot(QTableWidget *table, QString *strFileName)
+CVariablesToPlot::CVariablesToPlot(QTableWidget *table, QString *strFileNameIn, QString *strFileNameOut)
 {
-    processVarsToPlot(table, strFileName);
+    processVarsToPlot(table, strFileNameIn, strFileNameOut);
 }
 
 //--------------------------------------------------------
@@ -107,8 +107,7 @@ void CVariablesToPlot::writeTableToFile(ofstream *file, vector<unsigned int> tim
 }
 
 //--------------------------------------------------------
-void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString *strFileName) {
-//    QVector<QString> VarList;
+void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString *strFileNameIn, QString *strFileNameOut) {
     ifstream infile;
     ofstream outFile;
 
@@ -116,7 +115,7 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString *strFileNa
     for (int ii = 0; ii < table->rowCount(); ++ii) {
         for (int jj = 0; jj < table->columnCount(); ++jj) {
            QTableWidgetItem *cell = table->item(ii, jj);
-           if(cell) {
+           if(cell && cell->text() != "") {
                VarList << cell->text()+ ": ";
            }
            else {
@@ -126,7 +125,7 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString *strFileNa
     }
 
     process:
-    infile.open (strFileName->toStdString());
+    infile.open (strFileNameIn->toStdString());
     outFile.open (nameFile, std::ofstream::out | std::ofstream::trunc);
     string STRING;
     int iRowCounter=0,
@@ -184,6 +183,6 @@ void CVariablesToPlot::processVarsToPlot(QTableWidget *table, QString *strFileNa
     outFile.close();
     infile.close();
 
-    *strFileName = QString::fromStdString(nameFile);     // Set correct file name for plotting
+    *strFileNameOut = QString::fromStdString(nameFile);     // Set correct file name for plotting
 
 }

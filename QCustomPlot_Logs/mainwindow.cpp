@@ -53,7 +53,6 @@
 #include "cprocesskaloslogs.h"
 #include "CDecorator.h"
 #include "ckalosdecorator.h"
-//#include "selectedgraph.h"
 
 int MainWindow::iSystemUsed;
 QString MainWindow::strSystemUsed;
@@ -246,12 +245,31 @@ void MainWindow::allScreenShots()
 
 
 //------------------------------------------------------------------------------
+QString MainWindow::setFileName(int item) {
+    QString fileName;
+
+    switch(item) {
+    case 0:        // Kalos
+        fileName = strFileNameParsedOut;
+        break;
+    case 1:         // Ivan
+        fileName = strFileNameOut;
+        break;
+    }
+
+    return fileName;
+}
+
+//------------------------------------------------------------------------------
 /**
  * @brief set the Gui up to process and display result
  */
 void MainWindow::setupPlotLogs(void)
 {
+    static int iCountPlots = 0;
     CParentDecorator *pCDecorator = NULL;
+    QString strFileName;
+
 	/* QString selFilter="Text files(*.txt)";
 	QString LoadFile;
 	LoadFile = QFileDialog::getOpenFileName(this,"Open Full Log",
@@ -259,17 +277,33 @@ void MainWindow::setupPlotLogs(void)
 											"Text files(*.txt)",
 											&selFilter);
 	*/
-	QFile file(strFileNameOut);
+
+    strFileName = setFileName(iSystemUsed);
+    QFile file(strFileName);
 
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-		QMessageBox::warning(this,"op","file not open");
-		return;
-	}
-	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
+        QMessageBox::warning(this,"op","file not open");
+        return;
+    }
+
+    /// Alcohol may be man's worst enemy, but the bible says love your enemy.
 
     switch(iSystemUsed) {
     case 0:         // Kalos
-        bZoomGraph = FALSE;         // Initialize variable for Kalos plot zoom
+        iCountPlots++;
+        if(iCountPlots > 1) {
+            for (int i=0; i<ui->customPlot->graphCount(); ++i) {
+                ui->customPlot->removeGraph(i);
+                ui->customPlot->removeItem(i);
+            }
+            ui->customPlot->legend->setVisible(false);
+
+//            ui->customPlot->clearItems();
+//            ui->customPlot->clearPlottables();
+//            ui->customPlot->clearGraphs();
+            ui->customPlot->replot();
+
+        }
         pCDecorator = new CKalosDecorator(ui->customPlot, &file, plotVars);
         break;
     case 1:         // Ivan
@@ -353,7 +387,6 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
                 qpGraphPen.setStyle(Qt::DotLine);
                 qpGraphPen.setWidth(4);
                 if(strSystemUsed == "Kalos") {
-                    bZoomGraph = TRUE;
                     ui->resetBtn->setVisible(TRUE);
                     graph->rescaleAxes();
                 }
@@ -733,11 +766,12 @@ void MainWindow::on_pbScreenShot_clicked()
 
 void MainWindow::on_OkToDrawBtn_clicked()
 {
+//    delete plotVars;
 
     switch(iSystemUsed) {
     case 0:     // Kalos
         // Set Variables to plot
-        plotVars = new CVariablesToPlot(ui->tableWidget, &strFileNameOut);
+        plotVars = new CVariablesToPlot(ui->tableWidget, &strFileNameOut, &strFileNameParsedOut);
         // Start plotting
         ui->tabWidget->setCurrentIndex(1);
         setupPlotLogs();
@@ -758,18 +792,15 @@ void MainWindow::on_OkToDrawBtn_clicked()
  */
 void MainWindow::on_resetBtn_clicked()
 {
-    if(bZoomGraph) {
-        bZoomGraph = FALSE;
-        ui->customPlot->rescaleAxes();
-        for (int i=0; i<ui->customPlot->graphCount(); ++i) {
-            QPen qpGraphPen = ui->customPlot->legend->parentPlot()->graph(i)->pen ();
-            qpGraphPen.setStyle(Qt::SolidLine);
-            qpGraphPen.setWidth(2);
+    ui->customPlot->rescaleAxes();
+    for (int i=0; i<ui->customPlot->graphCount(); ++i) {
+        QPen qpGraphPen = ui->customPlot->legend->parentPlot()->graph(i)->pen ();
+        qpGraphPen.setStyle(Qt::SolidLine);
+        qpGraphPen.setWidth(2);
 
-            ui->customPlot->legend->parentPlot()->graph(i)->setPen(qpGraphPen);
-        }
-
-        ui->customPlot->replot();
-        ui->resetBtn->setVisible(FALSE);
+        ui->customPlot->legend->parentPlot()->graph(i)->setPen(qpGraphPen);
     }
+
+    ui->customPlot->replot();
+    ui->resetBtn->setVisible(FALSE);
 }
