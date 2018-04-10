@@ -122,6 +122,8 @@ private slots:
 
     void on_resetBtn_clicked();
 
+    void tabSelected();
+
 private:
 	Ui::MainWindow *ui;
 	QString demoName;

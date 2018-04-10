@@ -266,7 +266,6 @@ QString MainWindow::setFileName(int item) {
  */
 void MainWindow::setupPlotLogs(void)
 {
-    static int iCountPlots = 0;
     CParentDecorator *pCDecorator = NULL;
     QString strFileName;
 
@@ -290,20 +289,6 @@ void MainWindow::setupPlotLogs(void)
 
     switch(iSystemUsed) {
     case 0:         // Kalos
-        iCountPlots++;
-        if(iCountPlots > 1) {
-            for (int i=0; i<ui->customPlot->graphCount(); ++i) {
-                ui->customPlot->removeGraph(i);
-                ui->customPlot->removeItem(i);
-            }
-            ui->customPlot->legend->setVisible(false);
-
-//            ui->customPlot->clearItems();
-//            ui->customPlot->clearPlottables();
-//            ui->customPlot->clearGraphs();
-            ui->customPlot->replot();
-
-        }
         pCDecorator = new CKalosDecorator(ui->customPlot, &file, plotVars);
         break;
     case 1:         // Ivan
@@ -363,6 +348,22 @@ void MainWindow::setupPlotLogs(void)
 			SIGNAL(activated()),
 			this,
 			SLOT(on_pushButtonZoomMeno_clicked()));
+
+    //check if user clicked at a tab
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabSelected()));
+
+//    on_tabWidget_currentChanged(2);  // When Variables tab is clicked
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::tabSelected(){
+    if(ui->tabWidget->currentIndex() == 2){     // variable tab
+            ui->tabWidget->setCurrentIndex(2);
+
+            ui->customPlot->clearGraphs();
+            ui->customPlot->replot();
+    }
+
 }
 //-----------------------------------------------------------------------------
 /**
@@ -766,7 +767,6 @@ void MainWindow::on_pbScreenShot_clicked()
 
 void MainWindow::on_OkToDrawBtn_clicked()
 {
-//    delete plotVars;
 
     switch(iSystemUsed) {
     case 0:     // Kalos
@@ -775,7 +775,7 @@ void MainWindow::on_OkToDrawBtn_clicked()
         // Start plotting
         ui->tabWidget->setCurrentIndex(1);
         setupPlotLogs();
-        if (customPlotVariable==true){
+        if(customPlotVariable==true){
             ui->customPlot->replot();
         }
         break;
