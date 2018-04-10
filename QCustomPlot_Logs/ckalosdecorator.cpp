@@ -16,7 +16,7 @@ void CKalosDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
     // We create a sub layout so we can generate a small gap between the plot layout cell border
     // and the legend border:
     QCPLayoutGrid *subLayout = new QCPLayoutGrid;
-    if(customPlot->plotLayout()->elementCount() <= 1) {
+    if(customPlot->plotLayout()->elementCount() <= 1) {     // Only first time customPlot is drawn
         customPlot->plotLayout()->addElement(0, 1, subLayout);
         subLayout->setMargins(QMargins(5, 0, 5, 5));
         subLayout->addElement(0, 0, customPlot->legend);
