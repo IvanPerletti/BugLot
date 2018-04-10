@@ -293,7 +293,6 @@ void MainWindow::setupPlotLogs(void)
         break;
     case 1:         // Ivan
         pCDecorator = new CDecorator(ui->customPlot, &file);
-
         break;
 //    default:
         //TODO
@@ -352,14 +351,12 @@ void MainWindow::setupPlotLogs(void)
     //check if user clicked at a tab
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabSelected()));
 
-//    on_tabWidget_currentChanged(2);  // When Variables tab is clicked
 }
 
 //-----------------------------------------------------------------------------
 void MainWindow::tabSelected(){
     if(ui->tabWidget->currentIndex() == 2){     // variable tab
             ui->tabWidget->setCurrentIndex(2);
-
             ui->customPlot->clearGraphs();
             ui->customPlot->replot();
     }
