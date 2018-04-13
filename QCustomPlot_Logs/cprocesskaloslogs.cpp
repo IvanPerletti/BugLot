@@ -766,6 +766,16 @@ void CProcessKalosLogs::composeLineLog(string *strFile, InfoDataStruct *infoData
             break;
         }
 
+        if(infoData->strLabel[ii] == " Angolo_Rot_decdegree: " || infoData->strLabel[ii] == " Angolo_Inc_decdegree: " ||
+                infoData->strLabel[ii] == " pensile_target_inc: " || infoData->strLabel[ii] == " pensile_target_rot: ") {
+            if (iData > 3600){
+               iData = (abs(iData-65535) * -0.1);
+            }
+             else{
+               iData = (iData * 0.1);
+            }
+        }
+
         itoa(iData, s8aDummy, 10);
         strFile->append(infoData->strLabel[ii]);
         strFile->append(s8aDummy);
