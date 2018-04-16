@@ -468,14 +468,19 @@ bool CProcessKalosLogs::isFirstMessage(unsigned int *arrVal, int freeSlots) {
         break;
     case 3:
         iVal = 5;
+        break;
     case 4:
         iVal = 4;
+        break;
     case 5:
         iVal = 3;
+        break;
     case 6:
         iVal = 2;
+        break;
     case 7:
         iVal = 1;
+        break;
     default:
         iVal = 8;
     }
