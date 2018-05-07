@@ -633,6 +633,15 @@ void CProcessKalosLogs::setUntimelySynchroData(InfoDataStruct *data) {
 }
 
 //--------------------------------------------------------
+void CProcessKalosLogs::setChangeAccessoryData(InfoDataStruct *data) {
+
+    data->uiSize.push_back(2);
+
+    data->strLabel.push_back("Stato_movimento_automatico: ");
+
+}
+
+//--------------------------------------------------------
 /**
  * @brief CProcessKalosLogs::setDataToErrorType     set message size and label as function of error happened
  * @param uiDataArray       log data
@@ -706,6 +715,8 @@ CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(unsigned
     case 820:
     case 849:
     case 850:
+    case 857:
+    case 858:
         setDirectionData(&dataInfo, uiDataArray);
         break;
     case 843:
@@ -726,6 +737,9 @@ CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(unsigned
         break;
     case 779:
         setUntimelySynchroData(&dataInfo);
+        break;
+    case 859:
+        setChangeAccessoryData(&dataInfo);
         break;
     case 768:
     case 769:

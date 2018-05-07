@@ -59,6 +59,7 @@ private:
     void setAutoTargetPosData(InfoDataStruct *data, unsigned int *arrVal);
     void setSynchroTargetPosData(InfoDataStruct *data);
     void setUntimelySynchroData(InfoDataStruct *data);
+    void setChangeAccessoryData(InfoDataStruct *data);
     InfoDataStruct setDataToErrorType(unsigned int* uiDataArray, unsigned int error);
     void composeLineLog(string *strFile, InfoDataStruct *infoData, unsigned int dataID, unsigned int *uiDataArray);
 };
