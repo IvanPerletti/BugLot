@@ -6,6 +6,9 @@
 
 using namespace std;
 
+//static bool bAngle = FALSE;
+bool bAngle = FALSE;
+
 CProcessKalosLogs::CProcessKalosLogs(const char * ucaNameFileIn, const char * ucaNameFileOut)
 {
     processFile(ucaNameFileIn, ucaNameFileOut);
@@ -753,6 +756,32 @@ CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(unsigned
 }
 
 //--------------------------------------------------------
+bool CProcessKalosLogs::is_angle_log_data(string label){
+    bool bIsAngle = FALSE;
+
+    if(label == " Angolo_Rot_decdegree: " || label == " Angolo_Inc_decdegree: " ||
+            label == " pensile_target_inc: " || label == " pensile_target_rot: ") {
+        bIsAngle = TRUE;
+    }
+
+    return bIsAngle;
+}
+
+//--------------------------------------------------------
+bool CProcessKalosLogs::is_error_angle(bool isAngle, string label) {
+    bool bIsAngle = FALSE;
+
+    if(isAngle) {
+        if(label == " iActual: " || label == " iPrevPos: " || label == " iCheckPos: " ||
+               label == "iActual: " || label == " iTarget: ") {
+            bIsAngle = TRUE;
+        }
+    }
+
+    return bIsAngle;
+}
+
+//--------------------------------------------------------
 /**
  * @brief CProcessKalosLogs::composeLineLog     compose data to write on file using predefined data sizes and labels
  * @param strFile
@@ -763,6 +792,7 @@ void CProcessKalosLogs::composeLineLog(string *strFile, InfoDataStruct *infoData
     unsigned int uiIndexDataArray;
     char s8aDummy[16]={0,};
     int iData;
+
 
     // Since for Motion Monitoring Logs we have already written error type, we have already used first two message slots
     if(dataID == 0x0657) {
@@ -785,8 +815,7 @@ void CProcessKalosLogs::composeLineLog(string *strFile, InfoDataStruct *infoData
             break;
         }
 
-        if(infoData->strLabel[ii] == " Angolo_Rot_decdegree: " || infoData->strLabel[ii] == " Angolo_Inc_decdegree: " ||
-                infoData->strLabel[ii] == " pensile_target_inc: " || infoData->strLabel[ii] == " pensile_target_rot: ") {
+        if(is_angle_log_data(infoData->strLabel[ii]) || is_error_angle(bAngle, infoData->strLabel[ii])) {
             if (iData > 3600){
                iData = (abs(iData-65535) * -0.1);
             }
@@ -795,9 +824,17 @@ void CProcessKalosLogs::composeLineLog(string *strFile, InfoDataStruct *infoData
             }
         }
 
+//        if(infoData->strLabel[ii] == "ErrorID: " && iData == 814) {     // Need to check all possible MM errors sending incidence and rotation angle
+//            bAngle = TRUE;
+//        }
+
         itoa(iData, s8aDummy, 10);
         strFile->append(infoData->strLabel[ii]);
         strFile->append(s8aDummy);
+    }
+
+    if(bAngle == TRUE) {
+        bAngle = FALSE;
     }
 
     strFile->append("\n" );
@@ -934,6 +971,9 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                 case 0x0657:    // MM_CANLOG_ID
                     lErrorID = ulaData[0]<<8 ;
                     lErrorID += ulaData[1];
+                    if(lErrorID == 814 || lErrorID == 813 || lErrorID == 828 || lErrorID == 829 || lErrorID == 837 || lErrorID == 838) {
+                        bAngle = TRUE;
+                    }
                     itoa(lErrorID, s8aDummy, 10);
                     strOut.append("ErrorID: ");
                     strOut.append(s8aDummy);
