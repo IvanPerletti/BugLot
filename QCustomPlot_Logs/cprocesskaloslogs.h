@@ -60,6 +60,7 @@ private:
     void setSynchroTargetPosData(InfoDataStruct *data);
     void setUntimelySynchroData(InfoDataStruct *data);
     void setChangeAccessoryData(InfoDataStruct *data);
+    void setAxesDriverData(InfoDataStruct *data);
     InfoDataStruct setDataToErrorType(unsigned int* uiDataArray, unsigned int error);
     bool is_angle_log_data(string label);
     bool is_error_angle(bool isAngle, string label);

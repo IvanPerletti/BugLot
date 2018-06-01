@@ -640,7 +640,16 @@ void CProcessKalosLogs::setChangeAccessoryData(InfoDataStruct *data) {
 
     data->uiSize.push_back(2);
 
-    data->strLabel.push_back("Stato_movimento_automatico: ");
+    data->strLabel.push_back(" Stato_movimento_automatico: ");
+
+}
+
+//--------------------------------------------------------
+void CProcessKalosLogs::setAxesDriverData(InfoDataStruct *data) {
+
+    data->uiSize.push_back(1);
+
+    data->strLabel.push_back(" AxisStat: ");
 
 }
 
@@ -743,6 +752,10 @@ CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(unsigned
         break;
     case 859:
         setChangeAccessoryData(&dataInfo);
+        break;
+    case 823:
+    case 824:
+        setAxesDriverData(&dataInfo);
         break;
     case 768:
     case 769:
