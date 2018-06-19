@@ -567,6 +567,7 @@ void MainWindow::on_LoadFile_clicked()
     strFileNameIn = QFileDialog::getOpenFileName(this,
                                                  "Open Full Log",
                                                  QDir::currentPath(),
+                                                 //"C:/Users/gatti/Desktop/Kalos",
                                                  "Text files (*.txt);;All files (*.*)",
                                                  &selFilter);
 	on_LoadFile();
@@ -602,7 +603,8 @@ void MainWindow::on_SaveButton_clicked()
 	strFileNameOut.clear();
     strFileNameOut = QFileDialog::getSaveFileName(this,
                                                   "Choose Output filename",
-                                                  QDir::currentPath()+"/out.txt",
+                                                  QDir::currentPath()+ "/out.txt",
+                                                  //"C:/Users/gatti/Desktop/Kalos/out.txt",
                                                   "Text files (*.txt);;All files (*.*)",
                                                   &selFilter);
     //strFileNameOut = QDir::currentPath()+"/out.txt";

@@ -639,8 +639,16 @@ void CProcessKalosLogs::setUntimelySynchroData(InfoDataStruct *data) {
 void CProcessKalosLogs::setChangeAccessoryData(InfoDataStruct *data) {
 
     data->uiSize.push_back(2);
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(1);
 
     data->strLabel.push_back(" Stato_movimento_automatico: ");
+    data->strLabel.push_back(" Accessorio: ");
+    data->strLabel.push_back(" Posizione: ");
+    data->strLabel.push_back(" Accessorio_Errore: ");
+    data->strLabel.push_back(" Posizione_Errore: ");
 
 }
 
