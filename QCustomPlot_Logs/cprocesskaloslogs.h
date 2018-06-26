@@ -48,7 +48,9 @@ private:
     void setCanLogDetLatSyncData(InfoDataStruct *infoStruct);
     void setCanLogDetLongSyncData(InfoDataStruct *infoStruct);
 
-    // Motion Monitoring
+    // Motion Monitoring Info
+    void setCanLogMotionMonitoringInfo(unsigned int uiType, InfoDataStruct *infoStruct);
+    // Motion Monitoring Error
     void setLineError(InfoDataStruct *data);
     void setNoMotionData(InfoDataStruct *data);
     bool isFirstMessage(unsigned int *arrVal, int freeSlots);

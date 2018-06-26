@@ -424,6 +424,38 @@ void CProcessKalosLogs::setCanLogDetLongSyncData(InfoDataStruct *infoStruct){
 
 //--------------------------------------------------------
 /**
+ * @brief CProcessKalosLogs::setCanLogMotionMonitoringInfo  set message size (in byte) and label for informative Motion Monitoring CAN logs
+ * @param uiType        identify type of info sent
+ * @param infoStruct    pointer to struct containing data size and label
+ */
+void CProcessKalosLogs::setCanLogMotionMonitoringInfo(unsigned int uiType, InfoDataStruct *infoStruct){
+
+    switch(uiType) {
+    case 1:         // MOTION_TYPE_INFO
+        infoStruct->uiSize.push_back(1);
+        infoStruct->uiSize.push_back(1);
+        infoStruct->uiSize.push_back(1);
+        infoStruct->uiSize.push_back(1);
+
+        infoStruct->strLabel.push_back(" Pensile.wType: ");
+        infoStruct->strLabel.push_back(" TableBucky.wType: ");
+        infoStruct->strLabel.push_back(" WallBucky.wType: ");
+        infoStruct->strLabel.push_back(" Elevix.wType: ");
+        break;
+    case 2:         // MANUAL_INFO
+        infoStruct->uiSize.push_back(1);
+        infoStruct->uiSize.push_back(1);
+        infoStruct->uiSize.push_back(1);
+
+        infoStruct->strLabel.push_back(" elType: ");
+        infoStruct->strLabel.push_back(" bManualMotion: ");
+        infoStruct->strLabel.push_back(" Direction: ");
+        break;
+    }
+}
+
+//--------------------------------------------------------
+/**
  * @brief CProcessKalosLogs::setLineError set message size (in byte) and label for error message requiring line of error
  * @param data     pointer to struct containing data size and label
  */
@@ -814,9 +846,9 @@ void CProcessKalosLogs::composeLineLog(string *strFile, InfoDataStruct *infoData
     char s8aDummy[16]={0,};
     int iData;
 
-
     // Since for Motion Monitoring Logs we have already written error type, we have already used first two message slots
-    if(dataID == 0x0657) {
+    // For Motion Monitoring Info instead, first data is not useful for Logs
+    if(dataID == 0x0657 || dataID == 0x0655) {
         uiIndexDataArray = 2;
     }
     else {
@@ -844,10 +876,6 @@ void CProcessKalosLogs::composeLineLog(string *strFile, InfoDataStruct *infoData
                iData = (iData * 0.1);
             }
         }
-
-//        if(infoData->strLabel[ii] == "ErrorID: " && iData == 814) {     // Need to check all possible MM errors sending incidence and rotation angle
-//            bAngle = TRUE;
-//        }
 
         itoa(iData, s8aDummy, 10);
         strFile->append(infoData->strLabel[ii]);
@@ -877,7 +905,7 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
     infile.open (ucaNameFileIn);
     outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
     int iRowCounter=0;
-    unsigned int uiID = 0;
+    unsigned int uiID = 0, uiMmInfoType = 0;
     char strID[16];
     unsigned int
             lErrorID=0,
@@ -988,6 +1016,10 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                     break;
                 case 0x0656:    // OX_CANLOG_ID_DET_LONG_SYNC_DATA
                     setCanLogDetLongSyncData(&dataInfo);
+                    break;
+                case 0x0655:    // MM_CANLOG_ID_INFO
+                    uiMmInfoType = ulaData[0];      // information code used for proper decoding
+                    setCanLogMotionMonitoringInfo(uiMmInfoType, &dataInfo);
                     break;
                 case 0x0657:    // MM_CANLOG_ID
                     lErrorID = ulaData[0]<<8 ;
