@@ -666,7 +666,7 @@ void CProcessKalosLogs::setUntimelySynchroData(InfoDataStruct *data) {
     data->strLabel.push_back(" isNewPos: ");
     data->strLabel.push_back(" EnableSwitch: ");
     data->strLabel.push_back(" PensileMotionType: ");
-    data->strLabel.push_back(" New_exam_finished: ");
+    data->strLabel.push_back(" bExamFinished: ");
     data->strLabel.push_back(" all_movements_finished: ");
 
 }
