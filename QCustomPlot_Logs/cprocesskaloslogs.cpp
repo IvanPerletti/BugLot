@@ -437,7 +437,7 @@ void CProcessKalosLogs::setCanLogMotionMonitoringInfo(unsigned int uiType, InfoD
         infoStruct->uiSize.push_back(1);
         infoStruct->uiSize.push_back(1);
 
-        infoStruct->strLabel.push_back(" Pensile.wType: ");
+        infoStruct->strLabel.push_back("Pensile.wType: ");
         infoStruct->strLabel.push_back(" TableBucky.wType: ");
         infoStruct->strLabel.push_back(" WallBucky.wType: ");
         infoStruct->strLabel.push_back(" Elevix.wType: ");
@@ -447,7 +447,7 @@ void CProcessKalosLogs::setCanLogMotionMonitoringInfo(unsigned int uiType, InfoD
         infoStruct->uiSize.push_back(1);
         infoStruct->uiSize.push_back(1);
 
-        infoStruct->strLabel.push_back(" elType: ");
+        infoStruct->strLabel.push_back("elType: ");
         infoStruct->strLabel.push_back(" bManualMotion: ");
         infoStruct->strLabel.push_back(" Direction: ");
         break;
@@ -660,10 +660,14 @@ void CProcessKalosLogs::setUntimelySynchroData(InfoDataStruct *data) {
     data->uiSize.push_back(1);
     data->uiSize.push_back(1);
     data->uiSize.push_back(1);
+    data->uiSize.push_back(1);
+    data->uiSize.push_back(2);
 
     data->strLabel.push_back(" isNewPos: ");
     data->strLabel.push_back(" EnableSwitch: ");
     data->strLabel.push_back(" PensileMotionType: ");
+    data->strLabel.push_back(" New_exam_finished: ");
+    data->strLabel.push_back(" all_movements_finished: ");
 
 }
 
