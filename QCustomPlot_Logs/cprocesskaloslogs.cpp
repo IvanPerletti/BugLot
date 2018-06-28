@@ -852,8 +852,11 @@ void CProcessKalosLogs::composeLineLog(string *strFile, InfoDataStruct *infoData
 
     // Since for Motion Monitoring Logs we have already written error type, we have already used first two message slots
     // For Motion Monitoring Info instead, first data is not useful for Logs
-    if(dataID == 0x0657 || dataID == 0x0655) {
+    if(dataID == 0x0657) {
         uiIndexDataArray = 2;
+    }
+    else if(dataID == 0x0655) {
+        uiIndexDataArray = 1;
     }
     else {
         uiIndexDataArray = 0;
