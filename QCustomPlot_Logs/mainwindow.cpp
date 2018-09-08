@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	// setup signal and slot
 	connect(timer, SIGNAL(timeout()), this, SLOT(MyTimerSlot()));
 	timer->start(1000);    // msec
+	lTimeStart = 0;
 }
 
 
@@ -503,12 +504,12 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/release/TableLog_2018_03_31.txt";
-	//	strFileNameIn = QFileDialog::getOpenFileName(this,
-	//												 "Open Full Log",
-	//												 QDir::currentPath(),
-	//												 "Text files (*.txt);;All files (*.*)",
-	//												 &selFilter);
+	//	strFileNameIn ="C:/Users/perletti.GMM-BG/Desktop/Drawer WIP/Test Macchine/Alzano/TableLog_2018_09_05_cut.txt";
+	strFileNameIn = QFileDialog::getOpenFileName(this,
+												 "Open Full Log",
+												 QDir::currentPath(),
+												 "Text files (*.txt);;All files (*.*)",
+												 &selFilter);
 	on_LoadFile();
 }
 //-------------------------------------------------------------------------------------------------
@@ -693,4 +694,13 @@ void MainWindow::on_pbScreenShot_clicked()
 void MainWindow::on_timeEdit_editingFinished()
 {
 	on_pushButtonProcess_clicked();
+}
+
+void MainWindow::on_timeEdit_2_timeChanged(const QTime &time)
+{
+	int hour = time.hour();
+	int min =  time.minute();
+	int sec =  time.second();
+
+	lTimeStart = (hour*60*60) + (min*60) + (sec) ;
 }

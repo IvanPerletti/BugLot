@@ -928,7 +928,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -936,7 +936,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QCustomPlot plot examples", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "BUG-LOT v01.02", 0));
 #ifndef QT_NO_TOOLTIP
         LoadFile->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Load file to be processed</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP

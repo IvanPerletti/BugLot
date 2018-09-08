@@ -117,6 +117,8 @@ class MainWindow : public QMainWindow
 
 	void on_timeEdit_editingFinished();
 
+	void on_timeEdit_2_timeChanged(const QTime &time);
+
 	private:
 	Ui::MainWindow *ui;
 	QString demoName;
@@ -129,7 +131,7 @@ class MainWindow : public QMainWindow
 	bool TimerFlag = false;
 	bool customPlotVariable = true;
 	double dLastTimeVal; // last value of Time
-
+	long lTimeStart;
 };
 
 #endif // MAINWINDOW_H

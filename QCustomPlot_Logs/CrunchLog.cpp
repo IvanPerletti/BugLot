@@ -34,7 +34,7 @@ void CrunchLog::unpackBit(string * pstrOut, unsigned int uiVal)
 unsigned long CrunchLog::unpackTimeString(const char * u8aData)
 {
 	unsigned long  ulTime;
-	unsigned int l_hour, l_min, l_sec, l_ms;
+	unsigned int l_hour=0, l_min=0, l_sec=0, l_ms=0;
 	sscanf( u8aData ,
 			"%02d:%02d:%02d:%03d",
 			&l_hour	,
@@ -42,6 +42,8 @@ unsigned long CrunchLog::unpackTimeString(const char * u8aData)
 			&l_sec	,
 			&l_ms	);
 	ulTime = l_ms + (l_sec + l_min*60 + l_hour * 3600)*1000; // max Num: 90060999ms
+	if (ulTime >= 47018074)
+		ulTime++;
 	return(ulTime);
 }
 
@@ -108,6 +110,9 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 	while(iRowCounter<1000000) // To get you all the lines.
 	{
 		getline(infile,STRING); // Saves the line in STRING.
+		if (infile.eof() || infile.bad() ){
+			break;
+		}
 		if (STRING != previousLine)// true in the end of file or file corrupted
 		{
 			previousLine = STRING;
