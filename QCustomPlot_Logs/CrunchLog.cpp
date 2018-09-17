@@ -1,7 +1,7 @@
 #include "CrunchLog.h"
 #include <QString>
 #include "mainwindow.h"
-
+//#include <QDebug>
 #include "ui_mainwindow.h"
 
 
@@ -15,9 +15,22 @@ CrunchLog::CrunchLog()
 using namespace std;
 
 
-
 //--------------------------------------------------------
-void CrunchLog::unpackBit(string * pstrOut, unsigned int uiVal)
+void CrunchLog::unpackBit8(string * pstrOut, unsigned char u8Val)
+{
+	int ii, iBit;
+
+	for (ii=0; ii<8; ii++)
+	{
+		char u8aNum[4];
+		iBit = ( u8Val & (1<<ii) ) !=0;
+		itoa(iBit,u8aNum,10);
+		pstrOut->append(u8aNum);
+		pstrOut->append(" ");
+	}
+}
+//--------------------------------------------------------
+void CrunchLog::unpackBit32(string * pstrOut, unsigned int uiVal)
 {
 	int ii, iBit;
 
@@ -72,26 +85,50 @@ void CrunchLog::removeChars(string * strProcessed, string strMatchToFind)
 }
 //--------------------------------------------------------
 
-void CrunchLog::finalizeString( string *pStrOut, unsigned long ulTime, long lBitMask, long lMcStatus)
+void CrunchLog::finalizeString( string *pStrOut,
+								unsigned long ulTime,
+								long lBitMask,
+								long lMcStatus,
+								unsigned char u8TableBit,
+								unsigned char u8GenStat)
 {
 	char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
+	char s8aChar[1];
+
 	pStrOut->clear();
 	itoa(ulTime, s8aDummy, 10);
 	pStrOut->append(s8aDummy);
 	pStrOut->append(" " );
-	unpackBit(pStrOut,lBitMask);
+	unpackBit32(pStrOut, lBitMask);
 	itoa( lMcStatus,s8aDummy, 10);
 	pStrOut->append(s8aDummy);
+	pStrOut->append(" " );
+	unpackBit8(pStrOut, u8TableBit);
+	pStrOut->append(" " );
+	itoa(u8GenStat, s8aChar, 10);
+	pStrOut->append(s8aChar);
 	pStrOut->append("\n");
 
 }
 //--------------------------------------------------------
-void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFileOut)
+void CrunchLog::processFile (const char * ucaNameFileIn,
+							 const char * ucaNameFileOut,
+							 const unsigned long ulTimeStart,
+							 const unsigned long ulTimeStop)
 {
 	string STRING, strOut;
+	string previousLine="";
 	ifstream infile;
 	ofstream outFile;
-
+	int iRowCounter=0;
+	unsigned int
+			lBitMask=0,
+			ulTime=0,
+			lMcStatus=0,
+			ulaData[8]={0,};
+	unsigned char
+			u8TableBit = 0,
+			u8GenStat = 0;
 
 	if (ucaNameFileIn == NULL || ucaNameFileOut == NULL ){
 		return;
@@ -99,14 +136,8 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 
 	infile.open (ucaNameFileIn);
 	outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
-	int iRowCounter=0;
-	unsigned int
-			lBitMask=0,
-			ulTime=0,
-			lMcStatus=0,
-			ulaData[8]={0,};
 
-	string previousLine="";
+	qDebug()<<"processing files";
 	while(iRowCounter<1000000) // To get you all the lines.
 	{
 		getline(infile,STRING); // Saves the line in STRING.
@@ -121,29 +152,32 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 			{ // found <Id = 0652
 				removeCharsUntil(&STRING,"; ");
 				ulTime = unpackTimeString( STRING.data() );
-				removeCharsUntil(&STRING,"DEBUG data = ");
-				removeChars(&STRING,"0X");// replace 0X with blank spaces
-				sscanf( STRING.data() , "%x %x %x %x %x %x",
-						&ulaData[0] ,
-						&ulaData[1] ,
-						&ulaData[2] ,
-						&ulaData[3] ,
-						&ulaData[4] ,
-						&ulaData[5] );// extract numbers
-				lBitMask = ulaData[1];
-				lBitMask+= (ulaData[2]<<8);
-				lBitMask+= (ulaData[3]<<16);
-				lBitMask+= (ulaData[4]<<24);
-				lMcStatus = ulaData[5] ;
-				switch(ulaData[0])
+				if (ulTime > ulTimeStop){
+					break; // end of time interval
+				}else if (ulTime > ulTimeStart)
 				{
-				case 6:
-					finalizeString(&strOut, ulTime, lBitMask, lMcStatus);
-					cout<<strOut;// Prints out STRING.;
-					outFile << strOut;
-
-
-					break;
+					removeCharsUntil(&STRING,"DEBUG data = ");
+					removeChars(&STRING,"0X");// replace 0X with blank spaces
+					sscanf( STRING.data() , "%x %x %x %x %x %x",
+							&ulaData[0] ,
+							&ulaData[1] ,
+							&ulaData[2] ,
+							&ulaData[3] ,
+							&ulaData[4] ,
+							&ulaData[5] );// extract numbers
+					lBitMask = ulaData[1];
+					lBitMask+= (ulaData[2]<<8);
+					lBitMask+= (ulaData[3]<<16);
+					lBitMask+= (ulaData[4]<<24);
+					lMcStatus = ulaData[5] ;
+					switch(ulaData[0])
+					{
+					case 6:
+						finalizeString(&strOut, ulTime, lBitMask, lMcStatus, u8TableBit, u8GenStat);
+						cout<< strOut.c_str(); // Prints out STRING
+						outFile << strOut;
+						break;
+					}
 				}
 			}
 			else
@@ -153,28 +187,59 @@ void CrunchLog::processFile (const char * ucaNameFileIn, const char * ucaNameFil
 				{
 					removeCharsUntil(&STRING,"; ");
 					ulTime = unpackTimeString( STRING.data() );
-					finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus);
+					finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus,
+								   u8TableBit, u8GenStat);
 					outFile << strOut;
-					finalizeString(&strOut, ulTime, lBitMask, 20);
+					finalizeString(&strOut, ulTime, lBitMask, 0, u8TableBit, u8GenStat);
 					outFile << strOut;
-					finalizeString(&strOut, ulTime+1, lBitMask, lMcStatus);
+					finalizeString(&strOut, ulTime+1, lBitMask, lMcStatus,
+								   u8TableBit, u8GenStat);
 					outFile << strOut;
-
+				}
+				else
+				{
+					std::size_t pos = STRING.find("<Id = CAN_ID_CLISIS_DBG_125 (0125)");
+					if (pos < STRING.size() )
+					{
+						removeCharsUntil(&STRING,"; ");
+						ulTime = unpackTimeString( STRING.data() );
+						removeCharsUntil(&STRING,"Data = ");
+						finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus,
+									   u8TableBit, u8GenStat);
+						outFile << strOut;
+						sscanf( STRING.data() , "%x", &u8TableBit );
+						finalizeString(&strOut, ulTime, lBitMask, lMcStatus,
+									   u8TableBit, u8GenStat);
+						outFile << strOut;
+					}
+					else
+					{
+						std::size_t pos = STRING.find("CURRENTSTATE=");
+						if (pos < STRING.size() )
+						{
+							removeCharsUntil(&STRING,"; ");
+							ulTime = unpackTimeString( STRING.data() );
+							removeCharsUntil(&STRING,"CURRENTSTATE=");
+							finalizeString(&strOut, ulTime-1,
+										   lBitMask, lMcStatus, u8TableBit, u8GenStat);
+							char u8aArray[16]={0,};
+							STRING.at(1)=' ';
+							sscanf( STRING.data() , "%d %s", &u8GenStat, &u8aArray);
+							finalizeString(&strOut, ulTime,
+										   lBitMask, lMcStatus, u8TableBit, u8GenStat);
+							outFile << strOut;
+						}
+					}
 				}
 			}
 		}
 		iRowCounter++;
-
-
-
-
-	}
+	}// while..
 
 	outFile.close();
 	infile.close();
-
-
 }
+
 
 //--------------------------------------------------------
 void CrunchLog::strReplaceOccurrence(string *pStrOut,

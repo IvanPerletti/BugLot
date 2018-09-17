@@ -10,14 +10,14 @@ class CrunchLog;
 
 class CrunchLog : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit CrunchLog(QWidget *parent = 0);
-    ~CrunchLog();
+	explicit CrunchLog(QWidget *parent = 0);
+	~CrunchLog();
 
 private:
-    Ui::CrunchLog *ui;
+	Ui::CrunchLog *ui;
 };
  */
 #ifndef CRUNCHLOG_H
@@ -30,18 +30,27 @@ using namespace std;
 class CrunchLog
 {
 public:
-    CrunchLog();
-    void processFile(const char *ucaNameFileIn, const char *ucaNameFileOut);
+	CrunchLog();
+	void processFile(const char *ucaNameFileIn,
+					 const char *ucaNameFileOut,
+					 const unsigned long ulTimeStart = 0,
+					 const unsigned long ulTimeStop = 24*60*60);
 
 private:
-    void unpackBit(string * pstrOut, unsigned int uiVal);
-    unsigned long unpackTimeString(const char * u8aData);
-    void removeCharsUntil(string * strProcessed, string strMatchToFind);
-    void removeChars( string * strProcessed, string strMatchToFind);
-    void finalizeString( string *pStrOut, unsigned long ulTime, long lBitMask, long lMcStatus);
-    void strReplaceOccurrence(string *pStrOut,
-                              const string csSubStrLook,
-                              const string csSubStrSubst );
+	void unpackBit8(string * pstrOut, unsigned char u8Val);
+	void unpackBit32(string * pstrOut, unsigned int uiVal);
+	unsigned long unpackTimeString(const char * u8aData);
+	void removeCharsUntil(string * strProcessed, string strMatchToFind);
+	void removeChars( string * strProcessed, string strMatchToFind);
+	void finalizeString(string *pStrOut, unsigned long ulTime,
+						long lBitMask,
+						long lMcStatus,
+						unsigned char u8TableBit,
+						unsigned char u8GenStat);
+
+	void strReplaceOccurrence(string *pStrOut,
+							  const string csSubStrLook,
+							  const string csSubStrSubst );
 
 
 };
