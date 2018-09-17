@@ -1,6 +1,6 @@
 
 #include "CDecorator.h"
-
+//#include <QDebug>
 CDecorator cDecorator;
 CDecorator::CDecorator()
 {
@@ -88,51 +88,63 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 			  << "I GEN EXON          "
 			  << "O PID EXON          "
 			  << "STATUS              "
-			  << "ADC CM10            "
-			  << "DAC ABS             ";
-
+			  << "I_CNS_PREP          "	// stato del segnale di preparazione dato dai 2 segnali in arrivo
+			  << "I_CNS_FL            "	// stato del segnale di fluoro dato dai 2 segnali in arrivo
+			  << "I_CNS_RAD           "	// stato del segnale di esposizione dato dai 2 segnali in arrivo
+			  << "O_TAB_?             "	// fluoroscopia (pedale fluoro)
+			  << "O_TAB_FL            "	// preparazione (tasto di preparazione su consolle)
+			  << "O_TAB_PREP          "	// esposizione rx (consenso finale rx)
+			  << "O_TAB_RAD           "	// grafia (second step)
+			  << "O_TAB_EN            "
+			  << "Dll_Gen             "
+			  << "   "
+				 ;
+	qDebug()<<"Legend";
 	//  } .=========================================
 
 	const int iSzVet = qvMyVect.size(); // array Size
 	const int iNumElem = qvMyVect[0].size(); // num of plots
 	QVector<double> qvTime; // time array
 	QVector<double> qvDataArranged; // data array
-	qvDataArranged.resize(iSzVet); // resize optimze time with memory alloc
-	qvTime.resize(iSzVet); // resize optimze time with memory alloc
 
-	for (int jj=0; jj<iSzVet; jj++){
-		qvTime[jj] = qvMyVect[jj][0]/1000.0 ;
-	}
-
-	for (int iDataIdx=1; iDataIdx<iNumElem; iDataIdx++)
-	{	// OBS:  index move from 1: data(0,:) are time values
-		for ( int jj=0; jj<iSzVet; jj++ ){
-			qvDataArranged[jj] = qvMyVect[jj][iDataIdx]*0.5 + (20-iDataIdx) ;
+	if (iSzVet> 0 )
+	{
+		qvDataArranged.resize(iSzVet); // resize optimze time with memory alloc
+		qvTime.resize(iSzVet); // resize optimze time with memory alloc
+		qDebug()<<"ResizeOk";
+		for (int jj=0; jj<iSzVet; jj++){
+			qvTime[jj] = qvMyVect[jj][0]/1000.0 ;
 		}
-		customPlot->addGraph();// create graph
-		QPen pen;
-		const int iColPos = (iDataIdx*2)%63; // position Color choice
-		pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
-		pen.setWidth(2);
-		customPlot->graph()->setPen(pen);
+		qDebug()<<"ForB";
+		for (int iDataIdx=1; iDataIdx<iNumElem; iDataIdx++)
+		{	// OBS:  index move from 1: data(0,:) are time values
+			for ( int jj=0; jj<iSzVet; jj++ ){
+				qvDataArranged[jj] = qvMyVect[jj][iDataIdx]*0.5 + (20-iDataIdx) ;
+			}
+			customPlot->addGraph();// create graph
+			QPen pen;
+			const int iColPos = (iDataIdx*2)%63; // position Color choice
+			pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
+			pen.setWidth(2);
+			customPlot->graph()->setPen(pen);
 
-		QString qStrLegend = LegendList.at(iDataIdx);
-		customPlot->graph()->setName(qStrLegend);
-		customPlot->graph(iDataIdx-1)->setData(qvTime, qvDataArranged);
+			QString qStrLegend = LegendList.at(iDataIdx);
+			customPlot->graph()->setName(qStrLegend);
+			customPlot->graph(iDataIdx-1)->setData(qvTime, qvDataArranged);
+		}
+		qDebug()<<"Set Axis";
+		// give the axes some labels:
+		customPlot->xAxis->setLabel("t [s]");
+		customPlot->yAxis->setLabel("y");
+		// set axes ranges, so we see all data:
+		double dMinXAxis = *std::min_element(qvTime.constBegin(), qvTime.constEnd());
+		double dMaxXAxis = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
+
+		customPlot->xAxis->setRange(dMinXAxis-1,dMaxXAxis+1);
+		dMaxXAxis = *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
+		customPlot->yAxis->setRange(19-iNumElem, 20); // Y axis range
+
+		customPlot->setInteractions(QCP::iSelectLegend);
 	}
-
-	// give the axes some labels:
-	customPlot->xAxis->setLabel("t [ms]");
-	customPlot->yAxis->setLabel("y");
-	// set axes ranges, so we see all data:
-	double dMinXAxis = *std::min_element(qvTime.constBegin(), qvTime.constEnd());
-	double dMaxXAxis = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
-
-	customPlot->xAxis->setRange(dMinXAxis-1,dMaxXAxis+1);
-	dMaxXAxis = *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
-	customPlot->yAxis->setRange(-1, iNumElem+1); // Y axis range
-
-	customPlot->setInteractions(QCP::iSelectLegend);
-
 
 }

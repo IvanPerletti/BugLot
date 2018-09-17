@@ -1,6 +1,5 @@
 #ifndef CDECORATOR_H
 #define CDECORATOR_H
-#include <QDebug>
 #include <QDesktopWidget>
 #include <QScreen>
 #include <QMessageBox>
