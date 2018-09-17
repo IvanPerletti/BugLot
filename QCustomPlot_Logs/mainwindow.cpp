@@ -41,7 +41,6 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
 #include <QDesktopWidget>
 #include <QScreen>
 #include <QMessageBox>
@@ -51,8 +50,8 @@
 #include <QShortcut>
 #include "crunchlog.h"
 #include "CDecorator.h"
-
-
+#include <iostream>
+//#include <QDebug>
 
 //-----------------------------------------------------------------------------
 
@@ -66,9 +65,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	// setup signal and slot
 	connect(timer, SIGNAL(timeout()), this, SLOT(MyTimerSlot()));
 	timer->start(1000);    // msec
-	lTimeStart = 0;
+	ulTimeStart = 0;
+	ulTimeStop = ( 23*3600 + 59*60 )* 1000;
+	qDebug()<<"Setup";
 }
-
 
 //-----------------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ void MainWindow::setupDemo(int demoIndex)
 	switch (demoIndex)
 	{
 	case 20:
-		demoName.append("GmmScope");
+		demoName.append("GMM BugLot");
 		setupPlotLogs();
 		break;
 	}
@@ -87,8 +87,6 @@ void MainWindow::setupDemo(int demoIndex)
 	ui->tabWidget->setCurrentIndex(0);
 	ui->customPlot->replot();
 }
-
-
 //-----------------------------------------------------------------------------
 void MainWindow::realtimeDataSlot()
 {
@@ -346,10 +344,14 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
  */
 void MainWindow::showPointToolTip(QMouseEvent *event)
 {
-	int x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
-	int y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
+	const double x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
+	int ss = x;
+	int mm = ( ss / 60    ) % 60;
+	int hh = ( ss / 3660  ) % 24;
+	int ms = x*1000.0f - ss*1000;
+	ss = ss % 60;
 
-	setToolTip(QString("%1 , %2").arg(x).arg(y));
+	setToolTip(QString::asprintf("%d:%d:%d.%d",hh,mm,ss,ms));
 
 }
 //------------------------------------------------------------------------------
@@ -478,6 +480,7 @@ void MainWindow::on_pushButtonZoomPiu_clicked()
 	// ui->customPlot->replot();
 	on_UpgradePlot();
 	ui->dial->setValue(0);
+	updateUiTimeEdit(newRangeX0);
 }
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomMeno_clicked()
@@ -497,6 +500,7 @@ void MainWindow::on_pushButtonZoomMeno_clicked()
 	// ui->customPlot->replot();
 	on_UpgradePlot();
 	ui->dial->setValue(0);
+	updateUiTimeEdit(dNewRangeX0);
 }
 
 //------------------------------------------------------------------------------------------------
@@ -504,13 +508,14 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-	//	strFileNameIn ="C:/Users/perletti.GMM-BG/Desktop/Drawer WIP/Test Macchine/Alzano/TableLog_2018_09_05_cut.txt";
-	strFileNameIn = QFileDialog::getOpenFileName(this,
-												 "Open Full Log",
-												 QDir::currentPath(),
-												 "Text files (*.txt);;All files (*.*)",
-												 &selFilter);
+		strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/TableLog_2018_09_10B.txt";
+//	strFileNameIn = QFileDialog::getOpenFileName(this,
+//												 "Open Full Log",
+//												 QDir::currentPath(),
+//												 "Text files (*.txt);;All files (*.*)",
+//												 &selFilter);
 	on_LoadFile();
+	qDebug()<<"File loaded";
 }
 //-------------------------------------------------------------------------------------------------
 void MainWindow::on_LoadFile()
@@ -540,6 +545,8 @@ void MainWindow::on_LoadFile()
 void MainWindow::on_SaveButton_clicked()
 {
 	QString selFilter="Text files (*.txt)";
+	ulTimeStart = 0; // reset time intervals
+	ulTimeStop = ( 23*3600 + 59*60 )* 1000;
 	strFileNameOut.clear();
 	//	strFileNameOut = QFileDialog::getSaveFileName(this,
 	//												  "Choose Output filename",
@@ -548,6 +555,7 @@ void MainWindow::on_SaveButton_clicked()
 	//												  &selFilter);
 	strFileNameOut = QDir::currentPath()+"/out.txt";
 	on_save();
+	qDebug()<<"save";
 }
 
 void MainWindow::on_save()
@@ -599,7 +607,11 @@ void MainWindow::on_pushButtonProcess_clicked()
 	char caOutfile[256] = {0,};
 	memcpy(caDummy, strFileNameIn.toStdString().c_str() ,sizeof(caDummy));
 	memcpy(caOutfile, strFileNameOut.toStdString().c_str() ,sizeof(caOutfile));
-	crunchLog.processFile(caDummy, caOutfile);
+	qDebug()<<"calling crunch";
+	qDebug()<<ulTimeStart;
+	qDebug()<<ulTimeStop;
+
+	crunchLog.processFile(caDummy, caOutfile, ulTimeStart, ulTimeStop);
 	QFile file (strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","Cannot open file");
@@ -625,6 +637,13 @@ void MainWindow::on_pushButtonProcess_clicked()
 
 
 }
+void MainWindow::updateUiTimeEdit(long l_ms)
+{
+	QTime n(0, 0, 0);                // n == 14:00:00
+	QTime t;
+	t = n.addSecs(l_ms);                // t == 14:01:10
+	ui->timeEdit->setTime(t);
+}
 
 void MainWindow::on_pushButtonZoomLeft_clicked()
 {
@@ -639,6 +658,8 @@ void MainWindow::on_pushButtonZoomLeft_clicked()
 
 	ui->customPlot->xAxis->setRange(rangeX0,rangeX0+interval);
 	ui->customPlot->replot();
+
+	updateUiTimeEdit(rangeX0);
 
 }
 
@@ -657,6 +678,7 @@ void MainWindow::on_pushButtonZoomRight_clicked()
 
 	ui->customPlot->xAxis->setRange(rangeX0,rangeX0+interval);
 	ui->customPlot->replot();
+	updateUiTimeEdit(rangeX0);
 }
 
 //--------------------------------------------------------------------------
@@ -702,5 +724,13 @@ void MainWindow::on_timeEdit_2_timeChanged(const QTime &time)
 	int min =  time.minute();
 	int sec =  time.second();
 
-	lTimeStart = (hour*60*60) + (min*60) + (sec) ;
+	ulTimeStart = ((hour*60*60) + (min*60) + (sec))*1000 ;
+}
+
+void MainWindow::on_timeEdit_3_timeChanged(const QTime &time)
+{
+	int hour = time.hour();
+	int min =  time.minute();
+	int sec =  time.second();
+	ulTimeStop = ((hour*60*60) + (min*60) + (sec))*1000 ;
 }

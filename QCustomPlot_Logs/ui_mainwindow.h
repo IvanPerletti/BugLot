@@ -50,6 +50,8 @@ public:
     QPushButton *SaveButton;
     QLabel *SaveLabel;
     QHBoxLayout *horizontalLayout_11;
+    QTimeEdit *timeEdit_2;
+    QTimeEdit *timeEdit_3;
     QPushButton *pushButtonProcess;
     QSpacerItem *horizontalSpacer_4;
     QPushButton *PulisciButton;
@@ -651,6 +653,17 @@ public:
         horizontalLayout_11 = new QHBoxLayout();
         horizontalLayout_11->setSpacing(6);
         horizontalLayout_11->setObjectName(QStringLiteral("horizontalLayout_11"));
+        timeEdit_2 = new QTimeEdit(tab);
+        timeEdit_2->setObjectName(QStringLiteral("timeEdit_2"));
+
+        horizontalLayout_11->addWidget(timeEdit_2);
+
+        timeEdit_3 = new QTimeEdit(tab);
+        timeEdit_3->setObjectName(QStringLiteral("timeEdit_3"));
+        timeEdit_3->setDateTime(QDateTime(QDate(2000, 1, 1), QTime(23, 59, 0)));
+
+        horizontalLayout_11->addWidget(timeEdit_3);
+
         pushButtonProcess = new QPushButton(tab);
         pushButtonProcess->setObjectName(QStringLiteral("pushButtonProcess"));
         pushButtonProcess->setEnabled(false);
@@ -959,7 +972,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         FinishTextEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Here will be showed preview of the Procesed File to be plot</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        label->setText(QApplication::translate("MainWindow", "FL Tool rev 1.0.0.1", 0));
+        label->setText(QApplication::translate("MainWindow", "FL Tool rev 1.0.3.0", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Load", 0));
 #ifndef QT_NO_TOOLTIP
         groupBox->setToolTip(QString());

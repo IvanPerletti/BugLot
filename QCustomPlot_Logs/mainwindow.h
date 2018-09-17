@@ -70,7 +70,7 @@ class MainWindow : public QMainWindow
 	void allScreenShots();
 	private:
 	QTimer *timer;
-
+	void updateUiTimeEdit(long l_ms);
 
 
 
@@ -119,6 +119,8 @@ class MainWindow : public QMainWindow
 
 	void on_timeEdit_2_timeChanged(const QTime &time);
 
+	void on_timeEdit_3_timeChanged(const QTime &time);
+
 	private:
 	Ui::MainWindow *ui;
 	QString demoName;
@@ -131,7 +133,8 @@ class MainWindow : public QMainWindow
 	bool TimerFlag = false;
 	bool customPlotVariable = true;
 	double dLastTimeVal; // last value of Time
-	long lTimeStart;
+	unsigned long ulTimeStart; // starting time [ms]
+	unsigned long ulTimeStop; // ending time [ms]
 };
 
 #endif // MAINWINDOW_H
