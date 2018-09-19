@@ -46,7 +46,7 @@ private:
 						long lBitMask,
 						long lMcStatus,
 						unsigned char u8TableBit,
-						unsigned char u8GenStat);
+						int u8GenStat, int iDllStat);
 
 	void strReplaceOccurrence(string *pStrOut,
 							  const string csSubStrLook,
