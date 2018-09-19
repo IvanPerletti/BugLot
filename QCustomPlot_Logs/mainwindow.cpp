@@ -508,12 +508,12 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-		strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/TableLog_2018_09_10B.txt";
-//	strFileNameIn = QFileDialog::getOpenFileName(this,
-//												 "Open Full Log",
-//												 QDir::currentPath(),
-//												 "Text files (*.txt);;All files (*.*)",
-//												 &selFilter);
+	//	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/TableLog_2018_09_10.txt";
+	strFileNameIn = QFileDialog::getOpenFileName(this,
+												 "Open Full Log",
+												 QDir::currentPath(),
+												 "Text files (*.txt);;All files (*.*)",
+												 &selFilter);
 	on_LoadFile();
 	qDebug()<<"File loaded";
 }

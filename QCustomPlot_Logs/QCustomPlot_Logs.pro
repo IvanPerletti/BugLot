@@ -13,14 +13,19 @@ SOURCES += access.cpp \
 		   mainwindow.cpp \
 		 ../qcustomplot.cpp \
 	CrunchLog.cpp \
-    CDecorator.cpp
+	CDecorator.cpp
 
 HEADERS  += access.h \
 		  mainwindow.h \
 		 ../qcustomplot.h \
 	CrunchLog.h \
-    CDecorator.h
+	CDecorator.h
 
 
 FORMS    += access.ui \
 			mainwindow.ui
+
+RESOURCES += \
+	img.qrc
+
+DISTFILES +=

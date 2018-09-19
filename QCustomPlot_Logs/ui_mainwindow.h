@@ -100,6 +100,9 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(846, 638);
+        QIcon icon;
+        icon.addFile(QStringLiteral(":/Icon.png"), QSize(), QIcon::Normal, QIcon::Off);
+        MainWindow->setWindowIcon(icon);
         MainWindow->setStyleSheet(QLatin1String("QLabel{\n"
 "font: 11pt;\n"
 "}\n"
@@ -700,6 +703,7 @@ public:
         horizontalLayout_15->setObjectName(QStringLiteral("horizontalLayout_15"));
         textEdit = new QTextEdit(tab);
         textEdit->setObjectName(QStringLiteral("textEdit"));
+        textEdit->setToolTipDuration(3);
 
         horizontalLayout_15->addWidget(textEdit);
 
@@ -949,7 +953,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "BUG-LOT v01.02", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "BUG-LOT v1.0.3.0", 0));
 #ifndef QT_NO_TOOLTIP
         LoadFile->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Load file to be processed</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
