@@ -11,7 +11,118 @@ CDecorator::CDecorator()
 uint8_t u8aColR[64]={ 85, 85, 85, 170, 170, 170, 255, 255, 255, 0, 0, 0, 85, 85, 85, 85, 170, 170, 170, 170, 255, 255, 255, 255, 0, 0, 0, 85, 85, 85, 85, 170, 170, 170, 170, 255, 255, 255, 42, 85, 127, 170, 212, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 72, 109, 145, 182, 218, 255, };
 uint8_t u8aColG[64]={ 85, 170, 255, 85, 170, 255, 85, 170, 255, 85, 170, 255, 0, 85, 170, 255, 0, 85, 170, 255, 0, 85, 170, 255, 85, 170, 255, 0, 85, 170, 255, 0, 85, 170, 255, 0, 85, 170, 0, 0, 0, 0, 0, 0, 42, 85, 127, 170, 212, 255, 0, 0, 0, 0, 0, 0, 0, 36, 72, 109, 145, 182, 218, 255, };
 uint8_t u8aColB[64]={ 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 85, 127, 170, 212, 255, 0, 36, 72, 109, 145, 182, 218, 255, };
+//-----------------------------------------------------------------------------
+/**
+ * @brief CDecorator::addSignalToPlot draw single IO plot
+ * @param qvTime	array of time
+ * @param qvDataArranged
+ * @param LegendList	Legend List to be procesed
+ * @param qvMyVect	array of y -output
+ * @param iSzVet
+ * @param iDataIdx
+ * @param customPlot
+ */
+void CDecorator::addIOSignalToPlot(QVector<double> qvTime,
+								   QVector<double> qvDataArranged,
+								   QString qStrLegend,
+								   QVector <QVector <int> > qvMyVect,
+								   int iDataIdx,
+								   QCustomPlot *customPlot)
+{
+	const int iSzVet = qvMyVect.size();
+	QPen pen;
+	const int iColPos = (3*iDataIdx) % 63; // position Color choice
+	pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
+	pen.setWidth(2);
 
+	for ( int jj=0; jj<iSzVet; jj++ ){
+		qvDataArranged[jj] = qvMyVect[jj][iDataIdx]*0.5 + (MC_STATUS-iDataIdx) ;
+	}
+	addGraph(pen, qvDataArranged, qvTime, qStrLegend, customPlot);
+}
+//-----------------------------------------------------------------------------
+/**
+ * @brief CDecorator::addSignalToPlot draw single IO plot
+ * @param qvTime	array of time
+ * @param qvDataArranged
+ * @param LegendList	Legend List to be procesed
+ * @param qvMyVect
+ * @param iSzVet
+ * @param iDataIdx
+ * @param customPlot
+ */
+void CDecorator::addGraph(QPen pen, QVector<double> qvDataArranged, QVector<double> qvTime, QString qStrLegend, QCustomPlot *customPlot)
+{
+	customPlot->addGraph();// create graph
+	customPlot->graph()->setPen(pen);
+	customPlot->graph()->setName(qStrLegend);
+	int iGraphCount = customPlot->graphCount();
+	customPlot->graph(iGraphCount-1)->setData(qvTime, qvDataArranged);
+}
+
+void CDecorator::addIntSignalToPlot(QVector<double> qvTime,
+									QVector<double> qvDataArranged,
+									QString qStrLegend,
+									QVector <QVector <int> > qvMyVect,
+									int iDataIdx,
+									QCustomPlot *customPlot)
+{
+	const int iSzVet = qvMyVect.size();
+	QPen pen;
+	const int iColPos = (3*iDataIdx) % 63; // position Color choice
+	pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
+	pen.setWidth(2);
+
+	for ( int jj=0; jj<iSzVet; jj++ ){
+		qvDataArranged[jj] = qvMyVect[jj][iDataIdx] ;
+	}
+	addGraph(pen, qvDataArranged, qvTime, qStrLegend, customPlot);
+}
+//-----------------------------------------------------------------------------
+/**
+ * @brief CDecorator::buildLegend buil legend array
+ * @return Full Filled Legend
+ */
+QVector<QString> CDecorator::buildLegend()
+{
+	QVector<QString> LegendList;
+	LegendList<< "TIME                "
+			  << "I PID SDCAL STP     "
+			  << "I PID APPOPEN       "
+			  << "I PID READY         "
+			  << "I PID PULSE MODE    "
+			  << "O PID HCF MODE      "
+			  << "I GEN REQ FL HCF    "
+			  << "I GEN PREP RAD      "
+			  << "I GEN COM REQ       "
+			  << "I GEN READY         "
+			  << "I GEN REQ RAD       "
+			  << "O PID CFL           "
+			  << "O PREP PID          "
+			  << "O CRAD PID          "
+			  << "I PID EXP RX        "
+			  << "O PID DOSE ADJ      "
+			  << "O GEN READY ACQ FL  "
+			  << "O READY ACQ RAD HCF "
+			  << "I GEN EXON          "
+			  << "O PID EXON          "
+			  << "STATUS              "
+			  << "I_CNS_PREP          "	// stato del segnale di preparazione dato dai 2 segnali in arrivo
+			  << "I_CNS_FL            "	// stato del segnale di fluoro dato dai 2 segnali in arrivo
+			  << "I_CNS_RAD           "	// stato del segnale di esposizione dato dai 2 segnali in arrivo
+			  << "O_TAB_?             "	// fluoroscopia (pedale fluoro)
+			  << "O_TAB_FL            "	// preparazione (tasto di preparazione su consolle)
+			  << "O_TAB_PREP          "	// esposizione rx (consenso finale rx)
+			  << "O_TAB_RAD           "	// grafia (second step)
+			  << "O_TAB_EN            "
+			  << "GEN STAT            "
+			  << "DLL STAT            "
+			  << "   "
+				 ;
+	qDebug()<<"Legend";
+	return LegendList;
+}
+//-----------------------------------------------------------------------------
 /**
  * @brief CDecorator::buildGraph build the graph accordin to own method implementation
  */
@@ -64,43 +175,8 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 		qvMyVect.push_back(tempVector);
 		//  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
 	}
+	QVector<QString> LegendList = buildLegend();
 
-	//  buildLegend() { =========================================
-	QVector<QString> LegendList;
-	LegendList<< "TIME                "
-			  << "I PID SDCAL STP     "
-			  << "I PID APPOPEN       "
-			  << "I PID READY         "
-			  << "I PID PULSE MODE    "
-			  << "O PID HCF MODE      "
-			  << "I GEN REQ FL HCF    "
-			  << "I GEN PREP RAD      "
-			  << "I GEN COM REQ       "
-			  << "I GEN READY         "
-			  << "I GEN REQ RAD       "
-			  << "O PID CFL           "
-			  << "O PREP PID          "
-			  << "O CRAD PID          "
-			  << "I PID EXP RX        "
-			  << "O PID DOSE ADJ      "
-			  << "O GEN READY ACQ FL  "
-			  << "O READY ACQ RAD HCF "
-			  << "I GEN EXON          "
-			  << "O PID EXON          "
-			  << "STATUS              "
-			  << "I_CNS_PREP          "	// stato del segnale di preparazione dato dai 2 segnali in arrivo
-			  << "I_CNS_FL            "	// stato del segnale di fluoro dato dai 2 segnali in arrivo
-			  << "I_CNS_RAD           "	// stato del segnale di esposizione dato dai 2 segnali in arrivo
-			  << "O_TAB_?             "	// fluoroscopia (pedale fluoro)
-			  << "O_TAB_FL            "	// preparazione (tasto di preparazione su consolle)
-			  << "O_TAB_PREP          "	// esposizione rx (consenso finale rx)
-			  << "O_TAB_RAD           "	// grafia (second step)
-			  << "O_TAB_EN            "
-			  << "Dll_Gen             "
-			  << "   "
-				 ;
-	qDebug()<<"Legend";
-	//  } .=========================================
 
 	const int iSzVet = qvMyVect.size(); // array Size
 	const int iNumElem = qvMyVect[0].size(); // num of plots
@@ -116,26 +192,41 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 			qvTime[jj] = qvMyVect[jj][0]/1000.0 ;
 		}
 		qDebug()<<"ForB";
-		for (int iDataIdx=1; iDataIdx<iNumElem; iDataIdx++)
-		{	// OBS:  index move from 1: data(0,:) are time values
-			for ( int jj=0; jj<iSzVet; jj++ ){
-				qvDataArranged[jj] = qvMyVect[jj][iDataIdx]*0.5 + (20-iDataIdx) ;
-			}
-			customPlot->addGraph();// create graph
-			QPen pen;
-			const int iColPos = (iDataIdx*2)%63; // position Color choice
-			pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
-			pen.setWidth(2);
-			customPlot->graph()->setPen(pen);
 
-			QString qStrLegend = LegendList.at(iDataIdx);
-			customPlot->graph()->setName(qStrLegend);
-			customPlot->graph(iDataIdx-1)->setData(qvTime, qvDataArranged);
+		for (int iDataIdx=I_PID_SDCAL_STP; iDataIdx <= O_PID_EXON; iDataIdx++)
+		{	// OBS:  index move from 1: data(0,:) are time values
+			addIOSignalToPlot(qvTime, qvDataArranged,
+							  LegendList.at(iDataIdx), qvMyVect,
+							  iDataIdx, customPlot);
 		}
-		qDebug()<<"Set Axis";
+		qDebug()<<"Plot IO";
+		QVector<int> qVTablePlot = {
+			I_CNS_PREP, I_CNS_FL  ,
+			I_CNS_RAD , O_TAB_x   ,
+			O_TAB_FL  , O_TAB_PREP,
+			O_TAB_RAD , O_TAB_EN   };
+		for (int ii=0; ii < qVTablePlot.size(); ii++)
+		{	// OBS:  index move from 1: data(0,:) are time values
+			int iDataIdx = qVTablePlot.at(ii);
+			addIOSignalToPlot(qvTime, qvDataArranged,
+							  LegendList.at(iDataIdx), qvMyVect,
+							  iDataIdx, customPlot);
+		}
+		qDebug()<<"Plot Table";
+
+		QVector<int> qVIntPlot = {MC_STATUS, GEN_STAT, DLL_GE_STAT};
+		for (int ii=0; ii <qVIntPlot.size(); ii++)
+		{	// OBS:  index move from 1: data(0,:) are time values
+			int iDataIdx = qVIntPlot.at(ii);
+			addIntSignalToPlot(qvTime, qvDataArranged,
+							   LegendList.at(iDataIdx), qvMyVect,
+							   iDataIdx, customPlot);
+		}
+		qDebug()<<"Plot Int ";
 		// give the axes some labels:
 		customPlot->xAxis->setLabel("t [s]");
 		customPlot->yAxis->setLabel("y");
+		qDebug()<<"Set Axis";
 		// set axes ranges, so we see all data:
 		double dMinXAxis = *std::min_element(qvTime.constBegin(), qvTime.constEnd());
 		double dMaxXAxis = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
