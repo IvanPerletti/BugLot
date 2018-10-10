@@ -436,11 +436,16 @@ void CProcessKalosLogs::setCanLogMotionMonitoringInfo(unsigned int uiType, InfoD
         infoStruct->uiSize.push_back(1);
         infoStruct->uiSize.push_back(1);
         infoStruct->uiSize.push_back(1);
+        infoStruct->uiSize.push_back(1);
+        infoStruct->uiSize.push_back(1);
 
         infoStruct->strLabel.push_back("Pensile.wType: ");
         infoStruct->strLabel.push_back(" TableBucky.wType: ");
         infoStruct->strLabel.push_back(" WallBucky.wType: ");
         infoStruct->strLabel.push_back(" Elevix.wType: ");
+        infoStruct->strLabel.push_back(" bIsNewPos: ");
+        infoStruct->strLabel.push_back(" bExamFinished: ");
+
         break;
     case 2:         // MANUAL_INFO
         infoStruct->uiSize.push_back(1);
