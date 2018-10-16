@@ -120,7 +120,7 @@ void CProcessKalosLogs::unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, 
 void CProcessKalosLogs::setCanLogEsBkData(InfoDataStruct *infoStruct){
     const int iNumData = 8;
     string strEsBklabel[iNumData] = {"EnableSwitch: ", " Horns: ", " Move: ", " Homing: ",
-                                     " RemoteEnablewitch: ", " SUPER_ENABLE_SWITCH: ", " BrakeStatus: ", " HW_maintenance: "};
+                                     " RemoteEnablewitch: ", " SUPER_ENABLE_SWITCH: ", " BrakeStatus: ", " Brake_active: "};
     for(int ii = 0; ii < iNumData; ii++) {
         infoStruct->uiSize.push_back(1);
         infoStruct->strLabel.push_back(strEsBklabel[ii]);
@@ -179,11 +179,13 @@ void CProcessKalosLogs::setCanLogVertData3(InfoDataStruct *infoStruct){
     infoStruct->uiSize.push_back(2);
     infoStruct->uiSize.push_back(2);
     infoStruct->uiSize.push_back(1);
+    infoStruct->uiSize.push_back(1);
 
     infoStruct->strLabel.push_back("H_AKD_encoder_mm: ");
     infoStruct->strLabel.push_back(" Rampa_tube_vert_mm: ");
     infoStruct->strLabel.push_back(" Tube_Target_Verticale_mm: ");
     infoStruct->strLabel.push_back(" U_Sound_brake: ");
+    infoStruct->strLabel.push_back(" HW_maintenance: ");
 
 }
 
