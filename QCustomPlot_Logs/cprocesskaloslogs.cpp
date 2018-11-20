@@ -117,311 +117,259 @@ void CProcessKalosLogs::unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogEsBkData(InfoDataStruct *infoStruct){
-    const int iNumData = 8;
-    string strEsBklabel[iNumData] = {"EnableSwitch: ", " Horns: ", " Move: ", " Homing: ",
-                                     " RemoteEnablewitch: ", " SUPER_ENABLE_SWITCH: ", " BrakeStatus: ", " Brake_active: "};
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(1);
-        infoStruct->strLabel.push_back(strEsBklabel[ii]);
-    }
+void CProcessKalosLogs::setCanLogEsBkData(string *strFile, unionDataInfo *infoStruct){
+
+    sprintf(strData,
+            "EnableSwitch: %d Horns: %d Move: %d Homing: %d "
+            "RemoteEnablewitch: %d SUPER_ENABLE_SWITCH: %d BrakeStatus: %d Brake_active: %d",
+            infoStruct->msg2.i8Data1, infoStruct->msg2.i8Data2, infoStruct->msg2.i8Data3, infoStruct->msg2.i8Data4,
+            infoStruct->msg2.i8Data5, infoStruct->msg2.i8Data6, infoStruct->msg2.i8Data7, infoStruct->msg2.i8Data8);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogAutoData1(InfoDataStruct *infoStruct){
+void CProcessKalosLogs::setCanLogAutoData1(string *strFile, unionDataInfo *infoStruct){
 
-    infoStruct->uiSize.push_back(2);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(2);
-    infoStruct->uiSize.push_back(2);
 
-    infoStruct->strLabel.push_back("Stato_movimento_automatico: ");
-    infoStruct->strLabel.push_back(" Accessorio: ");
-    infoStruct->strLabel.push_back(" Posizione: ");
-    infoStruct->strLabel.push_back(" all_movements_started: ");
-    infoStruct->strLabel.push_back(" all_movements_finished: ");
+    sprintf(strData,
+            "Stato_movimento_automatico: %d Accessorio: %d Posizione: %d all_movements_started: %d all_movements_finished %d",
+            infoStruct->msg4.iData1, infoStruct->msg4.i8Data2, infoStruct->msg4.i8Data3, infoStruct->msg4.iData4, infoStruct->msg4.iData5);
+
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogVertData1(InfoDataStruct *infoStruct){
-    const int iNumData = 4;
-    string strVert1abel[iNumData] = {"Stato_motore_pensile_vert: ", " CmdMask[M_PENSILE_VERT]: ", " ExclMask[M_PENSILE_VERT]: ", " CollMask[M_PENSILE_VERT]: "};
+void CProcessKalosLogs::setCanLogVertData1(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strVert1abel[ii]);
-    }
+    sprintf(strData,
+            "Stato_motore_pensile_vert: %d CmdMask[M_PENSILE_VERT]: %d ExclMask[M_PENSILE_VERT]: %d CollMask[M_PENSILE_VERT]: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2, infoStruct->msg1.iData3, infoStruct->msg1.iData4);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogVertData2(InfoDataStruct *infoStruct){
+void CProcessKalosLogs::setCanLogVertData2(string *strFile, unionDataInfo *infoStruct){
 
-    infoStruct->uiSize.push_back(4);
-    infoStruct->uiSize.push_back(2);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
 
-    infoStruct->strLabel.push_back("WSpeed_pensile: ");
-    infoStruct->strLabel.push_back(" WDir_pensile_vert: ");
-    infoStruct->strLabel.push_back(" AKD_drv_status: ");
-    infoStruct->strLabel.push_back(" Op_mode_AKD: ");
+    sprintf(strData,
+            "WSpeed_pensile: %ld WDir_pensile_vert: %d AKD_drv_status: %d Op_mode_AKD: %d",
+            infoStruct->msg5.lData1, infoStruct->msg5.iData2, infoStruct->msg5.i8Data3, infoStruct->msg5.i8Data4);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogVertData3(InfoDataStruct *infoStruct){
+void CProcessKalosLogs::setCanLogVertData3(string *strFile, unionDataInfo *infoStruct){
 
-    infoStruct->uiSize.push_back(2);
-    infoStruct->uiSize.push_back(2);
-    infoStruct->uiSize.push_back(2);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
 
-    infoStruct->strLabel.push_back("H_AKD_encoder_mm: ");
-    infoStruct->strLabel.push_back(" Rampa_tube_vert_mm: ");
-    infoStruct->strLabel.push_back(" Tube_Target_Verticale_mm: ");
-    infoStruct->strLabel.push_back(" U_Sound_brake: ");
-    infoStruct->strLabel.push_back(" HW_maintenance: ");
+    sprintf(strData,
+            "H_AKD_encoder_mm: %d Rampa_tube_vert_mm: %d Tube_Target_Verticale_mm: %d "
+            "U_Sound_brake: %d HW_maintenance: %d",
+            infoStruct->msg6.iData1, infoStruct->msg6.iData2, infoStruct->msg6.iData3,
+            infoStruct->msg6.i8Data4, infoStruct->msg6.i8Data5);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogVertData4(InfoDataStruct *infoStruct){
-    const int iNumData = 3;
-    string strVert4label[iNumData] = {"EndMMove[M_PENSILE_VERT]: ", " BrkMask[M_PENSILE_VERT]: ", " FcMask[M_PENSILE_VERT]: "};
+void CProcessKalosLogs::setCanLogVertData4(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strVert4label[ii]);
-    }
 
-}
-
-//--------------------------------------------------------
-void CProcessKalosLogs::setCanLogLatData1(InfoDataStruct *infoStruct){
-    const int iNumData = 4;
-    string strLat1label[iNumData] = {"Stato_motore_pensile_lat: ", " CmdMask[M_PENSILE_LAT]: ", " ExclMask[M_PENSILE_LAT]: ", " CollMask[M_PENSILE_LAT]: "};
-
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strLat1label[ii]);
-    }
+    sprintf(strData,
+            "EndMMove[M_PENSILE_VERT]: %d BrkMask[M_PENSILE_VERT]: %d FcMask[M_PENSILE_VERT]: %d ",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2, infoStruct->msg1.iData3);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogLatData2(InfoDataStruct *infoStruct){
-    const int iNumData = 2;
-    string strLat2label[iNumData] = {"WDir_pensile_lat: ", " Pos_pensile_lat_mm: "};
+void CProcessKalosLogs::setCanLogLatData1(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strLat2label[ii]);
-    }
-}
 
-//--------------------------------------------------------
-void CProcessKalosLogs::setCanLogLongData1(InfoDataStruct *infoStruct){
-    const int iNumData = 4;
-    string strLong1label[iNumData] = {"Stato_motore_pensile_long: ", " CmdMask[M_PENSILE_LONG]: ", " ExclMask[M_PENSILE_LONG]: ", " CollMask[M_PENSILE_LONG]: "};
-
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strLong1label[ii]);
-    }
+    sprintf(strData,
+            "Stato_motore_pensile_lat: %d CmdMask[M_PENSILE_LAT]: %d ExclMask[M_PENSILE_LAT]: %d CollMask[M_PENSILE_LAT]: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2, infoStruct->msg1.iData3, infoStruct->msg1.iData4);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogLongData2(InfoDataStruct *infoStruct){
-    const int iNumData = 2;
-    string strLong2label[iNumData] = {"WDir_pensile_long: ", " Pos_pensile_long_mm: "};
+void CProcessKalosLogs::setCanLogLatData2(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strLong2label[ii]);
-    }
-}
 
-//--------------------------------------------------------
-void CProcessKalosLogs::setCanLogRotData1(InfoDataStruct *infoStruct){
-    const int iNumData = 4;
-    string strRot1label[iNumData] = {"Stato_motore_pensile_rot: ", " CmdMask[M_PENSILE_ROT]: ", " ExclMask[M_PENSILE_ROT]: ", " CollMask[M_PENSILE_ROT]: "};
-
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strRot1label[ii]);
-    }
+    sprintf(strData,
+            "WDir_pensile_lat: %d Pos_pensile_lat_mm: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogRotData2(InfoDataStruct *infoStruct){
-    const int iNumData = 2;
-    string strRot2label[iNumData] = {"WDir_pensile_rot: ", " Angolo_Rot_decdegree: "};
+void CProcessKalosLogs::setCanLogLongData1(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strRot2label[ii]);
-    }
-}
 
-//--------------------------------------------------------
-void CProcessKalosLogs::setCanLogIncData1(InfoDataStruct *infoStruct){
-    const int iNumData = 4;
-    string strInc1label[iNumData] = {"Stato_motore_pensile_inc: ", " CmdMask[M_PENSILE_INC]: ", " ExclMask[M_PENSILE_INC]: ", " CollMask[M_PENSILE_INC]: "};
-
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strInc1label[ii]);
-    }
+    sprintf(strData,
+            "Stato_motore_pensile_long: %d CmdMask[M_PENSILE_LONG]: %d ExclMask[M_PENSILE_LONG]: %d CollMask[M_PENSILE_LONG]: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2, infoStruct->msg1.iData3, infoStruct->msg1.iData4);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogIncData2(InfoDataStruct *infoStruct){
-    const int iNumData = 2;
-    string strInc2label[iNumData] = {"WDir_pensile_inc: ", " Angolo_Inc_decdegree: "};
+void CProcessKalosLogs::setCanLogLongData2(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strInc2label[ii]);
-    }
 
-    infoStruct->uiSize.push_back(4);
-    infoStruct->strLabel.push_back(" pensile_target_inc: ");
+    sprintf(strData,
+            "WDir_pensile_long: %d Pos_pensile_long_mm: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2);
+    strFile->append(strData);
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogDetLatData1(InfoDataStruct *infoStruct) {
-    const int iNumData = 4;
-    string strDetLat1label[iNumData] = {"Stato_motore_detettore_lat: ", " CmdMask[M_DETETTORE_LAT]: ", " ExclMask[M_DETETTORE_LAT]: ", " CollMask[M_DETETTORE_LAT]: "};
+void CProcessKalosLogs::setCanLogRotData1(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strDetLat1label[ii]);
-    }
+
+    sprintf(strData,
+            "Stato_motore_pensile_rot: %d CmdMask[M_PENSILE_ROT]: %d ExclMask[M_PENSILE_ROT]: %d CollMask[M_PENSILE_ROT]: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2, infoStruct->msg1.iData3, infoStruct->msg1.iData4);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogDetLatData2(InfoDataStruct *infoStruct){
-    const int iNumData = 2;
-    string strDetLat2label[iNumData] = {"WDir_detettore_lat: ", " Pos_detettore_lat_mm: "};
+void CProcessKalosLogs::setCanLogRotData2(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strDetLat2label[ii]);
-    }
 
-    infoStruct->uiSize.push_back(4);
-    infoStruct->strLabel.push_back(" detettore_target_lat: ");
+    sprintf(strData,
+            "WDir_pensile_rot: %d Angolo_Rot_decdegree: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2);
+    strFile->append(strData);
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogDetLongData1(InfoDataStruct *infoStruct) {
-    const int iNumData = 4;
-    string strDetLong1label[iNumData] = {"Stato_motore_detettore_long: ", " CmdMask[M_DETETTORE_LONG]: ", " ExclMask[M_DETETTORE_LONG]: ", " CollMask[M_DETETTORE_LONG]: "};
+void CProcessKalosLogs::setCanLogIncData1(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strDetLong1label[ii]);
-    }
+
+    sprintf(strData,
+            "Stato_motore_pensile_inc: %d CmdMask[M_PENSILE_INC]: %d ExclMask[M_PENSILE_INC]: %d CollMask[M_PENSILE_INC]: %d",
+            infoStruct->msg1.iData1, (unsigned int) infoStruct->msg1.iData2, (unsigned int) infoStruct->msg1.iData3, (unsigned int) infoStruct->msg1.iData4);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogDetLongData2(InfoDataStruct *infoStruct){
-    const int iNumData = 2;
-    string strDetLong2label[iNumData] = {"WDir_detettore_long: ", " Pos_detettore_long_mm: "};
+void CProcessKalosLogs::setCanLogIncData2(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(2);
-        infoStruct->strLabel.push_back(strDetLong2label[ii]);
-    }
 
-    infoStruct->uiSize.push_back(4);
-    infoStruct->strLabel.push_back(" detettore_target_long: ");
-}
-
-//--------------------------------------------------------
-void CProcessKalosLogs::setCanLogSyncData(InfoDataStruct *infoStruct){
-
-    infoStruct->uiSize.push_back(2);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-
-    infoStruct->strLabel.push_back("Syncro_status: ");
-    infoStruct->strLabel.push_back(" ok_to_synchronize: ");
-    infoStruct->strLabel.push_back(" is_synchronized: ");
-    infoStruct->strLabel.push_back(" exit_from_synchro: ");
-    infoStruct->strLabel.push_back(" sync_error_position: ");
-    infoStruct->strLabel.push_back(" Dead_zone_sync: ");
-    infoStruct->strLabel.push_back(" Syncro_pensile_error: ");
+    sprintf(strData,
+            "WDir_pensile_inc: %d Angolo_Inc_decdegree: %d pensile_target_inc: %ld",
+            infoStruct->msg7.iData1, infoStruct->msg7.iData2, infoStruct->msg7.lData3);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogTargetData1(InfoDataStruct *infoStruct){
-    const int iNumData = 2;
-    string strTarget1label[iNumData] = {"pensile_target_vert: ", " pensile_target_lat: "};
+void CProcessKalosLogs::setCanLogDetLatData1(string *strFile, unionDataInfo *infoStruct){
 
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(4);
-        infoStruct->strLabel.push_back(strTarget1label[ii]);
-    }
-}
 
-//--------------------------------------------------------
-void CProcessKalosLogs::setCanLogTargetData2(InfoDataStruct *infoStruct){
-    const int iNumData = 2;
-    string strTarget2label[iNumData] = {"pensile_target_long: ", " pensile_target_rot: "};
-
-    for(int ii = 0; ii < iNumData; ii++) {
-        infoStruct->uiSize.push_back(4);
-        infoStruct->strLabel.push_back(strTarget2label[ii]);
-    }
+    sprintf(strData,
+            "Stato_motore_detettore_lat: %d CmdMask[M_DETETTORE_LAT]: %d ExclMask[M_DETETTORE_LAT]: %d CollMask[M_DETETTORE_LAT]: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2, infoStruct->msg1.iData3, infoStruct->msg1.iData4);
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogDetLatSyncData(InfoDataStruct *infoStruct){
+void CProcessKalosLogs::setCanLogDetLatData2(string *strFile, unionDataInfo *infoStruct){
 
-    infoStruct->uiSize.push_back(2);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
 
-    infoStruct->strLabel.push_back("FM713_detettore_lat_loop_speed: ");
-    infoStruct->strLabel.push_back(" Syncro_detettore_lat_error: ");
-    infoStruct->strLabel.push_back(" orobix_dead_zone_sync_lat_before: ");
-    infoStruct->strLabel.push_back(" orobix_dead_zone_sync_lat_after: ");
-    infoStruct->strLabel.push_back(" Corsa_detettore_lat: ");
+    sprintf(strData,
+            "WDir_detettore_lat: %d Pos_detettore_lat_mm: %d detettore_target_lat: %d",
+            infoStruct->msg7.iData1, infoStruct->msg7.iData2, infoStruct->msg7.lData3);
+    strFile->append(strData);
+
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setCanLogDetLongSyncData(InfoDataStruct *infoStruct){
+void CProcessKalosLogs::setCanLogDetLongData1(string *strFile, unionDataInfo *infoStruct) {
 
-    infoStruct->uiSize.push_back(2);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
-    infoStruct->uiSize.push_back(1);
 
-    infoStruct->strLabel.push_back("FM713_detettore_long_loop_speed: ");
-    infoStruct->strLabel.push_back(" Syncro_detettore_long_error: ");
-    infoStruct->strLabel.push_back(" orobix_dead_zone_sync_long_before: ");
-    infoStruct->strLabel.push_back(" orobix_dead_zone_sync_long_after: ");
-    infoStruct->strLabel.push_back(" Corsa_detettore_long: ");
+    sprintf(strData,
+            "Stato_motore_detettore_long: %d CmdMask[M_DETETTORE_LONG]: %d ExclMask[M_DETETTORE_LONG]: %d CollMask[M_DETETTORE_LONG]: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2, infoStruct->msg1.iData3, infoStruct->msg1.iData4);
+    strFile->append(strData);
+
+}
+
+//--------------------------------------------------------
+void CProcessKalosLogs::setCanLogDetLongData2(string *strFile, unionDataInfo *infoStruct){
+
+
+    sprintf(strData,
+            "WDir_detettore_long: %d Pos_detettore_long_mm: %d detettore_target_long: %ld",
+            infoStruct->msg7.iData1, infoStruct->msg7.iData2, infoStruct->msg7.lData3);
+    strFile->append(strData);
+}
+
+//--------------------------------------------------------
+void CProcessKalosLogs::setCanLogSyncData(string *strFile, unionDataInfo *infoStruct){
+
+
+    sprintf(strData,
+            "Syncro_status: %d ok_to_synchronize: %d is_synchronized: %d exit_from_synchro: %d "
+            "Dead_zone_sync: %d Syncro_pensile_error: %d",
+            infoStruct->msg9.iData1, infoStruct->msg9.i8Data2, infoStruct->msg9.i8Data3, infoStruct->msg9.i8Data4,
+            infoStruct->msg9.i8Data5, infoStruct->msg9.iData6);
+    strFile->append(strData);
+
+}
+
+//--------------------------------------------------------
+void CProcessKalosLogs::setCanLogTargetData1(string *strFile, unionDataInfo *infoStruct){
+
+
+    sprintf(strData,
+            "pensile_target_vert: %ld pensile_target_lat: %ld ",
+            infoStruct->msg3.lData1, infoStruct->msg3.lData2);
+    strFile->append(strData);
+
+}
+
+//--------------------------------------------------------
+void CProcessKalosLogs::setCanLogTargetData2(string *strFile, unionDataInfo *infoStruct){
+
+
+    sprintf(strData,
+            "pensile_target_long: %ld pensile_target_rot: %ld ",
+            infoStruct->msg3.lData1, infoStruct->msg3.lData2);
+    strFile->append(strData);
+
+}
+
+//--------------------------------------------------------
+void CProcessKalosLogs::setCanLogDetLatSyncData(string *strFile, unionDataInfo *infoStruct){
+
+
+    sprintf(strData,
+            "FM713_detettore_lat_loop_speed: %d Syncro_detettore_lat_error: %d orobix_dead_zone_sync_lat_before: %d"
+            "orobix_dead_zone_sync_lat_after: %d Corsa_detettore_lat: %d",
+            infoStruct->msg8.iData1, infoStruct->msg8.i8Data2, infoStruct->msg8.i8Data3, infoStruct->msg8.i8Data4, infoStruct->msg8.i8Data5);
+    strFile->append(strData);
+}
+
+//--------------------------------------------------------
+void CProcessKalosLogs::setCanLogDetLongSyncData(string *strFile, unionDataInfo *infoStruct){
+
+
+    sprintf(strData,
+            "FM713_detettore_long_loop_speed: %d Syncro_detettore_long_error: %d orobix_dead_zone_sync_long_befor:e %d"
+            "orobix_dead_zone_sync_long_after: %d Corsa_detettore_long: %d",
+            infoStruct->msg8.iData1, infoStruct->msg8.i8Data2, infoStruct->msg8.i8Data3, infoStruct->msg8.i8Data4, infoStruct->msg8.i8Data5);
+    strFile->append(strData);
+
 }
 
 //--------------------------------------------------------
@@ -430,35 +378,26 @@ void CProcessKalosLogs::setCanLogDetLongSyncData(InfoDataStruct *infoStruct){
  * @param uiType        identify type of info sent
  * @param infoStruct    pointer to struct containing data size and label
  */
-void CProcessKalosLogs::setCanLogMotionMonitoringInfo(unsigned int uiType, InfoDataStruct *infoStruct){
+void CProcessKalosLogs::setCanLogMotionMonitoringInfo(string *strFile, unionDataInfo *infoStruct){
 
-    switch(uiType) {
+    signed int iTypeInfo = (int) infoStruct->caAllData[0];
+
+    switch(iTypeInfo) {
     case 1:         // MOTION_TYPE_INFO
-        infoStruct->uiSize.push_back(1);
-        infoStruct->uiSize.push_back(1);
-        infoStruct->uiSize.push_back(1);
-        infoStruct->uiSize.push_back(1);
-        infoStruct->uiSize.push_back(1);
-        infoStruct->uiSize.push_back(1);
-
-        infoStruct->strLabel.push_back("Pensile.wType: ");
-        infoStruct->strLabel.push_back(" TableBucky.wType: ");
-        infoStruct->strLabel.push_back(" WallBucky.wType: ");
-        infoStruct->strLabel.push_back(" Elevix.wType: ");
-        infoStruct->strLabel.push_back(" bIsNewPos: ");
-        infoStruct->strLabel.push_back(" bExamFinished: ");
-
+        sprintf(strData,
+                "Pensile.wType: %d TableBucky.wType: %d WallBucky.wType: %d Elevix.wType: %d "
+                "bIsNewPos: %d bExamFinished: %d",
+                infoStruct->msg2.i8Data2, infoStruct->msg2.i8Data3, infoStruct->msg2.i8Data4,
+                infoStruct->msg2.i8Data5, infoStruct->msg2.i8Data6, infoStruct->msg2.i8Data7);
         break;
-    case 2:         // MANUAL_INFO
-        infoStruct->uiSize.push_back(1);
-        infoStruct->uiSize.push_back(1);
-        infoStruct->uiSize.push_back(1);
-
-        infoStruct->strLabel.push_back("elType: ");
-        infoStruct->strLabel.push_back(" bManualMotion: ");
-        infoStruct->strLabel.push_back(" Direction: ");
+    case 2:          // MANUAL_INFO
+        sprintf(strData,
+                "elType: %d bManualMotion: %d Direction: %d",
+                infoStruct->msg2.i8Data2, infoStruct->msg2.i8Data3, infoStruct->msg2.i8Data4);
         break;
     }
+    strFile->append(strData);
+
 }
 
 //--------------------------------------------------------
@@ -466,10 +405,13 @@ void CProcessKalosLogs::setCanLogMotionMonitoringInfo(unsigned int uiType, InfoD
  * @brief CProcessKalosLogs::setLineError set message size (in byte) and label for error message requiring line of error
  * @param data     pointer to struct containing data size and label
  */
-void CProcessKalosLogs::setLineError(InfoDataStruct *data) {
+void CProcessKalosLogs::setLineError(string *strFile, unionDataInfo *infoStruct) {
 
-    data->uiSize.push_back(2);
-    data->strLabel.push_back("LineOfError: ");
+
+    sprintf(strData,
+            "LineOfError: %d",
+            infoStruct->msg2.i8Data1);
+    strFile->append(strData);
 
 }
 
@@ -478,15 +420,13 @@ void CProcessKalosLogs::setLineError(InfoDataStruct *data) {
  * @brief CProcessKalosLogs::setNoMotionData    set message size (in byte) and label for error message related to no motion errors
  * @param data      pointer to struct containing data size and label
  */
-void CProcessKalosLogs::setNoMotionData(InfoDataStruct *data) {
+void CProcessKalosLogs::setNoMotionData(string *strFile, unionDataInfo *infoStruct) {
 
-    data->uiSize.push_back(2);
-    data->uiSize.push_back(2);
-    data->uiSize.push_back(2);
 
-    data->strLabel.push_back("iActual: ");
-    data->strLabel.push_back(" iTarget: ");
-    data->strLabel.push_back(" iThr: ");
+    sprintf(strData,
+            "iActual: %d iTarget: %d iThr: %d",
+            infoStruct->msg1.iData1, infoStruct->msg1.iData2, infoStruct->msg1.iData3);
+    strFile->append(strData);
 
 }
 
@@ -545,25 +485,21 @@ bool CProcessKalosLogs::isFirstMessage(unsigned int *arrVal, int freeSlots) {
  * @param data
  * @param arrVal
  */
-void CProcessKalosLogs::setAutoTargetData(InfoDataStruct *data, unsigned int *arrVal) {
+void CProcessKalosLogs::setAutoTargetData(string *strFile, unionDataInfo *infoStruct) {
 
-    if(isFirstMessage(arrVal, 2)) {
-        data->uiSize.push_back(4);
-        data->uiSize.push_back(2);
 
-        data->strLabel.push_back(" iTarget: ");
-        data->strLabel.push_back(" iInitial: ");
+    if(isFirstMessage(( unsigned int *) infoStruct->caAllData, 2)) {
+        sprintf(strData,
+                "iTarget: %ld iInitial: %d",
+                infoStruct->msgMM_1.lData1, infoStruct->msg1.iData2);
     }
     else {
-        data->uiSize.push_back(1);
-        data->uiSize.push_back(1);
-        data->uiSize.push_back(2);
-
-        data->strLabel.push_back(" Direction: ");
-        data->strLabel.push_back(" ElementType: ");
-        data->strLabel.push_back(" iActual: ");
+        sprintf(strData,
+                "Direction: %d ElementType: %d iActual: %d",
+                infoStruct->msgMM_2.i8Data1, infoStruct->msgMM_2.i8Data2, infoStruct->msgMM_2.iData3);
     }
 
+    strFile->append(strData);
 }
 
 //--------------------------------------------------------
@@ -572,25 +508,21 @@ void CProcessKalosLogs::setAutoTargetData(InfoDataStruct *data, unsigned int *ar
  * @param data
  * @param arrVal
  */
-void CProcessKalosLogs::setDirectionData(InfoDataStruct *data, unsigned int *arrVal) {
+void CProcessKalosLogs::setDirectionData(string *strFile, unionDataInfo *infoStruct) {
 
-    if(isFirstMessage(arrVal, 4)) {
-        data->uiSize.push_back(2);
-        data->uiSize.push_back(2);
-        data->uiSize.push_back(2);
 
-        data->strLabel.push_back(" iActual: ");
-        data->strLabel.push_back(" iPrevPos: ");
-        data->strLabel.push_back(" iCheckPos: ");
+    if(isFirstMessage(( unsigned int *) infoStruct->caAllData, 4)) {
+        sprintf(strData,
+                "iActual: %d iPrevPos: %d iCheckPos: %d",
+                infoStruct->msgMM_3.iData1, infoStruct->msgMM_3.iData2, infoStruct->msgMM_3.iData3);
     }
     else {
-        data->uiSize.push_back(1);
-        data->uiSize.push_back(1);
-
-        data->strLabel.push_back(" Direction: ");
-        data->strLabel.push_back(" ElementType: ");
+        sprintf(strData,
+                "Direction: %d ElementType: %d",
+                infoStruct->msgMM_2.i8Data1, infoStruct->msgMM_2.i8Data2);
     }
 
+    strFile->append(strData);
 }
 
 //--------------------------------------------------------
@@ -598,14 +530,15 @@ void CProcessKalosLogs::setDirectionData(InfoDataStruct *data, unsigned int *arr
  * @brief CProcessKalosLogs::setElevixTargetPosData     set message size (in byte) and label for elevix target pos error message
  * @param data
  */
-void CProcessKalosLogs::setElevixTargetPosData(InfoDataStruct *data) {
-    data->uiSize.push_back(2);
-    data->uiSize.push_back(2);
-    data->uiSize.push_back(2);
+void CProcessKalosLogs::setElevixTargetPosData(string *strFile, unionDataInfo *infoStruct) {
 
-    data->strLabel.push_back(" iActual: ");
-    data->strLabel.push_back(" EEpromMin: ");
-    data->strLabel.push_back(" EEpromMax: ");
+
+    sprintf(strData,
+            "iActual: %d EEpromMin: %d EEpromMax: %d",
+            infoStruct->msgMM_3.iData1, infoStruct->msgMM_3.iData2, infoStruct->msgMM_3.iData3);
+
+    strFile->append(strData);
+
 }
 
 //--------------------------------------------------------
@@ -613,14 +546,15 @@ void CProcessKalosLogs::setElevixTargetPosData(InfoDataStruct *data) {
  * @brief CProcessKalosLogs::setSynchroTargetData       set message size (in byte) and label for Synchro target error message
  * @param data
  */
-void CProcessKalosLogs::setSynchroTargetData(InfoDataStruct *data) {
-    data->uiSize.push_back(1);
-    data->uiSize.push_back(2);
-    data->uiSize.push_back(2);
+void CProcessKalosLogs::setSynchroTargetData(string *strFile, unionDataInfo *infoStruct) {
 
-    data->strLabel.push_back(" iDelta: ");
-    data->strLabel.push_back(" iTarget: ");
-    data->strLabel.push_back(" iActual: ");
+
+    sprintf(strData,
+            "iDelta: %d iTarget: %d iActual: %d",
+            infoStruct->msgMM_4.i8Data1, infoStruct->msgMM_4.iData2, infoStruct->msgMM_4.iData3);
+
+    strFile->append(strData);
+
 }
 
 //--------------------------------------------------------
@@ -629,16 +563,20 @@ void CProcessKalosLogs::setSynchroTargetData(InfoDataStruct *data) {
  * @param data
  * @param arrVal
  */
-void CProcessKalosLogs::setAutoTargetPosData(InfoDataStruct *data, unsigned int *arrVal) {
+void CProcessKalosLogs::setAutoTargetPosData(string *strFile, unionDataInfo *infoStruct) {
 
-    data->uiSize.push_back(4);
 
-    if(isFirstMessage(arrVal, 2)) {
-        data->strLabel.push_back(" ElevixTarget ");
+    if(isFirstMessage(( unsigned int *) infoStruct->caAllData, 4)) {
+        sprintf(strData,
+                "ElevixTarget: %ld",
+                infoStruct->msgMM_1.lData1);
     }
     else {
-        data->strLabel.push_back(" PensileVertTarget ");
+        sprintf(strData,
+                "PensileVertTarget: %ld",
+                infoStruct->msgMM_1.lData1);
     }
+    strFile->append(strData);
 
 }
 
@@ -647,14 +585,14 @@ void CProcessKalosLogs::setAutoTargetPosData(InfoDataStruct *data, unsigned int 
  * @brief CProcessKalosLogs::setSynchroTargetPosData        set message size (in byte) and label for relative synchro position elevix-pensile vert message error
  * @param data
  */
-void CProcessKalosLogs::setSynchroTargetPosData(InfoDataStruct *data) {
+void CProcessKalosLogs::setSynchroTargetPosData(string *strFile, unionDataInfo *infoStruct) {
 
-    data->uiSize.push_back(2);
-    data->uiSize.push_back(2);
 
-    data->strLabel.push_back(" ElevixActual: ");
-    data->strLabel.push_back(" PensileVertActual: ");
+    sprintf(strData,
+            "PensileVertActual: %d ElevixActual: %d",
+            infoStruct->msgMM_3.iData1, infoStruct->msgMM_3.iData2);
 
+    strFile->append(strData);
 }
 
 //--------------------------------------------------------
@@ -662,45 +600,39 @@ void CProcessKalosLogs::setSynchroTargetPosData(InfoDataStruct *data) {
  * @brief CProcessKalosLogs::setUntimelySynchroData     set message size (in byte) and label for untimely synchro error message
  * @param data
  */
-void CProcessKalosLogs::setUntimelySynchroData(InfoDataStruct *data) {
+void CProcessKalosLogs::setUntimelySynchroData(string *strFile, unionDataInfo *infoStruct) {
 
-    data->uiSize.push_back(1);
-    data->uiSize.push_back(1);
-    data->uiSize.push_back(1);
-    data->uiSize.push_back(1);
-    data->uiSize.push_back(2);
 
-    data->strLabel.push_back(" isNewPos: ");
-    data->strLabel.push_back(" EnableSwitch: ");
-    data->strLabel.push_back(" PensileMotionType: ");
-    data->strLabel.push_back(" bExamFinished: ");
-    data->strLabel.push_back(" all_movements_finished: ");
+    sprintf(strData,
+            "isNewPos: %d EnableSwitch: %d PensileMotionType: %d bExamFinished: %d all_movements_finished: %d",
+            infoStruct->msgMM_5.i8Data1, infoStruct->msgMM_5.i8Data2, infoStruct->msgMM_5.i8Data3, infoStruct->msgMM_5.i8Data4, infoStruct->msgMM_5.iData5);
+
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setChangeAccessoryData(InfoDataStruct *data) {
+void CProcessKalosLogs::setChangeAccessoryData(string *strFile, unionDataInfo *infoStruct) {
 
-    data->uiSize.push_back(2);
-    data->uiSize.push_back(1);
-    data->uiSize.push_back(1);
-    data->uiSize.push_back(1);
-    data->uiSize.push_back(1);
 
-    data->strLabel.push_back(" Stato_movimento_automatico: ");
-    data->strLabel.push_back(" Accessorio: ");
-    data->strLabel.push_back(" Posizione: ");
-    data->strLabel.push_back(" Accessorio_Errore: ");
-    data->strLabel.push_back(" Posizione_Errore: ");
+    sprintf(strData,
+            "Stato_movimento_automatico: %d Accessorio: %d Posizione: %d "
+            "Accessorio_Errore: %d Posizione_Errore: %d",
+            infoStruct->msgMM_6.iData1, infoStruct->msgMM_6.i8Data2, infoStruct->msgMM_6.i8Data3, infoStruct->msgMM_6.i8Data4, infoStruct->msgMM_6.i8Data5);
+
+    strFile->append(strData);
 
 }
 
 //--------------------------------------------------------
-void CProcessKalosLogs::setAxesDriverData(InfoDataStruct *data) {
+void CProcessKalosLogs::setAxesDriverData(string *strFile, unionDataInfo *infoStruct) {
 
-    data->uiSize.push_back(1);
 
-    data->strLabel.push_back(" AxisStat: ");
+    sprintf(strData,
+            "AxisStat: %d",
+            infoStruct->msgMM_5.i8Data1);
+
+    strFile->append(strData);
 
 }
 
@@ -711,13 +643,13 @@ void CProcessKalosLogs::setAxesDriverData(InfoDataStruct *data) {
  * @param error         error happened
  * @return  data struct containing correct message sizes and labels
  */
-CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(unsigned int* uiDataArray, unsigned int error) {
+CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(string *strFile, unionDataInfo *infoStruct, unsigned int error) {
     InfoDataStruct dataInfo;
 
     switch(error){
     case 851:
     case 852:
-        setLineError(&dataInfo);
+        setLineError(strFile, infoStruct);
         break;
     case 825:
     case 826:
@@ -739,7 +671,7 @@ CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(unsigned
     case 842:
     case 846:
     case 847:
-        setNoMotionData(&dataInfo);
+        setNoMotionData(strFile, infoStruct);
         break;
     case 781:
     case 783:
@@ -751,7 +683,7 @@ CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(unsigned
     case 805:
     case 807:
     case 848:
-        setAutoTargetData(&dataInfo, uiDataArray);
+        setAutoTargetData(strFile, infoStruct);
         break;
     case 782:
     case 784:
@@ -780,33 +712,33 @@ CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(unsigned
     case 850:
     case 857:
     case 858:
-        setDirectionData(&dataInfo, uiDataArray);
+        setDirectionData(strFile, infoStruct);
         break;
     case 843:
-        setElevixTargetPosData(&dataInfo);
+        setElevixTargetPosData(strFile, infoStruct);
         break;
     case 791:
     case 801:
     case 803:
-        setSynchroTargetData(&dataInfo);
+        setSynchroTargetData(strFile, infoStruct);
         break;
     case 853:
     case 854:
     case 855:
-        setAutoTargetPosData(&dataInfo, uiDataArray);
+        setAutoTargetPosData(strFile, infoStruct);
         break;
     case 856:
-        setSynchroTargetPosData(&dataInfo);
+        setSynchroTargetPosData(strFile, infoStruct);
         break;
     case 779:
-        setUntimelySynchroData(&dataInfo);
+        setUntimelySynchroData(strFile, infoStruct);
         break;
     case 859:
-        setChangeAccessoryData(&dataInfo);
+        setChangeAccessoryData(strFile, infoStruct);
         break;
     case 823:
     case 824:
-        setAxesDriverData(&dataInfo);
+        setAxesDriverData(strFile, infoStruct);
         break;
     case 768:
     case 769:
@@ -905,12 +837,29 @@ void CProcessKalosLogs::composeLineLog(string *strFile, InfoDataStruct *infoData
 }
 
 //--------------------------------------------------------
+void CProcessKalosLogs::set_log_char(char *cDataArr, unsigned int* uiDataArray) {
+
+    cDataArr[0] = uiDataArray[0];
+    cDataArr[1] = uiDataArray[1];
+    cDataArr[2] = uiDataArray[2];
+    cDataArr[3] = uiDataArray[3];
+    cDataArr[4] = uiDataArray[4];
+    cDataArr[5] = uiDataArray[5];
+    cDataArr[6] = uiDataArray[6];
+    cDataArr[7] = uiDataArray[7];
+
+}
+
+//--------------------------------------------------------
 void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * ucaNameFileOut)
 {
     string STRING, strOut, strTime;
     ifstream infile;
     ofstream outFile;
     InfoDataStruct dataInfo;
+
+    // UNION
+    unionDataInfo unionData;
 
     if (ucaNameFileIn == NULL || ucaNameFileOut == NULL ){
         return;
@@ -923,7 +872,7 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
     char strID[16];
     unsigned int
             lErrorID=0,
-            ulaData[8]={0,};
+            uiaData[8]={0,};
     char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
 
     string previousLine="";
@@ -947,15 +896,29 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                 sscanf( STRING.data(), "%X", &uiID);
                 sscanf( STRING.data(), "%s", strID);
                 removeCharsUntil(&STRING,"Data = ");
+
+                // Extract in unsigned int array
+//                sscanf( STRING.data() , "%x %x %x %x %x %x %x %x",
+//                        &uiaData[0] ,
+//                        &uiaData[1] ,
+//                        &uiaData[2] ,
+//                        &uiaData[3] ,
+//                        &uiaData[4] ,
+//                        &uiaData[5] ,
+//                        &uiaData[6] ,
+//                        &uiaData[7] );// extract numbers
+                // Set data into char array;
+                //set_log_char(unionData.caAllData, uiaData);
+
                 sscanf( STRING.data() , "%x %x %x %x %x %x %x %x",
-                        &ulaData[0] ,
-                        &ulaData[1] ,
-                        &ulaData[2] ,
-                        &ulaData[3] ,
-                        &ulaData[4] ,
-                        &ulaData[5] ,
-                        &ulaData[6] ,
-                        &ulaData[7] );// extract numbers
+                    &unionData.caAllData[0],
+                    &unionData.caAllData[1],
+                    &unionData.caAllData[2],
+                    &unionData.caAllData[3],
+                    &unionData.caAllData[4],
+                    &unionData.caAllData[5],
+                    &unionData.caAllData[6],
+                    &unionData.caAllData[7]);// extract numbers
                 strOut.clear();
                 strOut.append(strID);
                 strOut.append(" - " );
@@ -963,81 +926,105 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                 strOut.append(" " );
                 switch(uiID) {
                 case 0x0600:    // OX_CANLOG_ID_ES_BK1
-                    setCanLogEsBkData(&dataInfo);
+//                    setCanLogEsBkData(&dataInfo);
+                    setCanLogEsBkData(&strOut, &unionData);
                     break;
                 case 0x0610:    // OX_CANLOG_ID_AUTO1
-                    setCanLogAutoData1(&dataInfo);
+//                    setCanLogAutoData1(&dataInfo);
+                    setCanLogAutoData1(&strOut, &unionData);
                     break;
                 case 0x0620:    // OX_CANLOG_ID_VERT1
-                    setCanLogVertData1(&dataInfo);
+//                    setCanLogVertData1(&dataInfo);
+                    setCanLogVertData1(&strOut, &unionData);
                     break;
                 case 0x0621:    // OX_CANLOG_ID_VERT2
-                    setCanLogVertData2(&dataInfo);
+//                    setCanLogVertData2(&dataInfo);
+                    setCanLogVertData2(&strOut, &unionData);
                     break;
                 case 0x0622:    // OX_CANLOG_ID_VERT3
-                    setCanLogVertData3(&dataInfo);
+//                    setCanLogVertData3(&dataInfo);
+                    setCanLogVertData3(&strOut, &unionData);
                     break;
                 case 0x0623:    // OX_CANLOG_ID_VERT4
-                    setCanLogVertData4(&dataInfo);
+//                    setCanLogVertData4(&dataInfo);
+                    setCanLogVertData4(&strOut, &unionData);
                     break;
                 case 0x0630:    // OX_CANLOG_ID_LAT1
-                    setCanLogLatData1(&dataInfo);
+                    //setCanLogLatData1(&dataInfo);
+                    setCanLogLatData1(&strOut, &unionData);
                     break;
                 case 0x0631:    // OX_CANLOG_ID_LAT2
-                    setCanLogLatData2(&dataInfo);
+//                    setCanLogLatData2(&dataInfo);
+                    setCanLogLatData2(&strOut, &unionData);
                     break;
                 case 0x0640:    // OX_CANLOG_ID_LONG1
-                    setCanLogLongData1(&dataInfo);
+//                    setCanLogLongData1(&dataInfo);
+                    setCanLogLongData1(&strOut, &unionData);
                     break;
                 case 0x0641:    // OX_CANLOG_ID_LONG2
-                    setCanLogLongData2(&dataInfo);
+//                    setCanLogLongData2(&dataInfo);
+                    setCanLogLongData2(&strOut, &unionData);
                     break;
                 case 0x0644:    // OX_CANLOG_ID_ROT1
-                    setCanLogRotData1(&dataInfo);
+//                    setCanLogRotData1(&dataInfo);
+                    setCanLogRotData1(&strOut, &unionData);
                     break;
                 case 0x0645:    // OX_CANLOG_ID_ROT2
-                    setCanLogRotData2(&dataInfo);
+//                    setCanLogRotData2(&dataInfo);
+                    setCanLogRotData2(&strOut, &unionData);
                     break;
                 case 0x0647:    // OX_CANLOG_ID_INC1
-                    setCanLogIncData1(&dataInfo);
+//                    setCanLogIncData1(&dataInfo);
+                    setCanLogIncData1(&strOut, &unionData);
                     break;
                 case 0x0648:    // OX_CANLOG_ID_INC2
-                    setCanLogIncData2(&dataInfo);
+//                    setCanLogIncData2(&dataInfo);
+                    setCanLogIncData2(&strOut, &unionData);
                     break;
                 case 0x064A:    // OX_CANLOG_ID_DET_LAT1
-                    setCanLogDetLatData1(&dataInfo);
+//                    setCanLogDetLatData1(&dataInfo);
+                    setCanLogDetLatData1(&strOut, &unionData);
                     break;
                 case 0x064B:    // OX_CANLOG_ID_DET_LAT2
-                    setCanLogDetLatData2(&dataInfo);
+//                    setCanLogDetLatData2(&dataInfo);
+                    setCanLogDetLatData2(&strOut, &unionData);
                     break;
                 case 0x064D:    // OX_CANLOG_ID_DET_LONG1
-                    setCanLogDetLongData1(&dataInfo);
+//                    setCanLogDetLongData1(&dataInfo);
+                    setCanLogDetLongData1(&strOut, &unionData);
                     break;
                 case 0x064E:    // OX_CANLOG_ID_DET_LONG2
-                    setCanLogDetLongData2(&dataInfo);
+//                    setCanLogDetLongData2(&dataInfo);
+                    setCanLogDetLongData2(&strOut, &unionData);
                     break;
                 case 0x0650:    // OX_CANLOG_ID_SYNC
-                    setCanLogSyncData(&dataInfo);
+////                    setCanLogSyncData(&dataInfo);
+                    setCanLogSyncData(&strOut, &unionData);
                     break;
                 case 0x0660:    // OX_CANLOG_ID_TARGET1
-                    setCanLogTargetData1(&dataInfo);
+//                    setCanLogTargetData1(&dataInfo);
+                    setCanLogTargetData1(&strOut, &unionData);
                     break;
                 case 0x0661:    // OX_CANLOG_ID_TARGET2
-                    setCanLogTargetData2(&dataInfo);
+//                    setCanLogTargetData2(&dataInfo);
+                    setCanLogTargetData2(&strOut, &unionData);
                     break;
                 case 0x0654:    // OX_CANLOG_ID_DET_LAT_SYNC_DATA
-                    setCanLogDetLatSyncData(&dataInfo);
+//                    setCanLogDetLatSyncData(&dataInfo);
+                    setCanLogDetLatSyncData(&strOut, &unionData);
                     break;
                 case 0x0656:    // OX_CANLOG_ID_DET_LONG_SYNC_DATA
-                    setCanLogDetLongSyncData(&dataInfo);
+//                    setCanLogDetLongSyncData(&dataInfo);
+                    setCanLogDetLongSyncData(&strOut, &unionData);
                     break;
                 case 0x0655:    // MM_CANLOG_ID_INFO
-                    uiMmInfoType = ulaData[0];      // information code used for proper decoding
-                    setCanLogMotionMonitoringInfo(uiMmInfoType, &dataInfo);
+                    //uiMmInfoType = ulaData[0];      // information code used for proper decoding
+//                    setCanLogMotionMonitoringInfo(uiMmInfoType, &dataInfo);
+                    setCanLogMotionMonitoringInfo(&strOut, &unionData);
                     break;
                 case 0x0657:    // MM_CANLOG_ID
-                    lErrorID = ulaData[0]<<8 ;
-                    lErrorID += ulaData[1];
+                    lErrorID = uiaData[0]<<8 ;
+                    lErrorID += uiaData[1];
                     if(lErrorID == 814 || lErrorID == 813 || lErrorID == 828 || lErrorID == 829 || lErrorID == 837 || lErrorID == 838) {
                         bAngle = TRUE;
                     }
@@ -1046,15 +1033,15 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                     strOut.append(s8aDummy);
                     strOut.append(" " );
 
-                    dataInfo = setDataToErrorType(ulaData, lErrorID);
+                    dataInfo = setDataToErrorType(&strOut, &unionData, lErrorID);
                     break;
                 default:
                     bLogID = FALSE;
                 }
 
                 if(bLogID) {
-                    composeLineLog(&strOut, &dataInfo, uiID, ulaData);
-                    outFile << strOut;
+                    //composeLineLog(&strOut, &dataInfo, uiID, uiaData);
+                    outFile << strOut << endl;
                 }
             }
             else
