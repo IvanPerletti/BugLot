@@ -157,6 +157,7 @@ private:
     void setCanLogSyncData(string *strFile, unionDataInfo *infoStruct);
     void setCanLogTargetData1(string *strFile, unionDataInfo *infoStruct);
     void setCanLogTargetData2(string *strFile, unionDataInfo *infoStruct);
+    void setBrakesBlockData(string *strFile, unionDataInfo *infoStruct);
     void setCanLogDetLatSyncData(string *strFile, unionDataInfo *infoStruct);
     void setCanLogDetLongSyncData(string *strFile, unionDataInfo *infoStruct);
 

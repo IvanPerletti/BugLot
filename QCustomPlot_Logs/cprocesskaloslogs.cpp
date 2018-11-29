@@ -287,7 +287,7 @@ void CProcessKalosLogs::setCanLogDetLatData2(string *strFile, unionDataInfo *inf
 
 
     sprintf(strData,
-            "WDir_detettore_lat: %d Pos_detettore_lat_mm: %d detettore_target_lat: %d",
+            "WDir_detettore_lat: %d Pos_detettore_lat_mm: %d detettore_target_lat: %ld",
             infoStruct->msg7.iData1, infoStruct->msg7.iData2, infoStruct->msg7.lData3);
     strFile->append(strData);
 
@@ -345,6 +345,22 @@ void CProcessKalosLogs::setCanLogTargetData2(string *strFile, unionDataInfo *inf
     sprintf(strData,
             "pensile_target_long: %ld pensile_target_rot: %ld ",
             infoStruct->msg3.lData1, infoStruct->msg3.lData2);
+    strFile->append(strData);
+
+}
+
+//--------------------------------------------------------
+void CProcessKalosLogs::setBrakesBlockData(string *strFile, unionDataInfo *infoStruct){
+
+    if(infoStruct->caAllData[0] == (char) 255) {
+        sprintf(strData,
+                "LOG BRAKES Libera_freni_automatico()");
+    }
+    else {
+        sprintf(strData,
+                "Motore: %d OnOff: %d  ID: %d",
+                infoStruct->msg2.i8Data1, infoStruct->msg2.i8Data2, infoStruct->msg2.i8Data3);
+    }
     strFile->append(strData);
 
 }
@@ -868,7 +884,7 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
     infile.open (ucaNameFileIn);
     outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
     int iRowCounter=0;
-    unsigned int uiID = 0, uiMmInfoType = 0;
+    unsigned int uiID = 0;
     char strID[16];
     unsigned int
             lErrorID=0,
@@ -1008,6 +1024,9 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                 case 0x0661:    // OX_CANLOG_ID_TARGET2
 //                    setCanLogTargetData2(&dataInfo);
                     setCanLogTargetData2(&strOut, &unionData);
+                    break;
+                case 0x653:     // CANLOG_BRAKE_BLOCK
+                    setBrakesBlockData(&strOut, &unionData);
                     break;
                 case 0x0654:    // OX_CANLOG_ID_DET_LAT_SYNC_DATA
 //                    setCanLogDetLatSyncData(&dataInfo);
