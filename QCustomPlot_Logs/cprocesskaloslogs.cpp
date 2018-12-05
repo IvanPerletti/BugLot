@@ -87,7 +87,7 @@ void CProcessKalosLogs::setCanLogAutoData1(string *strFile, unionDataInfo *infoS
 
     sprintf(strData,
             "Stato_movimento_automatico: %d Accessorio: %d Posizione: %d all_movements_started: %d all_movements_finished %d",
-            infoStruct->msg4.iData1, infoStruct->msg4.i8Data2, infoStruct->msg4.i8Data3, infoStruct->msg4.iData4, infoStruct->msg4.iData5);
+            infoStruct->msg4.iData1, infoStruct->msg4.i8Data2, (uint8_t) infoStruct->msg4.i8Data3, infoStruct->msg4.iData4, infoStruct->msg4.iData5);
 
     strFile->append(strData);
 
