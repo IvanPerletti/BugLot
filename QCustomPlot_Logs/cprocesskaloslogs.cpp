@@ -70,53 +70,6 @@ void CProcessKalosLogs::removeChars(string * strProcessed, string strMatchToFind
 }
 
 //--------------------------------------------------------
-/**
- * @brief CProcessKalosLogs::unPackDataError_OneSlotMsg unpack single byte message
- * @param uiDataArray   data array from log file
- * @param uiIndex       index of data message from log file
- * @param iData1        data message coming from correct split of log data
- */
-void CProcessKalosLogs::unPackDataError_OneSlotMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
-
-    *iData1 = uiDataArray[*uiIndex];
-
-    *uiIndex += 1;
-}
-
-//--------------------------------------------------------
-/**
- * @brief CProcessKalosLogs::unPackDataError_TwoSlotsMsg unpack two bytes message
- * @param uiDataArray   data array from log file
- * @param uiIndex       index of data message from log file
- * @param iData1        data message coming from correct split of log data
- */
-void CProcessKalosLogs::unPackDataError_TwoSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
-
-    *iData1 = uiDataArray[*uiIndex]<<8;
-    *iData1 += uiDataArray[*uiIndex + 1];
-
-    *uiIndex += 2;
-}
-
-//--------------------------------------------------------
-/**
- * @brief CProcessKalosLogs::unPackDataError_FourSlotsMsg unpack four bytes message
- * @param uiDataArray   data array from log file
- * @param uiIndex       index of data message from log file
- * @param iData1        data message coming from correct split of log data
- */
-void CProcessKalosLogs::unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1) {
-
-    *iData1 = uiDataArray[*uiIndex]<<24;
-    *iData1 = uiDataArray[*uiIndex + 1]<<16;
-    *iData1 = uiDataArray[*uiIndex + 2]<<8;
-    *iData1 += uiDataArray[*uiIndex + 3];
-
-    *uiIndex += 4;
-
-}
-
-//--------------------------------------------------------
 void CProcessKalosLogs::setCanLogEsBkData(string *strFile, unionDataInfo *infoStruct){
 
     sprintf(strData,
@@ -350,6 +303,17 @@ void CProcessKalosLogs::setCanLogTargetData2(string *strFile, unionDataInfo *inf
 }
 
 //--------------------------------------------------------
+void CProcessKalosLogs::setInterlockData(string *strFile, unionDataInfo *infoStruct){
+
+    sprintf(strData,
+                "X_rays_interlock_movement: %d X_rays_interlock_exam_changed: %d  X_rays_interlock_cassette_not_ok: %d",
+                infoStruct->msg2.i8Data1, infoStruct->msg2.i8Data2, infoStruct->msg2.i8Data3);
+
+    strFile->append(strData);
+
+}
+
+//--------------------------------------------------------
 void CProcessKalosLogs::setBrakesBlockData(string *strFile, unionDataInfo *infoStruct){
 
     if(infoStruct->caAllData[0] == (char) 255) {
@@ -426,7 +390,7 @@ void CProcessKalosLogs::setLineError(string *strFile, unionDataInfo *infoStruct)
 
     sprintf(strData,
             "LineOfError: %d",
-            infoStruct->msg2.i8Data1);
+            infoStruct->msgMM_2.i8Data1);
     strFile->append(strData);
 
 }
@@ -438,10 +402,9 @@ void CProcessKalosLogs::setLineError(string *strFile, unionDataInfo *infoStruct)
  */
 void CProcessKalosLogs::setNoMotionData(string *strFile, unionDataInfo *infoStruct) {
 
-
     sprintf(strData,
             "iActual: %d iTarget: %d iThr: %d",
-            infoStruct->msg1.iData1, infoStruct->msg1.iData2, infoStruct->msg1.iData3);
+            infoStruct->msgMM_3.iData1, infoStruct->msgMM_3.iData2, infoStruct->msgMM_3.iData3);
     strFile->append(strData);
 
 }
@@ -760,96 +723,11 @@ CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(string *
     case 769:
     case 794:
     case 796:
-        // No data apart from error ID sent fro these ones
+        // No data apart from error ID sent from these ones
         break;
     }
 
     return dataInfo;
-}
-
-//--------------------------------------------------------
-bool CProcessKalosLogs::is_angle_log_data(string label){
-    bool bIsAngle = FALSE;
-
-    if(label == " Angolo_Rot_decdegree: " || label == " Angolo_Inc_decdegree: " ||
-            label == " pensile_target_inc: " || label == " pensile_target_rot: ") {
-        bIsAngle = TRUE;
-    }
-
-    return bIsAngle;
-}
-
-//--------------------------------------------------------
-bool CProcessKalosLogs::is_error_angle(bool isAngle, string label) {
-    bool bIsAngle = FALSE;
-
-    if(isAngle) {
-        if(label == " iActual: " || label == " iPrevPos: " || label == " iCheckPos: " ||
-               label == "iActual: " || label == " iTarget: ") {
-            bIsAngle = TRUE;
-        }
-    }
-
-    return bIsAngle;
-}
-
-//--------------------------------------------------------
-/**
- * @brief CProcessKalosLogs::composeLineLog     compose data to write on file using predefined data sizes and labels
- * @param strFile
- * @param infoData
- * @param uiDataArray
- */
-void CProcessKalosLogs::composeLineLog(string *strFile, InfoDataStruct *infoData, unsigned int dataID, unsigned int *uiDataArray) {
-    unsigned int uiIndexDataArray;
-    char s8aDummy[16]={0,};
-    int iData;
-
-    // Since for Motion Monitoring Logs we have already written error type, we have already used first two message slots
-    // For Motion Monitoring Info instead, first data is not useful for Logs
-    if(dataID == 0x0657) {
-        uiIndexDataArray = 2;
-    }
-    else if(dataID == 0x0655) {
-        uiIndexDataArray = 1;
-    }
-    else {
-        uiIndexDataArray = 0;
-    }
-
-    for(unsigned int ii = 0; ii < infoData->strLabel.size(); ii++) {
-        switch(infoData->uiSize[ii]){
-        case 1:
-            unPackDataError_OneSlotMsg(uiDataArray, &uiIndexDataArray, &iData);
-            break;
-        case 2:
-            unPackDataError_TwoSlotsMsg(uiDataArray, &uiIndexDataArray, &iData);
-            break;
-        case 4:
-            unPackDataError_FourSlotsMsg(uiDataArray, &uiIndexDataArray, &iData);
-            break;
-        }
-
-        if(is_angle_log_data(infoData->strLabel[ii]) || is_error_angle(bAngle, infoData->strLabel[ii])) {
-            if (iData > 3600){
-               iData = (abs(iData-65535) * -0.1);
-            }
-             else{
-               iData = (iData * 0.1);
-            }
-        }
-
-        itoa(iData, s8aDummy, 10);
-        strFile->append(infoData->strLabel[ii]);
-        strFile->append(s8aDummy);
-    }
-
-    if(bAngle == TRUE) {
-        bAngle = FALSE;
-    }
-
-    strFile->append("\n" );
-
 }
 
 //--------------------------------------------------------
@@ -886,10 +764,7 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
     int iRowCounter=0;
     unsigned int uiID = 0;
     char strID[16];
-    unsigned int
-            lErrorID=0,
-            uiaData[8]={0,};
-    char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
+    unsigned int uiErrorID =0;
 
     string previousLine="";
     while(iRowCounter<1000000) // To get you all the lines.
@@ -913,19 +788,6 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                 sscanf( STRING.data(), "%s", strID);
                 removeCharsUntil(&STRING,"Data = ");
 
-                // Extract in unsigned int array
-//                sscanf( STRING.data() , "%x %x %x %x %x %x %x %x",
-//                        &uiaData[0] ,
-//                        &uiaData[1] ,
-//                        &uiaData[2] ,
-//                        &uiaData[3] ,
-//                        &uiaData[4] ,
-//                        &uiaData[5] ,
-//                        &uiaData[6] ,
-//                        &uiaData[7] );// extract numbers
-                // Set data into char array;
-                //set_log_char(unionData.caAllData, uiaData);
-
                 sscanf( STRING.data() , "%x %x %x %x %x %x %x %x",
                     &unionData.caAllData[0],
                     &unionData.caAllData[1],
@@ -942,124 +804,100 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                 strOut.append(" " );
                 switch(uiID) {
                 case 0x0600:    // OX_CANLOG_ID_ES_BK1
-//                    setCanLogEsBkData(&dataInfo);
                     setCanLogEsBkData(&strOut, &unionData);
                     break;
                 case 0x0610:    // OX_CANLOG_ID_AUTO1
-//                    setCanLogAutoData1(&dataInfo);
                     setCanLogAutoData1(&strOut, &unionData);
                     break;
                 case 0x0620:    // OX_CANLOG_ID_VERT1
-//                    setCanLogVertData1(&dataInfo);
                     setCanLogVertData1(&strOut, &unionData);
                     break;
                 case 0x0621:    // OX_CANLOG_ID_VERT2
-//                    setCanLogVertData2(&dataInfo);
                     setCanLogVertData2(&strOut, &unionData);
                     break;
                 case 0x0622:    // OX_CANLOG_ID_VERT3
-//                    setCanLogVertData3(&dataInfo);
                     setCanLogVertData3(&strOut, &unionData);
                     break;
                 case 0x0623:    // OX_CANLOG_ID_VERT4
-//                    setCanLogVertData4(&dataInfo);
                     setCanLogVertData4(&strOut, &unionData);
                     break;
                 case 0x0630:    // OX_CANLOG_ID_LAT1
-                    //setCanLogLatData1(&dataInfo);
                     setCanLogLatData1(&strOut, &unionData);
                     break;
                 case 0x0631:    // OX_CANLOG_ID_LAT2
-//                    setCanLogLatData2(&dataInfo);
                     setCanLogLatData2(&strOut, &unionData);
                     break;
                 case 0x0640:    // OX_CANLOG_ID_LONG1
-//                    setCanLogLongData1(&dataInfo);
                     setCanLogLongData1(&strOut, &unionData);
                     break;
                 case 0x0641:    // OX_CANLOG_ID_LONG2
-//                    setCanLogLongData2(&dataInfo);
                     setCanLogLongData2(&strOut, &unionData);
                     break;
                 case 0x0644:    // OX_CANLOG_ID_ROT1
-//                    setCanLogRotData1(&dataInfo);
                     setCanLogRotData1(&strOut, &unionData);
                     break;
                 case 0x0645:    // OX_CANLOG_ID_ROT2
-//                    setCanLogRotData2(&dataInfo);
                     setCanLogRotData2(&strOut, &unionData);
                     break;
                 case 0x0647:    // OX_CANLOG_ID_INC1
-//                    setCanLogIncData1(&dataInfo);
                     setCanLogIncData1(&strOut, &unionData);
                     break;
                 case 0x0648:    // OX_CANLOG_ID_INC2
-//                    setCanLogIncData2(&dataInfo);
                     setCanLogIncData2(&strOut, &unionData);
                     break;
                 case 0x064A:    // OX_CANLOG_ID_DET_LAT1
-//                    setCanLogDetLatData1(&dataInfo);
                     setCanLogDetLatData1(&strOut, &unionData);
                     break;
                 case 0x064B:    // OX_CANLOG_ID_DET_LAT2
-//                    setCanLogDetLatData2(&dataInfo);
                     setCanLogDetLatData2(&strOut, &unionData);
                     break;
                 case 0x064D:    // OX_CANLOG_ID_DET_LONG1
-//                    setCanLogDetLongData1(&dataInfo);
                     setCanLogDetLongData1(&strOut, &unionData);
                     break;
                 case 0x064E:    // OX_CANLOG_ID_DET_LONG2
-//                    setCanLogDetLongData2(&dataInfo);
                     setCanLogDetLongData2(&strOut, &unionData);
                     break;
                 case 0x0650:    // OX_CANLOG_ID_SYNC
-////                    setCanLogSyncData(&dataInfo);
                     setCanLogSyncData(&strOut, &unionData);
                     break;
                 case 0x0660:    // OX_CANLOG_ID_TARGET1
-//                    setCanLogTargetData1(&dataInfo);
                     setCanLogTargetData1(&strOut, &unionData);
                     break;
                 case 0x0661:    // OX_CANLOG_ID_TARGET2
-//                    setCanLogTargetData2(&dataInfo);
                     setCanLogTargetData2(&strOut, &unionData);
+                    break;
+                case 0x652:     // CANLOG_INTERLOCK
+                    setInterlockData(&strOut, &unionData);
                     break;
                 case 0x653:     // CANLOG_BRAKE_BLOCK
                     setBrakesBlockData(&strOut, &unionData);
                     break;
                 case 0x0654:    // OX_CANLOG_ID_DET_LAT_SYNC_DATA
-//                    setCanLogDetLatSyncData(&dataInfo);
                     setCanLogDetLatSyncData(&strOut, &unionData);
                     break;
                 case 0x0656:    // OX_CANLOG_ID_DET_LONG_SYNC_DATA
-//                    setCanLogDetLongSyncData(&dataInfo);
                     setCanLogDetLongSyncData(&strOut, &unionData);
                     break;
                 case 0x0655:    // MM_CANLOG_ID_INFO
-                    //uiMmInfoType = ulaData[0];      // information code used for proper decoding
-//                    setCanLogMotionMonitoringInfo(uiMmInfoType, &dataInfo);
                     setCanLogMotionMonitoringInfo(&strOut, &unionData);
                     break;
                 case 0x0657:    // MM_CANLOG_ID
-                    lErrorID = uiaData[0]<<8 ;
-                    lErrorID += uiaData[1];
-                    if(lErrorID == 814 || lErrorID == 813 || lErrorID == 828 || lErrorID == 829 || lErrorID == 837 || lErrorID == 838) {
-                        bAngle = TRUE;
-                    }
-                    itoa(lErrorID, s8aDummy, 10);
-                    strOut.append("ErrorID: ");
-                    strOut.append(s8aDummy);
-                    strOut.append(" " );
+                    uiErrorID = (unsigned int) unionData.caAllData[0]<<8 ;
+                    uiErrorID += (unsigned int) unionData.caAllData[1];
 
-                    dataInfo = setDataToErrorType(&strOut, &unionData, lErrorID);
+                    char cArrData[255];
+                    sprintf(cArrData,
+                            "ErrorID: %d ",
+                            uiErrorID);
+                    strOut.append(cArrData);
+
+                    dataInfo = setDataToErrorType(&strOut, &unionData, uiErrorID);
                     break;
                 default:
                     bLogID = FALSE;
                 }
 
                 if(bLogID) {
-                    //composeLineLog(&strOut, &dataInfo, uiID, uiaData);
                     outFile << strOut << endl;
                 }
             }

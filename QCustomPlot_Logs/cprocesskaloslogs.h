@@ -132,9 +132,7 @@ private:
     unsigned long unpackTimeString(const char * u8aData);
     void removeCharsUntil(string * strProcessed, string strMatchToFind);
     void removeChars( string * strProcessed, string strMatchToFind);
-    void unPackDataError_OneSlotMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
-    void unPackDataError_TwoSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
-    void unPackDataError_FourSlotsMsg(unsigned int* uiDataArray, unsigned int *uiIndex, int *iData1);
+
     // Orobix
     void setCanLogEsBkData(string *strFile, unionDataInfo *infoStruct);
     void setCanLogAutoData1(string *strFile, unionDataInfo *infoStruct);
@@ -157,12 +155,14 @@ private:
     void setCanLogSyncData(string *strFile, unionDataInfo *infoStruct);
     void setCanLogTargetData1(string *strFile, unionDataInfo *infoStruct);
     void setCanLogTargetData2(string *strFile, unionDataInfo *infoStruct);
+    void setInterlockData(string *strFile, unionDataInfo *infoStruct);
     void setBrakesBlockData(string *strFile, unionDataInfo *infoStruct);
     void setCanLogDetLatSyncData(string *strFile, unionDataInfo *infoStruct);
     void setCanLogDetLongSyncData(string *strFile, unionDataInfo *infoStruct);
 
     // Motion Monitoring Info
     void setCanLogMotionMonitoringInfo(string *strFile, unionDataInfo *infoStruct);
+
     // Motion Monitoring Error
     void setLineError(string *strFile, unionDataInfo *infoStruct);
     void setNoMotionData(string *strFile, unionDataInfo *infoStruct);
@@ -177,9 +177,6 @@ private:
     void setChangeAccessoryData(string *strFile, unionDataInfo *infoStruct);
     void setAxesDriverData(string *strFile, unionDataInfo *infoStruct);
     InfoDataStruct setDataToErrorType(string *strFile, unionDataInfo *infoStruct, unsigned int error);
-    bool is_angle_log_data(string label);
-    bool is_error_angle(bool isAngle, string label);
-    void composeLineLog(string *strFile, InfoDataStruct *infoData, unsigned int dataID, unsigned int *uiDataArray);
 };
 
 #endif // CPROCESSKALOSLOGS_H
