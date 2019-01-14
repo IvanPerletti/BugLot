@@ -470,7 +470,7 @@ void CProcessKalosLogs::setAutoTargetData(string *strFile, unionDataInfo *infoSt
     if(isFirstMessage(( unsigned int *) infoStruct->caAllData, 2)) {
         sprintf(strData,
                 "iTarget: %ld iInitial: %d",
-                infoStruct->msgMM_1.lData1, infoStruct->msg1.iData2);
+                infoStruct->msgMM_1.lData1, infoStruct->msgMM_1.iData2);
     }
     else {
         sprintf(strData,

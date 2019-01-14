@@ -83,9 +83,9 @@ private:
             short int iData6;             // Byte[6] + Byte[7]
         }msg9;
         struct s_msgMM_1{
-            short int iErrorID;           // Byte[0] + Byte[1]
+            short int iErrorID;     // Byte[0] + Byte[1]
             long lData1;            // Byte[2] + Byte[3] + byte[4] + Byte[5]
-            int iData2;             // Byte[6] + Byte[7]
+            short int iData2;             // Byte[6] + Byte[7]
         }msgMM_1;
         struct s_msgMM_2{
             short int iErrorID;           // Byte[0] + Byte[1]
