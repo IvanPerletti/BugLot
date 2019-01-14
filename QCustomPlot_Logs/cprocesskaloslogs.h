@@ -1,22 +1,11 @@
 #ifndef CPROCESSKALOSLOGS_H
 #define CPROCESSKALOSLOGS_H
 
+
 #include "cprocesslogs.h"
 using namespace std;
 
-class CProcessKalosLogs: public CProcessLogs
-{
-public:
-    CProcessKalosLogs(const char * ucaNameFileIn, const char * ucaNameFileOut);
-    void processFile(const char *ucaNameFileIn, const char *ucaNameFileOut);
-
-private:
-    struct InfoDataStruct {
-        vector <unsigned int> uiSize;
-        vector <string> strLabel;
-    };
-    char strData[1024];
-
+#pragma pack(1)
     typedef union {
         struct s_msg1 {
             short int iData1;             // Byte[0] + Byte [1]
@@ -127,6 +116,17 @@ private:
         signed char caAllData[8];
     } unionDataInfo;
 
+#pragma pack()
+
+class CProcessKalosLogs: public CProcessLogs
+{
+public:
+    CProcessKalosLogs(const char * ucaNameFileIn, const char * ucaNameFileOut);
+    void processFile(const char *ucaNameFileIn, const char *ucaNameFileOut);
+
+private:
+    char strData[1024];
+
     void set_log_char(char *cDataArr, unsigned int* uiDataArray);
     string createTimeString(const char * u8aData);
     unsigned long unpackTimeString(const char * u8aData);
@@ -166,7 +166,7 @@ private:
     // Motion Monitoring Error
     void setLineError(string *strFile, unionDataInfo *infoStruct);
     void setNoMotionData(string *strFile, unionDataInfo *infoStruct);
-    bool isFirstMessage(unsigned int *arrVal, int freeSlots);
+    bool isFirstMessage(signed char *arrVal, int freeSlots);
     void setAutoTargetData(string *strFile, unionDataInfo *infoStruct);
     void setDirectionData(string *strFile, unionDataInfo *infoStruct);
     void setElevixTargetPosData(string *strFile, unionDataInfo *infoStruct);
@@ -176,7 +176,8 @@ private:
     void setUntimelySynchroData(string *strFile, unionDataInfo *infoStruct);
     void setChangeAccessoryData(string *strFile, unionDataInfo *infoStruct);
     void setAxesDriverData(string *strFile, unionDataInfo *infoStruct);
-    InfoDataStruct setDataToErrorType(string *strFile, unionDataInfo *infoStruct, unsigned int error);
+    void setDataToErrorType(string *strFile, unionDataInfo *infoStruct, unsigned int error);
+
 };
 
 #endif // CPROCESSKALOSLOGS_H

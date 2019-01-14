@@ -416,7 +416,7 @@ void CProcessKalosLogs::setNoMotionData(string *strFile, unionDataInfo *infoStru
  * @param freeSlots     number of unsued data slots in the second message
  * @return true if message is the first one
  */
-bool CProcessKalosLogs::isFirstMessage(unsigned int *arrVal, int freeSlots) {
+bool CProcessKalosLogs::isFirstMessage(signed char *arrVal, int freeSlots) {
     unsigned int iVal;
     long lFlag = 0xFF;
 
@@ -465,17 +465,20 @@ bool CProcessKalosLogs::isFirstMessage(unsigned int *arrVal, int freeSlots) {
  * @param arrVal
  */
 void CProcessKalosLogs::setAutoTargetData(string *strFile, unionDataInfo *infoStruct) {
+    static bool bIsFirst = TRUE;
 
-
-    if(isFirstMessage(( unsigned int *) infoStruct->caAllData, 2)) {
+//    if(isFirstMessage(infoStruct->caAllData, 2)) {
+    if(bIsFirst) {
         sprintf(strData,
                 "iTarget: %ld iInitial: %d",
                 infoStruct->msgMM_1.lData1, infoStruct->msgMM_1.iData2);
+        bIsFirst = FALSE;
     }
     else {
         sprintf(strData,
                 "Direction: %d ElementType: %d iActual: %d",
                 infoStruct->msgMM_2.i8Data1, infoStruct->msgMM_2.i8Data2, infoStruct->msgMM_2.iData3);
+        bIsFirst = TRUE;
     }
 
     strFile->append(strData);
@@ -488,17 +491,20 @@ void CProcessKalosLogs::setAutoTargetData(string *strFile, unionDataInfo *infoSt
  * @param arrVal
  */
 void CProcessKalosLogs::setDirectionData(string *strFile, unionDataInfo *infoStruct) {
+    static bool bIsFirst = TRUE;
 
-
-    if(isFirstMessage(( unsigned int *) infoStruct->caAllData, 4)) {
+//    if(isFirstMessage(infoStruct->caAllData, 4)) {
+    if(bIsFirst) {
         sprintf(strData,
                 "iActual: %d iPrevPos: %d iCheckPos: %d",
                 infoStruct->msgMM_3.iData1, infoStruct->msgMM_3.iData2, infoStruct->msgMM_3.iData3);
+        bIsFirst = FALSE;
     }
     else {
         sprintf(strData,
                 "Direction: %d ElementType: %d",
                 infoStruct->msgMM_2.i8Data1, infoStruct->msgMM_2.i8Data2);
+        bIsFirst = TRUE;
     }
 
     strFile->append(strData);
@@ -510,7 +516,6 @@ void CProcessKalosLogs::setDirectionData(string *strFile, unionDataInfo *infoStr
  * @param data
  */
 void CProcessKalosLogs::setElevixTargetPosData(string *strFile, unionDataInfo *infoStruct) {
-
 
     sprintf(strData,
             "iActual: %d EEpromMin: %d EEpromMax: %d",
@@ -527,7 +532,6 @@ void CProcessKalosLogs::setElevixTargetPosData(string *strFile, unionDataInfo *i
  */
 void CProcessKalosLogs::setSynchroTargetData(string *strFile, unionDataInfo *infoStruct) {
 
-
     sprintf(strData,
             "iDelta: %d iTarget: %d iActual: %d",
             infoStruct->msgMM_4.i8Data1, infoStruct->msgMM_4.iData2, infoStruct->msgMM_4.iData3);
@@ -543,17 +547,20 @@ void CProcessKalosLogs::setSynchroTargetData(string *strFile, unionDataInfo *inf
  * @param arrVal
  */
 void CProcessKalosLogs::setAutoTargetPosData(string *strFile, unionDataInfo *infoStruct) {
+    static bool bIsFirst = TRUE;
 
-
-    if(isFirstMessage(( unsigned int *) infoStruct->caAllData, 4)) {
+//    if(isFirstMessage(infoStruct->caAllData, 4)) {
+    if(bIsFirst) {
         sprintf(strData,
                 "ElevixTarget: %ld",
                 infoStruct->msgMM_1.lData1);
+        bIsFirst = FALSE;
     }
     else {
         sprintf(strData,
                 "PensileVertTarget: %ld",
                 infoStruct->msgMM_1.lData1);
+        bIsFirst = TRUE;
     }
     strFile->append(strData);
 
@@ -565,7 +572,6 @@ void CProcessKalosLogs::setAutoTargetPosData(string *strFile, unionDataInfo *inf
  * @param data
  */
 void CProcessKalosLogs::setSynchroTargetPosData(string *strFile, unionDataInfo *infoStruct) {
-
 
     sprintf(strData,
             "PensileVertActual: %d ElevixActual: %d",
@@ -581,7 +587,6 @@ void CProcessKalosLogs::setSynchroTargetPosData(string *strFile, unionDataInfo *
  */
 void CProcessKalosLogs::setUntimelySynchroData(string *strFile, unionDataInfo *infoStruct) {
 
-
     sprintf(strData,
             "isNewPos: %d EnableSwitch: %d PensileMotionType: %d bExamFinished: %d all_movements_finished: %d",
             infoStruct->msgMM_5.i8Data1, infoStruct->msgMM_5.i8Data2, infoStruct->msgMM_5.i8Data3, infoStruct->msgMM_5.i8Data4, infoStruct->msgMM_5.iData5);
@@ -592,7 +597,6 @@ void CProcessKalosLogs::setUntimelySynchroData(string *strFile, unionDataInfo *i
 
 //--------------------------------------------------------
 void CProcessKalosLogs::setChangeAccessoryData(string *strFile, unionDataInfo *infoStruct) {
-
 
     sprintf(strData,
             "Stato_movimento_automatico: %d Accessorio: %d Posizione: %d "
@@ -605,7 +609,6 @@ void CProcessKalosLogs::setChangeAccessoryData(string *strFile, unionDataInfo *i
 
 //--------------------------------------------------------
 void CProcessKalosLogs::setAxesDriverData(string *strFile, unionDataInfo *infoStruct) {
-
 
     sprintf(strData,
             "AxisStat: %d",
@@ -622,8 +625,7 @@ void CProcessKalosLogs::setAxesDriverData(string *strFile, unionDataInfo *infoSt
  * @param error         error happened
  * @return  data struct containing correct message sizes and labels
  */
-CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(string *strFile, unionDataInfo *infoStruct, unsigned int error) {
-    InfoDataStruct dataInfo;
+void CProcessKalosLogs::setDataToErrorType(string *strFile, unionDataInfo *infoStruct, unsigned int error) {
 
     switch(error){
     case 851:
@@ -727,7 +729,6 @@ CProcessKalosLogs::InfoDataStruct CProcessKalosLogs::setDataToErrorType(string *
         break;
     }
 
-    return dataInfo;
 }
 
 //--------------------------------------------------------
@@ -750,7 +751,6 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
     string STRING, strOut, strTime;
     ifstream infile;
     ofstream outFile;
-    InfoDataStruct dataInfo;
 
     // UNION
     unionDataInfo unionData;
@@ -761,6 +761,7 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
 
     infile.open (ucaNameFileIn);
     outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
+
     int iRowCounter=0;
     unsigned int uiID = 0;
     char strID[16];
@@ -770,8 +771,6 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
     while(iRowCounter<1000000) // To get you all the lines.
     {
         bool bLogID = TRUE;
-        dataInfo.strLabel.clear();
-        dataInfo.uiSize.clear();
         getline(infile,STRING); // Saves the line in STRING.
         if (STRING != previousLine)// true in the end of file or file corrupted
         {
@@ -787,16 +786,24 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                 sscanf( STRING.data(), "%X", &uiID);
                 sscanf( STRING.data(), "%s", strID);
                 removeCharsUntil(&STRING,"Data = ");
-
+                unsigned int uiArr[8];
                 sscanf( STRING.data() , "%x %x %x %x %x %x %x %x",
-                    &unionData.caAllData[0],
-                    &unionData.caAllData[1],
-                    &unionData.caAllData[2],
-                    &unionData.caAllData[3],
-                    &unionData.caAllData[4],
-                    &unionData.caAllData[5],
-                    &unionData.caAllData[6],
-                    &unionData.caAllData[7]);// extract numbers
+                    &uiArr[0],
+                    &uiArr[1],
+                    &uiArr[2],
+                    &uiArr[3],
+                    &uiArr[4],
+                    &uiArr[5],
+                    &uiArr[6],
+                    &uiArr[7]);// extract numbers
+                unionData.caAllData[0] = (signed char) uiArr[0];
+                unionData.caAllData[1] = (signed char) uiArr[1];
+                unionData.caAllData[2] = (signed char) uiArr[2];
+                unionData.caAllData[3] = (signed char) uiArr[3];
+                unionData.caAllData[4] = (signed char) uiArr[4];
+                unionData.caAllData[5] = (signed char) uiArr[5];
+                unionData.caAllData[6] = (signed char) uiArr[6];
+                unionData.caAllData[7] = (signed char) uiArr[7];
                 strOut.clear();
                 strOut.append(strID);
                 strOut.append(" - " );
@@ -891,7 +898,7 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                             uiErrorID);
                     strOut.append(cArrData);
 
-                    dataInfo = setDataToErrorType(&strOut, &unionData, uiErrorID);
+                    setDataToErrorType(&strOut, &unionData, uiErrorID);
                     break;
                 default:
                     bLogID = FALSE;
