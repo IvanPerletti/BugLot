@@ -566,8 +566,8 @@ void MainWindow::on_LoadFile_clicked()
     //strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/release/TableLog_2018_03_31.txt";
     strFileNameIn = QFileDialog::getOpenFileName(this,
                                                  "Open Full Log",
-                                                 QDir::currentPath(),
-                                                 //"C:/Users/gatti/Desktop/Kalos",
+                                                 //QDir::currentPath(),
+                                                 "C:/Users/gatti/Desktop/Kalos",
                                                  "Text files (*.txt);;All files (*.*)",
                                                  &selFilter);
 	on_LoadFile();
@@ -599,12 +599,14 @@ void MainWindow::on_LoadFile()
 
 void MainWindow::on_SaveButton_clicked()
 {
+    QString strFileNameOutTxt;
 	QString selFilter="Text files (*.txt)";
 	strFileNameOut.clear();
+    strFileNameOutTxt = strFileNameIn + "_parsed.txt";
     strFileNameOut = QFileDialog::getSaveFileName(this,
                                                   "Choose Output filename",
-                                                  QDir::currentPath()+ "/out.txt",
-                                                  //"C:/Users/gatti/Desktop/Kalos/out.txt",
+                                                  //QDir::currentPath()+ "/out.txt",
+                                                  strFileNameOutTxt,
                                                   "Text files (*.txt);;All files (*.*)",
                                                   &selFilter);
     //strFileNameOut = QDir::currentPath()+"/out.txt";
