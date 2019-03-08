@@ -56,19 +56,24 @@
 
 int MainWindow::iSystemUsed;
 QString MainWindow::strSystemUsed;
+QString MainWindow::strPathFile;        // Set in constructor
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
 {
+    strPathFile = "C:/Users/gatti/Desktop/Kalos";
+
 	ui->setupUi(this);
-	setGeometry(400, 250, 542, 390);
+    setGeometry(400, 250, 542, 390);
 	timer = new QTimer(this);
+
+    // Start from tab Load
     ui->tabWidget->setCurrentIndex(0);
 	// setup signal and slot
 	connect(timer, SIGNAL(timeout()), this, SLOT(MyTimerSlot()));
-	timer->start(1000);    // msec
+    timer->start(1000);    // msec
 }
 
 
@@ -561,13 +566,13 @@ void MainWindow::on_pushButtonZoomMeno_clicked()
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_LoadFile_clicked()
 {
-	QString selFilter="Text files (*.txt)";
-	strFileNameIn.clear();
-    //strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/release/TableLog_2018_03_31.txt";
+    QString selFilter="Text files (*.txt)";
+
+    strFileNameIn.clear();
     strFileNameIn = QFileDialog::getOpenFileName(this,
                                                  "Open Full Log",
                                                  //QDir::currentPath(),
-                                                 "C:/Users/gatti/Desktop/Kalos",
+                                                 strPathFile,
                                                  "Text files (*.txt);;All files (*.*)",
                                                  &selFilter);
 	on_LoadFile();
@@ -601,15 +606,15 @@ void MainWindow::on_SaveButton_clicked()
 {
     QString strFileNameOutTxt;
 	QString selFilter="Text files (*.txt)";
-	strFileNameOut.clear();
-    strFileNameOutTxt = strFileNameIn + "_parsed.txt";
+    strFileNameOut.clear();
+
+    strFileNameOutTxt = strFileNameIn.section(".", 0,0) + "_parsed.txt";
     strFileNameOut = QFileDialog::getSaveFileName(this,
                                                   "Choose Output filename",
                                                   //QDir::currentPath()+ "/out.txt",
                                                   strFileNameOutTxt,
                                                   "Text files (*.txt);;All files (*.*)",
                                                   &selFilter);
-    //strFileNameOut = QDir::currentPath()+"/out.txt";
 	on_save();
 }
 
@@ -658,19 +663,19 @@ void MainWindow::on_pushButtonProcess_clicked()
 {
     CProcessLogs *pProcLogs = NULL;
 
-    char caDummy[256] = {0,};
+    char caInfile[256] = {0,};
     char caOutfile[256] = {0,};
-    memcpy(caDummy, strFileNameIn.toStdString().c_str() ,sizeof(caDummy));
+    memcpy(caInfile, strFileNameIn.toStdString().c_str() ,sizeof(caInfile));
     memcpy(caOutfile, strFileNameOut.toStdString().c_str() ,sizeof(caOutfile));
 
     switch(iSystemUsed) {
     case 0:         // Kalos
-        pProcLogs = new CProcessKalosLogs(caDummy, caOutfile);
+        pProcLogs = new CProcessKalosLogs(caInfile, caOutfile);
         ui->tabWidget->setCurrentIndex(2);
         // Further tab for variable selection
         break;
     case 1:         // Ivan
-        pProcLogs = new CrunchLog(caDummy, caOutfile);
+        pProcLogs = new CrunchLog(caInfile, caOutfile);
         // Start plotting
         ui->tabWidget->setCurrentIndex(1);
         setupPlotLogs();

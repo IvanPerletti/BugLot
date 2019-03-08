@@ -74,6 +74,7 @@ class MainWindow : public QMainWindow
 	QTimer *timer;
     static int iSystemUsed;
     static QString strSystemUsed;
+    static QString strPathFile;
 
     QString setFileName(int item);
 
@@ -135,6 +136,7 @@ private:
 	QString strFileNameOut;
     QString strFileNameParsedOut;
 	QString strFileNameIn;
+    QDir dirPath;
 	bool TimerFlag = false;
 	bool customPlotVariable = true;
 	double dLastTimeVal; // last value of Time

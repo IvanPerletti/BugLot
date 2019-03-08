@@ -1,4 +1,5 @@
 #include "cprocesskaloslogs.h"
+
 #include <QString>
 #include <iostream>
 #include <fstream>
@@ -8,9 +9,11 @@ using namespace std;
 
 //static bool bAngle = FALSE;
 bool bAngle = FALSE;
+bool CProcessKalosLogs::bFirstEEprom;
 
 CProcessKalosLogs::CProcessKalosLogs(const char * ucaNameFileIn, const char * ucaNameFileOut)
 {
+    bFirstEEprom = TRUE;
     processFile(ucaNameFileIn, ucaNameFileOut);
 }
 
@@ -732,6 +735,11 @@ void CProcessKalosLogs::setDataToErrorType(string *strFile, unionDataInfo *infoS
 }
 
 //--------------------------------------------------------
+void createEEpromFile(void) {
+
+}
+
+//--------------------------------------------------------
 void CProcessKalosLogs::set_log_char(char *cDataArr, unsigned int* uiDataArray) {
 
     cDataArr[0] = uiDataArray[0];
@@ -759,6 +767,7 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
         return;
     }
 
+    // Open files
     infile.open (ucaNameFileIn);
     outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
 
@@ -766,8 +775,11 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
     unsigned int uiID = 0;
     char strID[16];
     unsigned int uiErrorID =0;
-
     string previousLine="";
+
+    // Before looping on file, create class for eeprom file
+    cEEpromProcess *eepromProcess = new cEEpromProcess();
+
     while(iRowCounter<1000000) // To get you all the lines.
     {
         bool bLogID = TRUE;
@@ -786,6 +798,8 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                 sscanf( STRING.data(), "%X", &uiID);
                 sscanf( STRING.data(), "%s", strID);
                 removeCharsUntil(&STRING,"Data = ");
+
+                // Copy message
                 unsigned int uiArr[8];
                 sscanf( STRING.data() , "%x %x %x %x %x %x %x %x",
                     &uiArr[0],
@@ -809,12 +823,27 @@ void CProcessKalosLogs::processFile (const char * ucaNameFileIn, const char * uc
                 strOut.append(" - " );
                 strOut.append(strTime);
                 strOut.append(" " );
+                // Up to now my line is: "CAN_ID - Time - ". Now insert data properly as function of CAN_ID
                 switch(uiID) {
                 case 0x0600:    // OX_CANLOG_ID_ES_BK1
                     setCanLogEsBkData(&strOut, &unionData);
                     break;
                 case 0x0610:    // OX_CANLOG_ID_AUTO1
                     setCanLogAutoData1(&strOut, &unionData);
+                    break;
+                case 0x0611:
+                    // CANLOG_ID_EEPROM
+                    if(eepromProcess->bNeedEEpromFile) {
+                        eepromProcess->createEEpromFile(ucaNameFileIn, ucaNameFileOut);
+                    }
+                    eepromProcess->writeEEpromDataonFile(&unionData);
+                    //TODO control closed file and reset bFirstEEprom
+                    break;
+                case 0x0612:
+                    // CANLOG_ID_ELEVIX_MODEL
+                    break;
+                case 0x0613:
+                    // CANLOG_ID_ELEVIX_MODEL
                     break;
                 case 0x0620:    // OX_CANLOG_ID_VERT1
                     setCanLogVertData1(&strOut, &unionData);
