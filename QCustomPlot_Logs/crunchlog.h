@@ -29,14 +29,17 @@ using namespace std;
 
 class CrunchLog
 {
-public:
+	public:
 	CrunchLog();
 	void processFile(const char *ucaNameFileIn,
 					 const char *ucaNameFileOut,
 					 const unsigned long ulTimeStart = 0,
 					 const unsigned long ulTimeStop = 24*60*60);
-
-private:
+	void extractLog (const char * ucaNameFileIn,
+					 const char * ucaNameFileOut,
+					 const char * ucaStrToSearch,
+					 const unsigned long ulNumLineNext);
+	private:
 	void unpackBit8(string * pstrOut, unsigned char u8Val);
 	void unpackBit32(string * pstrOut, unsigned int uiVal);
 	unsigned long unpackTimeString(const char * u8aData);

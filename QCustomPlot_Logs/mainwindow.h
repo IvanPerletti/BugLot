@@ -71,7 +71,7 @@ class MainWindow : public QMainWindow
 	private:
 	QTimer *timer;
 	void updateUiTimeEdit(long l_ms);
-
+	void checkUserDirs(void);
 
 
 	private slots:
@@ -130,6 +130,7 @@ class MainWindow : public QMainWindow
 	double *y1;
 	QString strFileNameOut;
 	QString strFileNameIn;
+	QString strFileNameExtractLog;
 	bool TimerFlag = false;
 	bool customPlotVariable = true;
 	double dLastTimeVal; // last value of Time

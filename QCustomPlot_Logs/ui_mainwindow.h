@@ -93,6 +93,10 @@ public:
     QVBoxLayout *verticalLayout_5;
     QLabel *label_5;
     QLineEdit *lineEditMin;
+    QWidget *tab_2;
+    QVBoxLayout *verticalLayout_2;
+    QLabel *label_3;
+    QTextEdit *textEditLogExtract;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -120,7 +124,7 @@ public:
 "QWidget\n"
 "{\n"
 "    color: #b1b1b1;\n"
-"    background-color: #323232;\n"
+"    background-color: #323255;\n"
 "	font: 10pt \"MS Shell Dlg 2\";\n"
 "}\n"
 "\n"
@@ -182,7 +186,7 @@ public:
 "QWidget:disabled\n"
 "{\n"
 "    color: #404040;\n"
-"    background-color: #323232;\n"
+"    background-color: #323255;\n"
 "}\n"
 "\n"
 "QAbstractItemView\n"
@@ -407,7 +411,7 @@ public:
 "{\n"
 "    text-align: center;\n"
 "    spacing: 3px; /* spacing between items in the tool bar */\n"
-"    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop: 0.5 #242424, stop:1 #323232);\n"
+"    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323255, stop: 0.5 #242424, stop:1 #323255);\n"
 "}\n"
 "\n"
 "QDockWidget::close-button, QDockWidget::float-button\n"
@@ -415,7 +419,7 @@ public:
 "    text-align: center;\n"
 "    spa"
                         "cing: 1px; /* spacing between items in the tool bar */\n"
-"    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop: 0.5 #242424, stop:1 #323232);\n"
+"    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323255, stop: 0.5 #242424, stop:1 #323255);\n"
 "}\n"
 "\n"
 "QDockWidget::close-button:hover, QDockWidget::float-button:hover\n"
@@ -482,7 +486,7 @@ public:
 "    color: #b1b1b1;\n"
 "    border: 1px solid #444;\n"
 "    border-bottom-style: none;\n"
-"    background-color: #323232;\n"
+"    background-color: #323255;\n"
 "    padding-left: 10px;\n"
 "    padding-right: 10px;\n"
 "    padding-top: 3px;\n"
@@ -537,7 +541,7 @@ public:
 "\n"
 "QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{\n"
 "    color: #b1b1b1;\n"
-"    background-color: #323232;\n"
+"    background-color: #323255;\n"
 "    border: 1px solid #b1b1b1;\n"
 "    border-radius: 3px;\n"
 "}\n"
@@ -549,7 +553,7 @@ public:
 "        fx: 0.5, fy: 0.5,\n"
 "        radius: 1.0,\n"
 "        stop: 0.25 #ffaa00,\n"
-"        stop: 0.3 #323232\n"
+"        stop: 0.3 #323255\n"
 "    );\n"
 "}\n"
 "\n"
@@ -576,7 +580,7 @@ public:
 "\n"
 "QCheckBox::indicator{\n"
 "    color: #b1b1b1;\n"
-"    background-color: #323232;\n"
+"    background-color: #323255;\n"
 "    border: 1px solid #b1b1b1;\n"
 "    width: 9px;\n"
 "    height: 9px;\n"
@@ -672,6 +676,8 @@ public:
         pushButtonProcess->setEnabled(false);
         pushButtonProcess->setMinimumSize(QSize(200, 0));
         pushButtonProcess->setMaximumSize(QSize(200, 16777215));
+        pushButtonProcess->setCheckable(false);
+        pushButtonProcess->setChecked(false);
 
         horizontalLayout_11->addWidget(pushButtonProcess);
 
@@ -935,6 +941,24 @@ public:
         horizontalLayout_14->addLayout(horizontalLayout_13);
 
         tabWidget->addTab(tab_1, QString());
+        tab_2 = new QWidget();
+        tab_2->setObjectName(QStringLiteral("tab_2"));
+        verticalLayout_2 = new QVBoxLayout(tab_2);
+        verticalLayout_2->setSpacing(6);
+        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+        label_3 = new QLabel(tab_2);
+        label_3->setObjectName(QStringLiteral("label_3"));
+
+        verticalLayout_2->addWidget(label_3);
+
+        textEditLogExtract = new QTextEdit(tab_2);
+        textEditLogExtract->setObjectName(QStringLiteral("textEditLogExtract"));
+        textEditLogExtract->setStyleSheet(QStringLiteral("font: 11pt \"Courier New\";"));
+
+        verticalLayout_2->addWidget(textEditLogExtract);
+
+        tabWidget->addTab(tab_2, QString());
 
         verticalLayout_4->addWidget(tabWidget);
 
@@ -953,7 +977,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "BUG-LOT v1.0.3.0", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "BUG-LOT v1.0.4.2", 0));
 #ifndef QT_NO_TOOLTIP
         LoadFile->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Load file to be processed</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
@@ -976,7 +1000,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         FinishTextEdit->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Here will be showed preview of the Procesed File to be plot</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        label->setText(QApplication::translate("MainWindow", "FL Tool rev 1.0.3.0", 0));
+        label->setText(QApplication::translate("MainWindow", "FL Tool rev 1.0.4.0", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Load", 0));
 #ifndef QT_NO_TOOLTIP
         groupBox->setToolTip(QString());
@@ -1005,7 +1029,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         pushButtonZoomRange->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:9pt;\">Click to plot current time set</span></p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        pushButtonZoomRange->setText(QApplication::translate("MainWindow", "Process", 0));
+        pushButtonZoomRange->setText(QApplication::translate("MainWindow", "Extract Log", 0));
 #ifndef QT_NO_TOOLTIP
         pbScreenShot->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Take a screen shot CTRL+S</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
@@ -1022,6 +1046,13 @@ public:
 #endif // QT_NO_TOOLTIP
         lineEditMin->setText(QString());
         tabWidget->setTabText(tabWidget->indexOf(tab_1), QApplication::translate("MainWindow", "Graph", 0));
+        label_3->setText(QApplication::translate("MainWindow", "Table Log extract", 0));
+        textEditLogExtract->setHtml(QApplication::translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Courier New'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\"> .. </span></p></body></html>", 0));
+        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Extract", 0));
     } // retranslateUi
 
 };

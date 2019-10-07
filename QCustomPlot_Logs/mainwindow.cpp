@@ -68,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ulTimeStart = 0;
 	ulTimeStop = ( 23*3600 + 59*60 )* 1000;
 	qDebug()<<"Setup";
+	ui->pushButtonProcess->setEnabled(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -441,7 +442,35 @@ void MainWindow::on_UpgradePlot()
 //------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomRange_clicked()
 {
-	on_UpgradePlot();
+	CrunchLog crunchLog;
+	ui->textEditLogExtract->clear(); // clear all the text
+
+	QString stringTime = ui->timeEdit->time().toString();
+	char caInFile[256] = {0,};
+	char caOutfile[256] = {0,};
+	memcpy(caInFile, strFileNameIn.toStdString().c_str() ,sizeof(caInFile));
+	memcpy(caOutfile, strFileNameExtractLog.toStdString().c_str() ,sizeof(caOutfile));
+
+	QByteArray ba = stringTime.toLatin1(); // necessary to conevert tpo char *
+	const char *c_str2;
+	ba.prepend(' ');
+	ba.prepend(';');
+	c_str2 = ba.data();
+
+	crunchLog.extractLog(caInFile ,
+						 caOutfile,
+						 c_str2,
+						 1000);
+	QFile file (strFileNameExtractLog);
+
+	if (!file.open(QFile::ReadOnly | QFile::Text)) {
+		QMessageBox::warning(this,"op","Cannot open Extract Log file");
+		return;
+	}
+	QString contents = file.readAll().constData();
+	ui->textEditLogExtract->setPlainText(contents);
+
+	file.close();
 
 }
 //------------------------------------------------------------------------------------------------
@@ -544,7 +573,7 @@ void MainWindow::on_LoadFile()
 
 void MainWindow::on_SaveButton_clicked()
 {
-	QString selFilter="Text files (*.txt)";
+	QString selFilter="Text files (*.i1)";
 	ulTimeStart = 0; // reset time intervals
 	ulTimeStop = ( 23*3600 + 59*60 )* 1000;
 	strFileNameOut.clear();
@@ -553,7 +582,12 @@ void MainWindow::on_SaveButton_clicked()
 	//												  QDir::currentPath()+"/out.txt",
 	//												  "Text files (*.txt);;All files (*.*)",
 	//												  &selFilter);
-	strFileNameOut = QDir::currentPath()+"/out.txt";
+	QFileInfo fi=strFileNameIn;
+	QString path= fi.absoluteFilePath();
+	path.replace(".txt",".i1");
+//	strFileNameOut = QDir::currentPath()+"/out" + path + ".i1";
+	strFileNameOut = path;
+	strFileNameExtractLog = QDir::currentPath()+"/extractLog.txt";
 	on_save();
 	qDebug()<<"save";
 }
@@ -578,7 +612,7 @@ void MainWindow::on_save()
 		ui->SaveLabel->setText("Processed File: " + path);
 	}
 	else{
-		ui->pushButtonProcess->setEnabled(false);
+//		ui->pushButtonProcess->setEnabled(false);
 		// -qmesage box
 	}
 }
@@ -634,9 +668,8 @@ void MainWindow::on_pushButtonProcess_clicked()
 		ui->customPlot->replot();
 	}
 	ui->tabWidget->setCurrentIndex(1);
-
-
 }
+
 void MainWindow::updateUiTimeEdit(long l_ms)
 {
 	QTime n(0, 0, 0);                // n == 14:00:00
@@ -715,7 +748,7 @@ void MainWindow::on_pbScreenShot_clicked()
 
 void MainWindow::on_timeEdit_editingFinished()
 {
-	on_pushButtonProcess_clicked();
+	//	on_pushButtonProcess_clicked();
 }
 
 void MainWindow::on_timeEdit_2_timeChanged(const QTime &time)
@@ -733,4 +766,18 @@ void MainWindow::on_timeEdit_3_timeChanged(const QTime &time)
 	int min =  time.minute();
 	int sec =  time.second();
 	ulTimeStop = ((hour*60*60) + (min*60) + (sec))*1000 ;
+}
+
+void MainWindow::checkUserDirs(void)
+{
+	//	QDirIterator it("C:\Users", QDirIterator::Subdirectories);
+	//	while (it.hasNext()) {
+	//		qDebug() << it.next();
+
+	//		// /etc/.
+	//		// /etc/..
+	//		// /etc/X11
+	//		// /etc/X11/fs
+	//		// ...
+	//	}
 }

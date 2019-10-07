@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>BUG-LOT v1.0.3.0</string>
+   <string>BUG-LOT v1.0.4.2</string>
   </property>
   <property name="windowIcon">
    <iconset resource="img.qrc">
@@ -35,7 +35,7 @@ QToolTip
 QWidget
 {
     color: #b1b1b1;
-    background-color: #323232;
+    background-color: #323255;
 	font: 10pt &quot;MS Shell Dlg 2&quot;;
 }
 
@@ -96,7 +96,7 @@ QMenu::item:selected
 QWidget:disabled
 {
     color: #404040;
-    background-color: #323232;
+    background-color: #323255;
 }
 
 QAbstractItemView
@@ -315,14 +315,14 @@ QDockWidget::title
 {
     text-align: center;
     spacing: 3px; /* spacing between items in the tool bar */
-    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop: 0.5 #242424, stop:1 #323232);
+    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323255, stop: 0.5 #242424, stop:1 #323255);
 }
 
 QDockWidget::close-button, QDockWidget::float-button
 {
     text-align: center;
     spacing: 1px; /* spacing between items in the tool bar */
-    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop: 0.5 #242424, stop:1 #323232);
+    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323255, stop: 0.5 #242424, stop:1 #323255);
 }
 
 QDockWidget::close-button:hover, QDockWidget::float-button:hover
@@ -388,7 +388,7 @@ QTabBar::tab {
     color: #b1b1b1;
     border: 1px solid #444;
     border-bottom-style: none;
-    background-color: #323232;
+    background-color: #323255;
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 3px;
@@ -441,7 +441,7 @@ QTabBar::tab:!selected:hover
 
 QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{
     color: #b1b1b1;
-    background-color: #323232;
+    background-color: #323255;
     border: 1px solid #b1b1b1;
     border-radius: 3px;
 }
@@ -453,7 +453,7 @@ QRadioButton::indicator:checked
         fx: 0.5, fy: 0.5,
         radius: 1.0,
         stop: 0.25 #ffaa00,
-        stop: 0.3 #323232
+        stop: 0.3 #323255
     );
 }
 
@@ -479,7 +479,7 @@ QTimeEdit:pressed
 
 QCheckBox::indicator{
     color: #b1b1b1;
-    background-color: #323232;
+    background-color: #323255;
     border: 1px solid #b1b1b1;
     width: 9px;
     height: 9px;
@@ -625,6 +625,12 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
             <property name="text">
              <string>process</string>
             </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -727,7 +733,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>FL Tool rev 1.0.3.0</string>
+           <string>FL Tool rev 1.0.4.0</string>
           </property>
          </widget>
         </item>
@@ -955,7 +961,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
 font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                     </property>
                     <property name="text">
-                     <string>Process</string>
+                     <string>Extract Log</string>
                     </property>
                    </widget>
                   </item>
@@ -1135,6 +1141,34 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
            </layout>
           </item>
          </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Extract</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Table Log extract</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="textEditLogExtract">
+          <property name="styleSheet">
+           <string notr="true">font: 11pt &quot;Courier New&quot;;</string>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Courier New'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; .. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

@@ -205,7 +205,7 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 				}
 				else
 				{
-					std::size_t pos = STRING.find("<Id = CAN_ID_CLISIS_DBG_125 (0125)");
+					std::size_t pos = STRING.find("0125");
 					if (pos < STRING.size() )
 					{
 						removeCharsUntil(&STRING,"; ");
@@ -278,3 +278,50 @@ void CrunchLog::strReplaceOccurrence(string *pStrOut,
 	}
 }
 
+
+//--------------------------------------------------------
+void CrunchLog::extractLog (const char * ucaNameFileIn,
+							const char * ucaNameFileOut,
+							const char * ucaStrToSearch,
+							const unsigned long ulNumLineNext)
+{
+	string STRING;
+	string previousLine="";
+	ifstream infile;
+	ofstream outFile;
+	unsigned long iRowCounter=0;
+
+	if (ucaNameFileIn == NULL || ucaNameFileOut == NULL ){
+		return;
+	}
+
+	infile.open (ucaNameFileIn);
+	outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
+
+	qDebug()<<"processing Extract Log";
+	while(iRowCounter<10000000) // To get you all the lines.
+	{
+		getline(infile,STRING); // Saves the line in STRING.
+		if (infile.eof() || infile.bad() ){
+			break;
+		}
+		if (STRING != previousLine)// true in the end of file or file corrupted
+		{
+			previousLine = STRING;
+			std::size_t pos = STRING.find(ucaStrToSearch);// if "find" fails then pos  = 4000000
+			if (pos < STRING.size() )
+			{ // found <Id = 0652
+				for (unsigned int jj=0; jj< ulNumLineNext; jj++)
+				{
+					getline(infile,STRING); // Saves the line in STRING.
+					if (infile.eof() || infile.bad() ){
+						break;
+					}
+					outFile << STRING <<"\n";
+				}
+			}
+		}
+	}
+	outFile.close();
+	infile.close();
+}
