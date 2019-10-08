@@ -76,7 +76,7 @@ class MainWindow : public QMainWindow
 
 	private slots:
 	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);
-
+	void onMouseDuobleClick(QMouseEvent *event);
 	void showPointToolTip(QMouseEvent *event);
 
 	void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);

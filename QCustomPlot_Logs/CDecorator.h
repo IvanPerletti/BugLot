@@ -46,21 +46,29 @@ class CDecorator
 		O_TAB_EN             	 = 	28 ,
 		GEN_STAT             	 = 	29 ,
 		DLL_GE_STAT          	 = 	30 ,
+		GEN_REQ_BIT          	=	31	,
+		GEN_XRAY_ON_BIT      	=	32	,
+		PREPARATION_BIT_EXT  	=	33	,
+		FLUORO_BIT_EXT       	=	34	,
+		EXPOSURE_BIT_EXT     	=	35	,
+		DEBUG_ERROR_BIT      	=	36	,
+		STATUS_CPU_BIT       	=	37	,
+		DBG_BIT_EXT          	=	38	,
 	} enumIO;
 	QRect qrAxisDim;
 	void addIOSignalToPlot(QVector<double> qvTime,
-						 QVector<double> qvDataArranged,
-						 QString qStrLegend,
-						 QVector <QVector <int> > qvMyVect,
-						 int iDataIdx,
-						 QCustomPlot *customPlot);
+						   QVector<double> qvDataArranged,
+						   QString qStrLegend,
+						   QVector <QVector <int> > qvMyVect,
+						   int iDataIdx,
+						   QCustomPlot *customPlot);
 
 	void addIntSignalToPlot(QVector<double> qvTime,
-						 QVector<double> qvDataArranged,
-						 QString qStrLegend,
-						 QVector <QVector <int> > qvMyVect,
-						 int iDataIdx,
-						 QCustomPlot *customPlot);
+							QVector<double> qvDataArranged,
+							QString qStrLegend,
+							QVector <QVector <int> > qvMyVect,
+							int iDataIdx,
+							QCustomPlot *customPlot);
 	QVector<QString> buildLegend();
 	void addGraph(QPen pen, QVector<double> qvDataArranged, QVector<double> qvTime, QString qStrLegend, QCustomPlot *customPlot);
 };

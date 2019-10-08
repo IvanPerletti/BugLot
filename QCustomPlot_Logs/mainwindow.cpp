@@ -280,7 +280,11 @@ void MainWindow::setupPlotLogs(void)
 			this,
 			SLOT(showPointToolTip(QMouseEvent*)));
 	//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
-
+	// tooltip on mouse hover
+	connect(ui->customPlot,
+			SIGNAL(mouseDoubleClick(QMouseEvent*)),
+			this,
+			SLOT(showPointToolTip(QMouseEvent*)));
 	QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"),this);
 	connect(shortcut,
 			SIGNAL(activated()),
@@ -339,20 +343,34 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
 	}
 }
 //------------------------------------------------------------------------------
+void MainWindow::onMouseDuobleClick(QMouseEvent *event)
+{
+	if(event->button() == Qt::LeftButton)
+	{
+		if(ui->customPlot->axisRect()->rect().contains(event->pos()))
+		{
+
+			double x = ui->customPlot->xAxis->pixelToCoord(event->x());
+			double y = ui->customPlot->yAxis->pixelToCoord(event->y());
+			qDebug() << x << y;
+		}
+	}
+}
+//------------------------------------------------------------------------------
 /**
  * @brief show Point Tool Tip on mouse hover
  * @param event mouse event connected
  */
 void MainWindow::showPointToolTip(QMouseEvent *event)
 {
-	const double x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
-	int ss = x;
+	const double dTimeS = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
+	int ss = static_cast<int>(dTimeS);
 	int mm = ( ss / 60    ) % 60;
 	int hh = ( ss / 3660  ) % 24;
-	int ms = x*1000.0f - ss*1000;
+	int ms = static_cast<int>((dTimeS *1000.0)) - ss*1000;
 	ss = ss % 60;
 
-	setToolTip(QString::asprintf("%d:%d:%d.%d",hh,mm,ss,ms));
+	setToolTip(QString::asprintf("%02d:%02d:%02d.%03d",hh,mm,ss,ms));
 
 }
 //------------------------------------------------------------------------------
@@ -545,6 +563,7 @@ void MainWindow::on_LoadFile_clicked()
 												 &selFilter);
 	on_LoadFile();
 	qDebug()<<"File loaded";
+	on_SaveButton_clicked();
 }
 //-------------------------------------------------------------------------------------------------
 void MainWindow::on_LoadFile()
@@ -585,7 +604,7 @@ void MainWindow::on_SaveButton_clicked()
 	QFileInfo fi=strFileNameIn;
 	QString path= fi.absoluteFilePath();
 	path.replace(".txt",".i1");
-//	strFileNameOut = QDir::currentPath()+"/out" + path + ".i1";
+	//	strFileNameOut = QDir::currentPath()+"/out" + path + ".i1";
 	strFileNameOut = path;
 	strFileNameExtractLog = QDir::currentPath()+"/extractLog.txt";
 	on_save();
@@ -612,7 +631,7 @@ void MainWindow::on_save()
 		ui->SaveLabel->setText("Processed File: " + path);
 	}
 	else{
-//		ui->pushButtonProcess->setEnabled(false);
+		//		ui->pushButtonProcess->setEnabled(false);
 		// -qmesage box
 	}
 }

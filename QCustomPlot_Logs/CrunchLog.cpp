@@ -85,13 +85,14 @@ void CrunchLog::removeChars(string * strProcessed, string strMatchToFind)
 }
 //--------------------------------------------------------
 
-void CrunchLog::finalizeString( string *pStrOut,
+void CrunchLog::finalizeString(string *pStrOut,
 								unsigned long ulTime,
-								long lBitMask,
+								unsigned long lBitMask,
 								long lMcStatus,
-								unsigned char u8TableBit,
+								unsigned long ulTableBit,
 								int u8GenStat,
-								int iDllStat)
+								int iDllStat,
+								unsigned long ulTableBitExt)
 {
 	char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
 	char s8aChar[10]={0,};
@@ -104,7 +105,7 @@ void CrunchLog::finalizeString( string *pStrOut,
 	itoa( lMcStatus,s8aDummy, 10);
 	pStrOut->append(s8aDummy);
 	pStrOut->append(" " );
-	unpackBit8(pStrOut, u8TableBit);
+	unpackBit8(pStrOut, static_cast<unsigned char>( ulTableBit ));
 	//	pStrOut->append(" " );already in unpack8Bit
 	itoa(u8GenStat, s8aChar, 10);
 	pStrOut->append(s8aChar);
@@ -112,6 +113,8 @@ void CrunchLog::finalizeString( string *pStrOut,
 	memset(s8aChar,0,sizeof(s8aChar));
 	itoa(iDllStat, s8aChar, 10);
 	pStrOut->append(s8aChar);
+	pStrOut->append(" " );
+	unpackBit8(pStrOut, static_cast<unsigned char>(ulTableBitExt) );
 	pStrOut->append("\n");
 
 }
@@ -129,10 +132,11 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 	unsigned int
 			lBitMask=0,
 			ulTime=0,
-			lMcStatus=0,
 			ulaData[8]={0,};
-	unsigned char
-			u8TableBit = 0;
+	long lMcStatus=0;
+	unsigned long
+			u8TableBit = 0,
+			u8TableExtBit = 0;
 	int iGenStat = 0, iDllStat = 0;
 
 	if (ucaNameFileIn == NULL || ucaNameFileOut == NULL ){
@@ -179,7 +183,7 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 					{
 					case 6:
 						finalizeString(&strOut, ulTime, lBitMask, lMcStatus,
-									   u8TableBit, iGenStat, iDllStat);
+									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 						cout<< strOut.c_str(); // Prints out STRING
 						outFile << strOut;
 						break;
@@ -194,13 +198,13 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 					removeCharsUntil(&STRING,"; ");
 					ulTime = unpackTimeString( STRING.data() );
 					finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus,
-								   u8TableBit, iGenStat, iDllStat);
+								   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 					outFile << strOut;
 					finalizeString(&strOut, ulTime, lBitMask, 0, u8TableBit,
-								   iGenStat, iDllStat);
+								   iGenStat, iDllStat, u8TableExtBit);
 					outFile << strOut;
 					finalizeString(&strOut, ulTime+1, lBitMask, lMcStatus,
-								   u8TableBit, iGenStat, iDllStat);
+								   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 					outFile << strOut;
 				}
 				else
@@ -212,11 +216,14 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 						ulTime = unpackTimeString( STRING.data() );
 						removeCharsUntil(&STRING,"Data = ");
 						finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus,
-									   u8TableBit, iGenStat, iDllStat);
+									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 						outFile << strOut;
-						u8TableBit = strtol ( STRING.data(), NULL, 16);
+
+						sscanf( STRING.data() , "%x %x ",
+								&u8TableBit,
+								&u8TableExtBit );
 						finalizeString(&strOut, ulTime, lBitMask, lMcStatus,
-									   u8TableBit, iGenStat, iDllStat);
+									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 						outFile << strOut;
 					}
 					else
@@ -230,7 +237,7 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 							ulTime = unpackTimeString( STRING.data() );
 							finalizeString(&strOut, ulTime-1,
 										   lBitMask, lMcStatus,
-										   u8TableBit, iGenStat, iDllStat);
+										   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 
 							if (  posB < STRING.size() ){// IQ to DLL
 								removeCharsUntil(&STRING,"CURRENTSTATE=");
@@ -245,7 +252,7 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 
 							finalizeString(&strOut, ulTime,
 										   lBitMask, lMcStatus,
-										   u8TableBit, iGenStat, iDllStat);
+										   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 							outFile << strOut;
 						}
 					}

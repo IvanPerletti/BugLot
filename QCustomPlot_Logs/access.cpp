@@ -32,9 +32,8 @@ void access::on_pushButton_login_clicked()
 	if (password=="a" && username=="a"){
 
 		access::close();
-		mainWindow = new MainWindow (this);
+		mainWindow = new MainWindow;
 		mainWindow->show();
-
 	}
 	else {
 		if( username!="" && password!="" ){

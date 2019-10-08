@@ -46,10 +46,10 @@ class CrunchLog
 	void removeCharsUntil(string * strProcessed, string strMatchToFind);
 	void removeChars( string * strProcessed, string strMatchToFind);
 	void finalizeString(string *pStrOut, unsigned long ulTime,
-						long lBitMask,
+						unsigned long lBitMask,
 						long lMcStatus,
-						unsigned char u8TableBit,
-						int u8GenStat, int iDllStat);
+						unsigned long ulTableBit,
+						int u8GenStat, int iDllStat, unsigned long ulTableBitExt);
 
 	void strReplaceOccurrence(string *pStrOut,
 							  const string csSubStrLook,

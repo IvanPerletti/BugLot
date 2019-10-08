@@ -117,6 +117,14 @@ QVector<QString> CDecorator::buildLegend()
 			  << "O_TAB_EN            "
 			  << "GEN STAT            "
 			  << "DLL STAT            "
+			  << "GEN_REQ_BIT        "
+			  << "GEN_XRAY_ON_BIT    "
+			  << "PREPARATION_BIT_EXT"
+			  << "FLUORO_BIT_EXT     "
+			  << "EXPOSURE_BIT_EXT   "
+			  << "DEBUG_ERROR_BIT    "
+			  << "STATUS_CPU_BIT     "
+			  << "DBG_BIT_EXT        "
 			  << "   "
 				 ;
 	qDebug()<<"Legend";
@@ -148,7 +156,7 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
 	//  .  .  .  .  .  .  .  .  .  .  .  .
 
-#define ARRAY_DIM 200000 /// max number of lines to auto-stop proessing
+#define ARRAY_DIM 400000 /// max number of lines to auto-stop proessing
 	QTextStream in(file);
 	QVector <QVector <int> > qvMyVect;
 
@@ -223,8 +231,29 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 							   iDataIdx, customPlot);
 		}
 		qDebug()<<"Plot Int ";
+		qDebug()<<"Plot IO";
+		QVector<int> qVTableExtPlot = {
+			GEN_REQ_BIT        ,
+			GEN_XRAY_ON_BIT    ,
+			PREPARATION_BIT_EXT,
+			FLUORO_BIT_EXT     ,
+			EXPOSURE_BIT_EXT   ,
+			DEBUG_ERROR_BIT    ,
+			STATUS_CPU_BIT     ,
+		};
+		for (int ii=0; ii < qVTableExtPlot.size(); ii++)
+		{	// OBS:  index move from 1: data(0,:) are time values
+			int iDataIdx = qVTableExtPlot.at(ii);
+			addIOSignalToPlot(qvTime, qvDataArranged,
+							  LegendList.at(iDataIdx), qvMyVect,
+							  iDataIdx, customPlot);
+		}
+		qDebug()<<"Plot TableExt";
 		// give the axes some labels:
 		customPlot->xAxis->setLabel("t [s]");
+		QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);
+		dateTicker->setDateTimeFormat("mm:ss\nzzz");
+		customPlot->xAxis->setTicker(dateTicker);
 		customPlot->yAxis->setLabel("y");
 		qDebug()<<"Set Axis";
 		// set axes ranges, so we see all data:
