@@ -805,6 +805,13 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout">
                   <item>
+                   <widget class="QPushButton" name="pushButtonDiretta">
+                    <property name="text">
+                     <string>ON AIR</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
                    <layout class="QGridLayout" name="gridLayout">
                     <item row="0" column="1">
                      <widget class="QPushButton" name="pushButtonZoomPiu">
@@ -898,18 +905,17 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
                    </layout>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="pushButtonDiretta">
-                    <property name="text">
-                     <string>ON AIR</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_2">
-                    <property name="text">
-                     <string>Time Edit</string>
-                    </property>
-                   </widget>
+                   <layout class="QGridLayout" name="gridLayout_2">
+                    <item row="0" column="0">
+                     <widget class="QLineEdit" name="lneTimeA"/>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="QLineEdit" name="lneTimeB"/>
+                    </item>
+                    <item row="1" column="0" colspan="2">
+                     <widget class="QLineEdit" name="lneDeltaTime"/>
+                    </item>
+                   </layout>
                   </item>
                   <item>
                    <widget class="QTimeEdit" name="timeEdit">
@@ -984,14 +990,14 @@ font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
                       </property>
                       <property name="minimumSize">
                        <size>
-                        <width>100</width>
-                        <height>100</height>
+                        <width>90</width>
+                        <height>90</height>
                        </size>
                       </property>
                       <property name="maximumSize">
                        <size>
-                        <width>100</width>
-                        <height>100</height>
+                        <width>90</width>
+                        <height>90</height>
                        </size>
                       </property>
                       <property name="toolTipDuration">

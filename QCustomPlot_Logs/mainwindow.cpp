@@ -87,6 +87,7 @@ void MainWindow::setupDemo(int demoIndex)
 	currentDemoIndex = demoIndex;
 	ui->tabWidget->setCurrentIndex(0);
 	ui->customPlot->replot();
+
 }
 //-----------------------------------------------------------------------------
 void MainWindow::realtimeDataSlot()
@@ -280,11 +281,10 @@ void MainWindow::setupPlotLogs(void)
 			this,
 			SLOT(showPointToolTip(QMouseEvent*)));
 	//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
-	// tooltip on mouse hover
 	connect(ui->customPlot,
 			SIGNAL(mouseDoubleClick(QMouseEvent*)),
 			this,
-			SLOT(showPointToolTip(QMouseEvent*)));
+			SLOT(onMouseDuobleClick(QMouseEvent*)));
 	QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"),this);
 	connect(shortcut,
 			SIGNAL(activated()),
@@ -349,12 +349,23 @@ void MainWindow::onMouseDuobleClick(QMouseEvent *event)
 	{
 		if(ui->customPlot->axisRect()->rect().contains(event->pos()))
 		{
-
-			double x = ui->customPlot->xAxis->pixelToCoord(event->x());
-			double y = ui->customPlot->yAxis->pixelToCoord(event->y());
-			qDebug() << x << y;
+			dTimeA = ui->customPlot->xAxis->pixelToCoord(event->x());
+			QString msgA = QString ("%1").arg (dTimeA);
+			ui->lneTimeA->setText(msgA);
 		}
 	}
+	else if(event->button() == Qt::RightButton)
+	{
+		if(ui->customPlot->axisRect()->rect().contains(event->pos()))
+		{
+			dTimeB = ui->customPlot->xAxis->pixelToCoord(event->x());
+			QString msgB = QString ("%1").arg (dTimeB);
+			ui->lneTimeB->setText(msgB);
+		}
+	}
+	double dDeltaTime = dTimeB - dTimeA;
+	QString msg = QString ("d: %1 s").arg (dDeltaTime);
+	ui->lneDeltaTime->setText(msg);
 }
 //------------------------------------------------------------------------------
 /**
@@ -404,14 +415,6 @@ void MainWindow::MyTimerSlot()
 	//    Qui entriamo ogni 500ms
 	if(TimerFlag == true)
 	{
-		QTime time = QTime::currentTime();
-		QString time_text = time.toString("hh : mm : ss");
-		if ((time.second() % 2) == 0) {
-			time_text[3]== ' ';
-			time_text[8]== ' ';
-		}
-
-		ui->label_time->setText(time_text);
 		on_LoadFile();
 		on_save();
 		//double minFinale = ui->lineEditMin->text().toDouble() ;
@@ -423,7 +426,6 @@ void MainWindow::MyTimerSlot()
 		ui->lineEditInterval->setText(QString::number(iTimWinDispl));
 		on_UpgradePlot();
 	}
-
 }
 
 

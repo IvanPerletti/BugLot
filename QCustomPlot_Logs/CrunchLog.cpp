@@ -242,11 +242,11 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 							if (  posB < STRING.size() ){// IQ to DLL
 								removeCharsUntil(&STRING,"CURRENTSTATE=");
 								STRING.at(1)= ' ';
-								iGenStat = strtol ( STRING.data(), NULL, 10);
+								iGenStat = strtol ( STRING.data(), nullptr, 10);
 							}else { // DLL to IQ
 								removeCharsUntil(&STRING,"NEXTSTATE=");
 								STRING.at(1)= ' ';
-								iDllStat = strtol ( STRING.data(), NULL, 10);
+								iDllStat = strtol ( STRING.data(), nullptr, 10);
 								iDllStat = (iDllStat<<1)/2;
 							}
 

@@ -136,6 +136,8 @@ class MainWindow : public QMainWindow
 	double dLastTimeVal; // last value of Time
 	unsigned long ulTimeStart; // starting time [ms]
 	unsigned long ulTimeStop; // ending time [ms]
+	double dTimeA;
+	double dTimeB;
 };
 
 #endif // MAINWINDOW_H
