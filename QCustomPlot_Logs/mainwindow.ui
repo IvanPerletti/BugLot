@@ -35,7 +35,7 @@ QToolTip
 QWidget
 {
     color: #b1b1b1;
-    background-color: #773255;
+    background-color: #885555;
 	font: 10pt &quot;MS Shell Dlg 2&quot;;
 }
 
@@ -522,7 +522,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -733,7 +733,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>FL Tool rev 1.0.5.0</string>
+           <string>FL Tool rev 1.0.5.2</string>
           </property>
          </widget>
         </item>
@@ -1161,6 +1161,24 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Analysis</string>
+       </attribute>
+       <widget class="QPushButton" name="pbnDoseAnalysis">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>40</y>
+          <width>80</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Dose 00</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>

@@ -122,9 +122,9 @@ QVector<QString> CDecorator::buildLegend()
 			  << "PREPARATION_BIT_EXT"
 			  << "FLUORO_BIT_EXT     "
 			  << "EXPOSURE_BIT_EXT   "
-			  << "DEBUG_ERROR_BIT    "
-			  << "STATUS_CPU_BIT     "
-			  << "DBG_BIT_EXT        "
+			  << "CONS1_PREP_HW      "
+			  << "CONS1_RAD_HW       "
+			  << "CONS1_FL_HW        "
 			  << "   "
 				 ;
 	qDebug()<<"Legend";
@@ -237,9 +237,9 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 			GEN_XRAY_ON_BIT    ,
 			PREPARATION_BIT_EXT,
 			FLUORO_BIT_EXT     ,
-			EXPOSURE_BIT_EXT   ,
-			DEBUG_ERROR_BIT    ,
-			STATUS_CPU_BIT     ,
+			CONS1_PREP_HW   ,
+			CONS1_RAD_HW    ,
+			CONS1_FL_HW     ,
 		};
 		for (int ii=0; ii < qVTableExtPlot.size(); ii++)
 		{	// OBS:  index move from 1: data(0,:) are time values
@@ -252,7 +252,8 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 		// give the axes some labels:
 		customPlot->xAxis->setLabel("t [s]");
 		QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);
-		dateTicker->setDateTimeFormat("mm:ss\nzzz");
+		dateTicker->setDateTimeFormat("hh\rmm:ss\nzzz");
+		dateTicker->setDateTimeSpec(Qt::UTC);
 		customPlot->xAxis->setTicker(dateTicker);
 		customPlot->yAxis->setLabel("y");
 		qDebug()<<"Set Axis";

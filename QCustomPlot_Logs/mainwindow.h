@@ -121,6 +121,8 @@ class MainWindow : public QMainWindow
 
 	void on_timeEdit_3_timeChanged(const QTime &time);
 
+	void on_pbnDoseAnalysis_clicked();
+
 	private:
 	Ui::MainWindow *ui;
 	QString demoName;

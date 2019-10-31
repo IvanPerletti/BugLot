@@ -9,6 +9,8 @@ CrunchLog::CrunchLog()
 {
 
 }
+
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -86,13 +88,13 @@ void CrunchLog::removeChars(string * strProcessed, string strMatchToFind)
 //--------------------------------------------------------
 
 void CrunchLog::finalizeString(string *pStrOut,
-								unsigned long ulTime,
-								unsigned long lBitMask,
-								long lMcStatus,
-								unsigned long ulTableBit,
-								int u8GenStat,
-								int iDllStat,
-								unsigned long ulTableBitExt)
+							   unsigned long ulTime,
+							   unsigned long lBitMask,
+							   long lMcStatus,
+							   unsigned long ulTableBit,
+							   int u8GenStat,
+							   int iDllStat,
+							   unsigned long ulTableBitExt)
 {
 	char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
 	char s8aChar[10]={0,};
@@ -266,7 +268,121 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 	infile.close();
 }
 
+void CrunchLog::processDose(const char *ucaNameFileIn, const char *ucaNameFileOut, const unsigned long ulTimeStart, const unsigned long ulTimeStop)
+{
+	string STRING, strOut;
+	string previousLine="";
+	ifstream infile;
+	ofstream outFile , outFileDose;
+	int iRowCounter=0;
+	int iDoseZero = 0;
+	int iDoseDigits = 0;
+	int iTotRad = 0, iTotFluo = 0;
 
+	if (ucaNameFileIn == nullptr || ucaNameFileOut == nullptr ){
+		return;
+	}
+	outFileDose.open("dose.txt", std::ofstream::out | std::ofstream::trunc);
+	infile.open (ucaNameFileIn);
+	outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
+
+	qDebug()<<"processing files";
+	while(iRowCounter<3000000) // To get you all the lines.
+	{
+		getline(infile,STRING); // Saves the line in STRING.
+		if (infile.eof() || infile.bad() ){
+			break;
+		}
+		if (STRING != previousLine)// true in the end of file or file corrupted
+		{
+			previousLine = STRING;
+			std::size_t pos = STRING.find("KD_MSG_RAD_POST_DATA_x10 - Dose=");// if "find" fails then pos  = 4000000
+			if (pos < STRING.size() )
+			{ // found <Id = 0652
+				iTotRad++;
+				strOut.assign(STRING);
+				removeCharsUntil(&strOut,"; ");
+				uint32_t ulTime = unpackTimeString( strOut.data() );
+				removeCharsUntil(&strOut, "Dose=");
+				int num1 = std::stoi(strOut);
+				outFileDose <<
+							   std::to_string(ulTime) << ";" <<
+							   std::to_string(num1)   << std::endl;
+
+				if(num1 == 0){
+					outFile << "ZERO ";
+					iDoseZero++;
+				}
+				else if((num1 %100) == 0){
+					outFile << "DIGITS ";
+					iDoseDigits++;
+				}
+				outFile << STRING << std::endl;
+				getline(infile,STRING); // Saves the line in STRING.
+				std::size_t pos2 = STRING.find("KD_MSG_COLLIMATOR_DATA");// if "find" fails then pos  = 4000000
+				if (pos2 < STRING.size() )
+				{
+					outFile << STRING << std::endl;
+				}
+			}else
+			{
+				std::size_t pos = STRING.find("KD_MSG_FLUO_POST_DATA_x10 - Dose=");// if "find" fails then pos  = 4000000
+				if (pos < STRING.size() )
+				{ // found <Id = 0652
+					iTotFluo++;
+					strOut.assign(STRING);
+					removeCharsUntil(&strOut,"; ");
+					uint32_t ulTime = unpackTimeString( strOut.data() );
+					removeCharsUntil(&strOut, "Dose=");
+					int num1 = std::stoi(strOut);
+					outFileDose <<
+								   std::to_string(ulTime) << ";" <<
+								   std::to_string(num1)   << std::endl;
+					if(num1 == 0){
+						outFile << "ZERO ";
+						iDoseZero++;
+					}
+					else if((num1 %100) == 0){
+						outFile << "DIGITS ";
+						iDoseDigits++;
+					}
+					outFile << STRING << std::endl;
+					getline(infile,STRING); // Saves the line in STRING.
+					std::size_t pos2 = STRING.find("KD_MSG_COLLIMATOR_DATA");// if "find" fails then pos  = 4000000
+					if (pos2 < STRING.size() )
+					{
+						outFile << STRING << std::endl;
+					}
+				}
+				else
+				{
+					std::size_t pos = STRING.find("DAPDose");
+					if (pos < STRING.size() )
+					{
+						outFile << STRING << std::endl;
+					}
+					else
+					{
+						std::size_t pos = STRING.find("SUBJECT Main Controller DEVICE System");
+						if (pos < STRING.size() )
+						{
+							outFile << STRING << std::endl;
+						}
+					}
+				}
+			}
+		}
+		iRowCounter++;
+	}// while..
+	outFile << "\r\n Statistics:";
+	outFile << ", ZERO dose =" << std::to_string(iDoseZero)   ;
+	outFile << ", ZEROED Digits =" << std::to_string(iDoseDigits);
+	outFile << ", Tot Rad =" << std::to_string(iTotRad);
+	outFile << ", Tot Fluo =" << std::to_string(iTotFluo) << std::endl;
+	outFile.close();
+	infile.close();
+	outFileDose.close();
+}
 //--------------------------------------------------------
 void CrunchLog::strReplaceOccurrence(string *pStrOut,
 									 const string csSubStrLook,

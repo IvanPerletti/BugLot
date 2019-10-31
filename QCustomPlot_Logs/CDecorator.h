@@ -51,9 +51,9 @@ class CDecorator
 		PREPARATION_BIT_EXT  	=	33	,
 		FLUORO_BIT_EXT       	=	34	,
 		EXPOSURE_BIT_EXT     	=	35	,
-		DEBUG_ERROR_BIT      	=	36	,
-		STATUS_CPU_BIT       	=	37	,
-		DBG_BIT_EXT          	=	38	,
+		CONS1_PREP_HW         	=	36	,
+		CONS1_RAD_HW          	=	37	,
+		CONS1_FL_HW           	=	38	,
 	} enumIO;
 	QRect qrAxisDim;
 	void addIOSignalToPlot(QVector<double> qvTime,

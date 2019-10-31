@@ -557,7 +557,7 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-	//	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/FileLogger_Tool/QCustomPlot_Logs/TableLog_2018_09_10.txt";
+	//		strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/GitFileLogger_Tool/TableLog_2019_09_02.txt";
 	strFileNameIn = QFileDialog::getOpenFileName(this,
 												 "Open Full Log",
 												 QDir::currentPath(),
@@ -801,4 +801,21 @@ void MainWindow::checkUserDirs(void)
 	//		// /etc/X11/fs
 	//		// ...
 	//	}
+}
+
+void MainWindow::on_pbnDoseAnalysis_clicked()
+{
+	CrunchLog crunchLog;
+	char caDummy[256] = {0,};
+	char caOutfile[256] = {0,};
+	QString strOutFileDose(strFileNameIn);
+	int pos= strOutFileDose.lastIndexOf("/");
+	pos = strOutFileDose.lastIndexOf("/", -40 );
+	strOutFileDose.remove(0,pos);
+	strOutFileDose.replace("/", "_");
+	strOutFileDose.prepend("Dose_");
+	memcpy(caDummy, strFileNameIn.toStdString().c_str()  ,sizeof(caDummy));
+	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
+
+	crunchLog.processDose(caDummy, caOutfile, ulTimeStart, ulTimeStop);
 }
