@@ -156,7 +156,7 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
 	//  .  .  .  .  .  .  .  .  .  .  .  .
 
-#define ARRAY_DIM 400000 /// max number of lines to auto-stop proessing
+#define ARRAY_DIM 100000 /// max number of lines to auto-stop proessing
 	QTextStream in(file);
 	QVector <QVector <int> > qvMyVect;
 

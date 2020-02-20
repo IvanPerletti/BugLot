@@ -3,7 +3,7 @@
 #include "mainwindow.h"
 //#include <QDebug>
 #include "ui_mainwindow.h"
-
+#define MAX(A,B)(((A)>=(B))?(A):(B))
 
 CrunchLog::CrunchLog()
 {
@@ -131,7 +131,7 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 	ifstream infile;
 	ofstream outFile;
 	int iRowCounter=0;
-	unsigned int
+	unsigned long
 			lBitMask=0,
 			ulTime=0,
 			ulaData[8]={0,};
@@ -162,7 +162,8 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 			if (pos < STRING.size() )
 			{ // found <Id = 0652
 				removeCharsUntil(&STRING,"; ");
-				ulTime = unpackTimeString( STRING.data() );
+				unsigned long ulTimeN = unpackTimeString( STRING.data() );
+				ulTime = MAX(ulTime+1, ulTimeN);
 				if (ulTime > ulTimeStop){
 					break; // end of time interval
 				}else if (ulTime > ulTimeStart)
@@ -175,21 +176,27 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 							&ulaData[2] ,
 							&ulaData[3] ,
 							&ulaData[4] ,
-							&ulaData[5] );// extract numbers
-					lBitMask = ulaData[1];
-					lBitMask+= (ulaData[2]<<8);
-					lBitMask+= (ulaData[3]<<16);
-					lBitMask+= (ulaData[4]<<24);
+							&ulaData[5] ); // extract numbers
+					unsigned long lBitMaskNew = ulaData[1];
+					lBitMaskNew+= (ulaData[2]<<8);
+					lBitMaskNew+= (ulaData[3]<<16);
+					lBitMaskNew+= (ulaData[4]<<24);
 					lMcStatus = ulaData[5] ;
 					switch(ulaData[0])
 					{
 					case 6:
-						finalizeString(&strOut, ulTime, lBitMask, lMcStatus,
+						if ( lBitMask != lBitMaskNew )
+						{
+						finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
+									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
+						}
+						finalizeString(&strOut, ++ulTime, lBitMaskNew, lMcStatus,
 									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 						cout<< strOut.c_str(); // Prints out STRING
 						outFile << strOut;
 						break;
 					}
+					lBitMask = lBitMaskNew;
 				}
 			}
 			else
@@ -198,14 +205,15 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 				if (pos < STRING.size() )
 				{
 					removeCharsUntil(&STRING,"; ");
-					ulTime = unpackTimeString( STRING.data() );
-					finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus,
+					unsigned long ulTimeN = unpackTimeString( STRING.data() );
+					ulTime = MAX(ulTime+1, ulTimeN);
+					finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
 								   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 					outFile << strOut;
-					finalizeString(&strOut, ulTime, lBitMask, 0, u8TableBit,
+					finalizeString(&strOut, ++ulTime, lBitMask, 0, u8TableBit,
 								   iGenStat, iDllStat, u8TableExtBit);
 					outFile << strOut;
-					finalizeString(&strOut, ulTime+1, lBitMask, lMcStatus,
+					finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
 								   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 					outFile << strOut;
 				}
@@ -215,16 +223,17 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 					if (pos < STRING.size() )
 					{
 						removeCharsUntil(&STRING,"; ");
-						ulTime = unpackTimeString( STRING.data() );
+						unsigned long ulTimeN = unpackTimeString( STRING.data() );
+						ulTime = MAX(ulTime+1, ulTimeN);
 						removeCharsUntil(&STRING,"Data = ");
-						finalizeString(&strOut, ulTime-1, lBitMask, lMcStatus,
+						finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
 									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 						outFile << strOut;
 
 						sscanf( STRING.data() , "%x %x ",
 								&u8TableBit,
 								&u8TableExtBit );
-						finalizeString(&strOut, ulTime, lBitMask, lMcStatus,
+						finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
 									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 						outFile << strOut;
 					}
@@ -236,8 +245,9 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 						if ( pos < STRING.size() )
 						{
 							removeCharsUntil(&STRING,"; ");
-							ulTime = unpackTimeString( STRING.data() );
-							finalizeString(&strOut, ulTime-1,
+							unsigned long ulTimeN = unpackTimeString( STRING.data() );
+							ulTime = MAX(ulTime+1, ulTimeN);
+							finalizeString(&strOut, ++ulTime,
 										   lBitMask, lMcStatus,
 										   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 
@@ -252,7 +262,7 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 								iDllStat = (iDllStat<<1)/2;
 							}
 
-							finalizeString(&strOut, ulTime,
+							finalizeString(&strOut, ++ulTime,
 										   lBitMask, lMcStatus,
 										   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 							outFile << strOut;

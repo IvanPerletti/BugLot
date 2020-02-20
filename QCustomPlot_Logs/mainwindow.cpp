@@ -557,12 +557,12 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-	//		strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/GitFileLogger_Tool/TableLog_2019_09_02.txt";
-	strFileNameIn = QFileDialog::getOpenFileName(this,
-												 "Open Full Log",
-												 QDir::currentPath(),
-												 "Text files (*.txt);;All files (*.*)",
-												 &selFilter);
+			strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/GitFileLogger_Tool/build-QCustomPlot_Logs-Desktop_Qt_5_13_0_MinGW_32_bit-Release/_TableLog_2019_09_02.txt";
+//	strFileNameIn = QFileDialog::getOpenFileName(this,
+//												 "Open Full Log",
+//												 QDir::currentPath(),
+//												 "Text files (*.txt);;All files (*.*)",
+//												 &selFilter);
 	on_LoadFile();
 	qDebug()<<"File loaded";
 	on_SaveButton_clicked();
