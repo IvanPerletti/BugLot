@@ -147,7 +147,7 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 
 	infile.open (ucaNameFileIn);
 	outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
-
+	outFile.clear();
 	qDebug()<<"processing files";
 	while(iRowCounter<1000000) // To get you all the lines.
 	{
@@ -164,13 +164,13 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 				removeCharsUntil(&STRING,"; ");
 				unsigned long ulTimeN = unpackTimeString( STRING.data() );
 				ulTime = MAX(ulTime+1, ulTimeN);
-				if (ulTime > ulTimeStop){
+				if (ulTimeN > ulTimeStop){
 					break; // end of time interval
-				}else if (ulTime > ulTimeStart)
+				}else if (ulTimeN > ulTimeStart)
 				{
 					removeCharsUntil(&STRING,"DEBUG data = ");
 					removeChars(&STRING,"0X");// replace 0X with blank spaces
-					sscanf( STRING.data() , "%x %x %x %x %x %x",
+					sscanf( STRING.data() , "%lx %lx %lx %lx %lx %lx",
 							&ulaData[0] ,
 							&ulaData[1] ,
 							&ulaData[2] ,
@@ -187,8 +187,8 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 					case 6:
 						if ( lBitMask != lBitMaskNew )
 						{
-						finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
-									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
+							finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
+										   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 						}
 						finalizeString(&strOut, ++ulTime, lBitMaskNew, lMcStatus,
 									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
@@ -206,16 +206,21 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 				{
 					removeCharsUntil(&STRING,"; ");
 					unsigned long ulTimeN = unpackTimeString( STRING.data() );
-					ulTime = MAX(ulTime+1, ulTimeN);
-					finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
-								   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
-					outFile << strOut;
-					finalizeString(&strOut, ++ulTime, lBitMask, 0, u8TableBit,
-								   iGenStat, iDllStat, u8TableExtBit);
-					outFile << strOut;
-					finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
-								   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
-					outFile << strOut;
+					if (ulTimeN > ulTimeStop){
+						break; // end of time interval
+					}else if (ulTimeN > ulTimeStart)
+					{
+						ulTime = MAX(ulTime+1, ulTimeN);
+						finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
+									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
+						outFile << strOut;
+						finalizeString(&strOut, ++ulTime, lBitMask, 0, u8TableBit,
+									   iGenStat, iDllStat, u8TableExtBit);
+						outFile << strOut;
+						finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
+									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
+						outFile << strOut;
+					}
 				}
 				else
 				{
@@ -224,18 +229,23 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 					{
 						removeCharsUntil(&STRING,"; ");
 						unsigned long ulTimeN = unpackTimeString( STRING.data() );
-						ulTime = MAX(ulTime+1, ulTimeN);
-						removeCharsUntil(&STRING,"Data = ");
-						finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
-									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
-						outFile << strOut;
+						if (ulTimeN > ulTimeStop){
+							break; // end of time interval
+						}else if (ulTimeN > ulTimeStart)
+						{
+							ulTime = MAX(ulTime+1, ulTimeN);
+							removeCharsUntil(&STRING,"Data = ");
+							finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
+										   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
+							outFile << strOut;
 
-						sscanf( STRING.data() , "%x %x ",
-								&u8TableBit,
-								&u8TableExtBit );
-						finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
-									   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
-						outFile << strOut;
+							sscanf( STRING.data() , "%lx %lx ",
+									&u8TableBit,
+									&u8TableExtBit );
+							finalizeString(&strOut, ++ulTime, lBitMask, lMcStatus,
+										   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
+							outFile << strOut;
+						}
 					}
 					else
 					{
@@ -246,26 +256,31 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 						{
 							removeCharsUntil(&STRING,"; ");
 							unsigned long ulTimeN = unpackTimeString( STRING.data() );
-							ulTime = MAX(ulTime+1, ulTimeN);
-							finalizeString(&strOut, ++ulTime,
-										   lBitMask, lMcStatus,
-										   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
+							if (ulTimeN > ulTimeStop){
+								break; // end of time interval
+							}else if (ulTimeN > ulTimeStart)
+							{
+								ulTime = MAX(ulTime+1, ulTimeN);
+								finalizeString(&strOut, ++ulTime,
+											   lBitMask, lMcStatus,
+											   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
 
-							if (  posB < STRING.size() ){// IQ to DLL
-								removeCharsUntil(&STRING,"CURRENTSTATE=");
-								STRING.at(1)= ' ';
-								iGenStat = strtol ( STRING.data(), nullptr, 10);
-							}else { // DLL to IQ
-								removeCharsUntil(&STRING,"NEXTSTATE=");
-								STRING.at(1)= ' ';
-								iDllStat = strtol ( STRING.data(), nullptr, 10);
-								iDllStat = (iDllStat<<1)/2;
+								if (  posB < STRING.size() ){// IQ to DLL
+									removeCharsUntil(&STRING,"CURRENTSTATE=");
+									STRING.at(1)= ' ';
+									iGenStat = strtol ( STRING.data(), nullptr, 10);
+								}else { // DLL to IQ
+									removeCharsUntil(&STRING,"NEXTSTATE=");
+									STRING.at(1)= ' ';
+									iDllStat = strtol ( STRING.data(), nullptr, 10);
+									iDllStat = (iDllStat<<1)/2;
+								}
+
+								finalizeString(&strOut, ++ulTime,
+											   lBitMask, lMcStatus,
+											   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
+								outFile << strOut;
 							}
-
-							finalizeString(&strOut, ++ulTime,
-										   lBitMask, lMcStatus,
-										   u8TableBit, iGenStat, iDllStat, u8TableExtBit);
-							outFile << strOut;
 						}
 					}
 				}
@@ -278,7 +293,8 @@ void CrunchLog::processFile (const char * ucaNameFileIn,
 	infile.close();
 }
 
-void CrunchLog::processDose(const char *ucaNameFileIn, const char *ucaNameFileOut, const unsigned long ulTimeStart, const unsigned long ulTimeStop)
+void CrunchLog::processDose(const char *ucaNameFileIn,
+							const char *ucaNameFileOut)
 {
 	string STRING, strOut;
 	string previousLine="";

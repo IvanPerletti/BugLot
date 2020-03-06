@@ -32,9 +32,7 @@ class CrunchLog
 	public:
 	CrunchLog();
 	void processDose(const char *ucaNameFileIn,
-									 const char *ucaNameFileOut,
-									 const unsigned long ulTimeStart = 0,
-									 const unsigned long ulTimeStop = 24*60*60);
+									 const char *ucaNameFileOut);
 	void processFile(const char *ucaNameFileIn,
 					 const char *ucaNameFileOut,
 					 const unsigned long ulTimeStart = 0,

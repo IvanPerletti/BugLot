@@ -130,12 +130,30 @@ QVector<QString> CDecorator::buildLegend()
 	qDebug()<<"Legend";
 	return LegendList;
 }
+
+//-----------------------------------------------------------------------------
+void CDecorator::cleanGraph(QCustomPlot *customPlot)
+{
+	// this is how to remove the legend item again (e.g. before graph removal):
+	QCPLegend *arLegend = customPlot->legend;
+
+	for( int ii=0; ii<customPlot->graphCount(); ii++ )
+	{
+		QCPGraph  *pGraph = customPlot->graph(ii);
+//		arLegend->remove(arLegend->itemWithPlottable(pGraph));
+		customPlot->graph(ii)->data().data()->clear();
+	}
+//	customPlot->clearPlottables();
+	customPlot->replot(); // last thing to do
+
+}
 //-----------------------------------------------------------------------------
 /**
  * @brief CDecorator::buildGraph build the graph accordin to own method implementation
  */
 void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 {
+
 	customPlot->legend->setVisible(true);
 	customPlot->legend->setFont(QFont("Helvetica", 9));
 	customPlot->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items

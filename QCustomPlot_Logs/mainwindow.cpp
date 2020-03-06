@@ -48,7 +48,7 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QShortcut>
-#include "crunchlog.h"
+#include "CrunchLog.h"
 #include "CDecorator.h"
 #include <iostream>
 //#include <QDebug>
@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ulTimeStop = ( 23*3600 + 59*60 )* 1000;
 	qDebug()<<"Setup";
 	ui->pushButtonProcess->setEnabled(true);
+	setShortCutKeys();
 }
 
 //-----------------------------------------------------------------------------
@@ -239,52 +240,8 @@ void MainWindow::allScreenShots()
 /**
  * @brief set the Gui up to process and display result
  */
-void MainWindow::setupPlotLogs(void)
+void MainWindow::setShortCutKeys()
 {
-	/* QString selFilter="Text files(*.txt)";
-	QString LoadFile;
-	LoadFile = QFileDialog::getOpenFileName(this,"Open Full Log",
-											QDir::currentPath(),
-											"Text files(*.txt)",
-											&selFilter);
-	*/
-
-	QFile file(strFileNameOut);
-	if (!file.open(QFile::ReadOnly | QFile::Text)) {
-		QMessageBox::warning(this,"op","file not open");
-		return;
-	}
-	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
-
-	cDecorator.buildGraph(ui->customPlot, &file);
-
-	double dMinXAxis = ui->customPlot->xAxis->range().lower;
-	double dMaxXAxis = ui->customPlot->xAxis->range().upper;
-	dLastTimeVal = dMaxXAxis; // used for "OnAir option"
-
-	ui->lineEditMin->setText(QString::number(dMinXAxis));
-	ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
-
-	// connect some interaction slots:
-	connect(ui->customPlot,
-			SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)),
-			this,
-			SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
-
-	connect(ui->customPlot,
-			SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
-			this,
-			SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
-	// tooltip on mouse hover
-	connect(ui->customPlot,
-			SIGNAL(mouseMove(QMouseEvent*)),
-			this,
-			SLOT(showPointToolTip(QMouseEvent*)));
-	//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
-	connect(ui->customPlot,
-			SIGNAL(mouseDoubleClick(QMouseEvent*)),
-			this,
-			SLOT(onMouseDuobleClick(QMouseEvent*)));
 	QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"),this);
 	connect(shortcut,
 			SIGNAL(activated()),
@@ -310,6 +267,57 @@ void MainWindow::setupPlotLogs(void)
 			SIGNAL(activated()),
 			this,
 			SLOT(on_pushButtonZoomMeno_clicked()));
+}
+
+void MainWindow::setupPlotLogs(void)
+{
+	/* QString selFilter="Text files(*.txt)";
+	QString LoadFile;
+	LoadFile = QFileDialog::getOpenFileName(this,"Open Full Log",
+											QDir::currentPath(),
+											"Text files(*.txt)",
+											&selFilter);
+	*/
+
+	QFile file(strFileNameOut);
+	if (!file.open(QFile::ReadOnly | QFile::Text)) {
+		QMessageBox::warning(this,"op","file not open");
+		return;
+	}
+	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
+
+	cDecorator.buildGraph(ui->customPlot, &file);
+
+	double dMinXAxis = ui->customPlot->xAxis->range().lower;
+	double dMaxXAxis = ui->customPlot->xAxis->range().upper;
+	dLastTimeVal = dMaxXAxis; // used for "OnAir option"
+
+	ui->lineEditMin->setText(QString::number(dMinXAxis));
+	ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
+	disconnect(ui->customPlot,
+			   SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)));
+
+	// connect some interaction slots:
+	connect(ui->customPlot,
+			SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)),
+			this,
+			SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
+
+	connect(ui->customPlot,
+			SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
+			this,
+			SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+	// tooltip on mouse hover
+	connect(ui->customPlot,
+			SIGNAL(mouseMove(QMouseEvent*)),
+			this,
+			SLOT(showPointToolTip(QMouseEvent*)));
+	//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
+	connect(ui->customPlot,
+			SIGNAL(mouseDoubleClick(QMouseEvent*)),
+			this,
+			SLOT(onMouseDuobleClick(QMouseEvent*)));
+
 }
 //-----------------------------------------------------------------------------
 /**
@@ -375,6 +383,7 @@ void MainWindow::onMouseDuobleClick(QMouseEvent *event)
 void MainWindow::showPointToolTip(QMouseEvent *event)
 {
 	const double dTimeS = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
+
 	int ss = static_cast<int>(dTimeS);
 	int mm = ( ss / 60    ) % 60;
 	int hh = ( ss / 3660  ) % 24;
@@ -557,12 +566,12 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-			strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/GitFileLogger_Tool/build-QCustomPlot_Logs-Desktop_Qt_5_13_0_MinGW_32_bit-Release/_TableLog_2019_09_02.txt";
-//	strFileNameIn = QFileDialog::getOpenFileName(this,
-//												 "Open Full Log",
-//												 QDir::currentPath(),
-//												 "Text files (*.txt);;All files (*.*)",
-//												 &selFilter);
+//	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/GitFileLogger_Tool/build-QCustomPlot_Logs-Desktop_Qt_5_13_0_MinGW_32_bit-Release/_TableLog_2019_09_02.txt";
+		strFileNameIn = QFileDialog::getOpenFileName(this,
+													 "Open Full Log",
+													 QDir::currentPath(),
+													 "Text files (*.txt);;All files (*.*)",
+													 &selFilter);
 	on_LoadFile();
 	qDebug()<<"File loaded";
 	on_SaveButton_clicked();
@@ -663,9 +672,16 @@ void MainWindow::on_pushButtonProcess_clicked()
 	memcpy(caDummy, strFileNameIn.toStdString().c_str() ,sizeof(caDummy));
 	memcpy(caOutfile, strFileNameOut.toStdString().c_str() ,sizeof(caOutfile));
 	qDebug()<<"calling crunch";
+	ulTimeStart = ui->timeEdit_2->time().msecsSinceStartOfDay();
+	ulTimeStop = ui->timeEdit_3->time().msecsSinceStartOfDay();
+	if ( ulTimeStart > ulTimeStop )
+	{
+		ulTimeStop = ulTimeStart + 10000;
+	}
+
 	qDebug()<<ulTimeStart;
 	qDebug()<<ulTimeStop;
-
+	cDecorator.cleanGraph(ui->customPlot);
 	crunchLog.processFile(caDummy, caOutfile, ulTimeStart, ulTimeStop);
 	QFile file (strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -673,10 +689,6 @@ void MainWindow::on_pushButtonProcess_clicked()
 		return;
 	}
 
-
-	//  QTextStream out(&file);
-	//  QString text = ui->textEdit->toPlainText();
-	//  out<<text;
 	QString contents = file.readAll().constData();
 	ui->FinishTextEdit->setPlainText(contents);
 
@@ -749,7 +761,7 @@ void MainWindow::on_pushButtonDiretta_clicked()
 		TimerFlag = true;
 	}
 }
-
+//--------------------------------------------------------------------------
 void MainWindow::on_timeEdit_timeChanged(const QTime &time)
 {
 	int hour = time.hour();
@@ -761,16 +773,18 @@ void MainWindow::on_timeEdit_timeChanged(const QTime &time)
 	ui->lineEditMin->setText(QString::number(sommaMsec));
 }
 
-
+//--------------------------------------------------------------------------
 void MainWindow::on_pbScreenShot_clicked()
 {
 	screenShot();
 }
+//--------------------------------------------------------------------------
 
 void MainWindow::on_timeEdit_editingFinished()
 {
 	//	on_pushButtonProcess_clicked();
 }
+//--------------------------------------------------------------------------
 
 void MainWindow::on_timeEdit_2_timeChanged(const QTime &time)
 {
@@ -780,7 +794,7 @@ void MainWindow::on_timeEdit_2_timeChanged(const QTime &time)
 
 	ulTimeStart = ((hour*60*60) + (min*60) + (sec))*1000 ;
 }
-
+//--------------------------------------------------------------------------
 void MainWindow::on_timeEdit_3_timeChanged(const QTime &time)
 {
 	int hour = time.hour();
@@ -817,5 +831,5 @@ void MainWindow::on_pbnDoseAnalysis_clicked()
 	memcpy(caDummy, strFileNameIn.toStdString().c_str()  ,sizeof(caDummy));
 	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
 
-	crunchLog.processDose(caDummy, caOutfile, ulTimeStart, ulTimeStop);
+	crunchLog.processDose(caDummy, caOutfile);
 }

@@ -140,6 +140,7 @@ class MainWindow : public QMainWindow
 	unsigned long ulTimeStop; // ending time [ms]
 	double dTimeA;
 	double dTimeB;
+	void setShortCutKeys();
 };
 
 #endif // MAINWINDOW_H

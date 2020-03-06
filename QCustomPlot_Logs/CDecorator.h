@@ -12,6 +12,7 @@ class CDecorator
 {
 	public:
 	CDecorator();
+	void cleanGraph(QCustomPlot *customPlot);
 	void buildGraph(QCustomPlot *customPlot, QFile *file);
 	private:
 	typedef enum {
