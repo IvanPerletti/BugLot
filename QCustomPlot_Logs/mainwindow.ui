@@ -239,7 +239,7 @@ QStatusBar {
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -862,6 +862,19 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="text">
          <string>Dose 00</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pbnAprAnalysis">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>40</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>APR anlaysis</string>
         </property>
        </widget>
       </widget>

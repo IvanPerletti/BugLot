@@ -566,12 +566,12 @@ void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-//	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/GitFileLogger_Tool/build-QCustomPlot_Logs-Desktop_Qt_5_13_0_MinGW_32_bit-Release/_TableLog_2019_09_02.txt";
-		strFileNameIn = QFileDialog::getOpenFileName(this,
-													 "Open Full Log",
-													 QDir::currentPath(),
-													 "Text files (*.txt);;All files (*.*)",
-													 &selFilter);
+	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/GitFileLogger_Tool/build-QCustomPlot_Logs-Desktop_Qt_5_13_0_MinGW_32_bit-Release/_TableLog_2019_09_02.txt";
+//		strFileNameIn = QFileDialog::getOpenFileName(this,
+//													 "Open Full Log",
+//													 QDir::currentPath(),
+//													 "Text files (*.txt);;All files (*.*)",
+//													 &selFilter);
 	on_LoadFile();
 	qDebug()<<"File loaded";
 	on_SaveButton_clicked();
@@ -832,4 +832,21 @@ void MainWindow::on_pbnDoseAnalysis_clicked()
 	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
 
 	crunchLog.processDose(caDummy, caOutfile);
+}
+
+void MainWindow::on_pbnAprAnalysis_clicked()
+{
+	CrunchLog crunchLog;
+	char caDummy[256] = {0,};
+	char caOutfile[256] = {0,};
+	QString strOutFileDose(strFileNameIn);
+	int pos= strOutFileDose.lastIndexOf("/");
+	pos = strOutFileDose.lastIndexOf("/", -40 );
+	strOutFileDose.remove(0,pos);
+	strOutFileDose.replace("/", "_");
+	strOutFileDose.prepend("Dose_");
+	memcpy(caDummy, strFileNameIn.toStdString().c_str()  ,sizeof(caDummy));
+	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
+
+	crunchLog.processApr(caDummy, caOutfile);
 }

@@ -123,6 +123,8 @@ class MainWindow : public QMainWindow
 
 	void on_pbnDoseAnalysis_clicked();
 
+	void on_pbnAprAnalysis_clicked();
+
 	private:
 	Ui::MainWindow *ui;
 	QString demoName;
