@@ -571,8 +571,8 @@ void MainWindow::on_LoadFile_clicked()
     strFileNameIn.clear();
     strFileNameIn = QFileDialog::getOpenFileName(this,
                                                  "Open Full Log",
-                                                 //QDir::currentPath(),
-                                                 strPathFile,
+                                                 QDir::currentPath(),
+                                                 //strPathFile,
                                                  "Text files (*.txt);;All files (*.*)",
                                                  &selFilter);
 	on_LoadFile();
