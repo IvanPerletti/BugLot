@@ -9,6 +9,7 @@ TARGET = BugLot
 TEMPLATE = app
 
 SOURCES += access.cpp \
+    CrunchLogDiscovery.cpp \
 	ISettings.cpp \
 		  main.cpp\
 		   mainwindow.cpp \
@@ -17,6 +18,7 @@ SOURCES += access.cpp \
 	CDecorator.cpp
 
 HEADERS  += access.h \
+    CrunchLogDiscovery.h \
 	ISettings.h \
 		  mainwindow.h \
 		 ../qcustomplot.h \

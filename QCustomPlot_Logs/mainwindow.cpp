@@ -48,7 +48,7 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QShortcut>
-#include "CrunchLog.h"
+#include "CrunchLogDiscovery.h"
 #include "CDecorator.h"
 #include <iostream>
 #include "ISettings.h"
@@ -665,7 +665,7 @@ void MainWindow::on_PulisciButton_clicked()
 void MainWindow::on_pushButtonProcess_clicked()
 {
 
-	CrunchLog crunchLog;
+    CrunchLogDiscovery crunchLog;
 	char caDummy[256] = {0,};
 	char caOutfile[256] = {0,};
 	memcpy(caDummy, strFileNameIn.toStdString().c_str() ,sizeof(caDummy));
@@ -831,7 +831,7 @@ void MainWindow::checkUserDirs(void)
 
 void MainWindow::on_pbnDoseAnalysis_clicked()
 {
-	CrunchLog crunchLog;
+    CrunchLogDiscovery crunchLog;
 	char caDummy[256] = {0,};
 	char caOutfile[256] = {0,};
 	QString strOutFileDose(strFileNameIn);
@@ -848,7 +848,7 @@ void MainWindow::on_pbnDoseAnalysis_clicked()
 
 void MainWindow::on_pbnAprAnalysis_clicked()
 {
-	CrunchLog crunchLog;
+    CrunchLogDiscovery crunchLog;
 	char caDummy[256] = {0,};
 	char caOutfile[256] = {0,};
 	QString strOutFileDose(strFileNameIn);
