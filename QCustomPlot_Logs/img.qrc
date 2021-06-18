@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>balboa.jpg</file>
         <file>bugLotIco.ico</file>
         <file>Icon.png</file>
     </qresource>
