@@ -10,18 +10,20 @@ class access;
 
 class access : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit access(QWidget *parent = 0);
-    ~access();
+	explicit access(QWidget *parent = 0);
+	~access();
 
 private slots:
-    void on_pushButton_login_clicked();
+	void on_pushButton_login_clicked();
 
 private:
-    Ui::access *ui;
-    MainWindow *mainWindow;
+	Ui::access *ui;
+	MainWindow *mainWindow;
+	uint32_t hash(uint32_t u32Seed);
+	uint32_t u32Licence;
 };
 
 #endif // ACCESS_H

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1321</width>
-    <height>640</height>
+    <width>1290</width>
+    <height>782</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@ font: 10pt;
 
 }
 QMainWindow {
-	background-color:rgb(82, 82, 82);
+	background-color:rgb(182, 82, 82);
 
 }
 QTextEdit {
@@ -239,7 +239,7 @@ QStatusBar {
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -319,6 +319,13 @@ QStatusBar {
               <month>1</month>
               <day>1</day>
              </datetime>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbxPerform">
+            <property name="text">
+             <string>Performance</string>
             </property>
            </widget>
           </item>
@@ -450,7 +457,7 @@ QStatusBar {
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>FL Tool rev 1.0.5.2</string>
+           <string>..</string>
           </property>
          </widget>
         </item>
@@ -479,13 +486,13 @@ QStatusBar {
          <widget class="QGroupBox" name="groupBox_2">
           <property name="minimumSize">
            <size>
-            <width>169</width>
+            <width>100</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>170</width>
+            <width>125</width>
             <height>16777215</height>
            </size>
           </property>
@@ -504,12 +511,76 @@ QStatusBar {
             </widget>
            </item>
            <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QPushButton" name="pbnPid">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>10</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>P</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pbnGen">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>10</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>G</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pbnTable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>10</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">font: 7pt &quot;MS Shell Dlg 2&quot;;</string>
+               </property>
+               <property name="text">
+                <string>T</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <layout class="QGridLayout" name="gridLayout">
              <item row="0" column="1">
               <widget class="QPushButton" name="pushButtonZoomPiu">
                <property name="minimumSize">
                 <size>
-                 <width>43</width>
+                 <width>30</width>
                  <height>30</height>
                 </size>
                </property>
@@ -531,7 +602,7 @@ QStatusBar {
               <widget class="QPushButton" name="pushButtonZoomLeft">
                <property name="minimumSize">
                 <size>
-                 <width>50</width>
+                 <width>30</width>
                  <height>30</height>
                 </size>
                </property>
@@ -543,24 +614,11 @@ QStatusBar {
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
              <item row="1" column="2">
               <widget class="QPushButton" name="pushButtonZoomRight">
                <property name="minimumSize">
                 <size>
-                 <width>50</width>
+                 <width>30</width>
                  <height>30</height>
                 </size>
                </property>
@@ -576,7 +634,7 @@ QStatusBar {
               <widget class="QPushButton" name="pushButtonZoomMeno">
                <property name="minimumSize">
                 <size>
-                 <width>43</width>
+                 <width>30</width>
                  <height>30</height>
                 </size>
                </property>
@@ -613,7 +671,7 @@ QStatusBar {
             <widget class="QTimeEdit" name="timeEdit">
              <property name="minimumSize">
               <size>
-               <width>150</width>
+               <width>80</width>
                <height>40</height>
               </size>
              </property>
@@ -627,7 +685,7 @@ QStatusBar {
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Starting time HH:MM:SS to be displayed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">font: 15pt &quot;MS Shell Dlg 2&quot;;</string>
+              <string notr="true">font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
              </property>
              <property name="displayFormat">
               <string>HH:mm:ss</string>
@@ -645,8 +703,8 @@ QStatusBar {
              <property name="font">
               <font>
                <family>MS Shell Dlg 2</family>
-               <pointsize>12</pointsize>
-               <weight>9</weight>
+               <pointsize>10</pointsize>
+               <weight>50</weight>
                <italic>false</italic>
                <bold>false</bold>
               </font>
@@ -655,8 +713,7 @@ QStatusBar {
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Click to plot current time set&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">
-font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
+              <string notr="true"/>
              </property>
              <property name="text">
               <string>Extract Log</string>
@@ -882,7 +939,6 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

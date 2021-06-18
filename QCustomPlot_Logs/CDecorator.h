@@ -55,6 +55,7 @@ class CDecorator
 		CONS1_PREP_HW         	=	36	,
 		CONS1_RAD_HW          	=	37	,
 		CONS1_FL_HW           	=	38	,
+		LOGICAL_MODE            =	39	,
 	} enumIO;
 	QRect qrAxisDim;
 	void addIOSignalToPlot(QVector<double> qvTime,
@@ -72,6 +73,11 @@ class CDecorator
 							QCustomPlot *customPlot);
 	QVector<QString> buildLegend();
 	void addGraph(QPen pen, QVector<double> qvDataArranged, QVector<double> qvTime, QString qStrLegend, QCustomPlot *customPlot);
+		void plotTableIo(QVector<double> qvTime,
+						  QVector<double> qvDataArranged,
+						  QVector<QString> LegendList,
+						  QVector <QVector <int> > qvMyVect,
+						  QCustomPlot *customPlot);
 };
 extern CDecorator cDecorator;
 #endif // CDECORATOR_H

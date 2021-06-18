@@ -125,6 +125,12 @@ class MainWindow : public QMainWindow
 
 	void on_pbnAprAnalysis_clicked();
 
+	void on_pbnPid_clicked();
+
+	void on_pbnGen_clicked();
+
+	void on_pbnTable_clicked();
+
 	private:
 	Ui::MainWindow *ui;
 	QString demoName;
@@ -143,6 +149,7 @@ class MainWindow : public QMainWindow
 	double dTimeA;
 	double dTimeB;
 	void setShortCutKeys();
+	void showHideElements(QString sTxt2Find);
 };
 
 #endif // MAINWINDOW_H

@@ -51,6 +51,7 @@
 #include "CrunchLog.h"
 #include "CDecorator.h"
 #include <iostream>
+#include "ISettings.h"
 //#include <QDebug>
 
 //-----------------------------------------------------------------------------
@@ -117,11 +118,6 @@ void MainWindow::realtimeDataSlot()
 	++frameCount;
 	if (key-lastFpsKey > 2) // average fps over 2 seconds
 	{
-		ui->statusBar->showMessage(
-					QString("%1 FPS, Total Data points: %2")
-					.arg(frameCount/(key-lastFpsKey), 0, 'f', 0)
-					.arg(ui->customPlot->graph(0)->data()->size()+ui->customPlot->graph(1)->data()->size())
-					, 0);
 		lastFpsKey = key;
 		frameCount = 0;
 	}
@@ -155,11 +151,6 @@ void MainWindow::bracketDataSlot()
 	++frameCount;
 	if (key-lastFpsKey > 2) // average fps over 2 seconds
 	{
-		ui->statusBar->showMessage(
-					QString("%1 FPS, Total Data points: %2")
-					.arg(frameCount/(key-lastFpsKey), 0, 'f', 0)
-					.arg(ui->customPlot->graph(0)->data()->size())
-					, 0);
 		lastFpsKey = key;
 		frameCount = 0;
 	}
@@ -317,7 +308,6 @@ void MainWindow::setupPlotLogs(void)
 			SIGNAL(mouseDoubleClick(QMouseEvent*)),
 			this,
 			SLOT(onMouseDuobleClick(QMouseEvent*)));
-
 }
 //-----------------------------------------------------------------------------
 /**
@@ -335,18 +325,22 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
 		for (int i=0; i<ui->customPlot->graphCount(); ++i)
 		{
 			QCPGraph *graph = ui->customPlot->graph(i);
-			QCPPlottableLegendItem *item = ui->customPlot->legend->itemWithPlottable(graph);
-			QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
+			if( graph->visible() )
+			{
+				QCPPlottableLegendItem *item = ui->customPlot->legend->itemWithPlottable(graph);
+				QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
 
-			if (item->selected() || graph->selected()){
-				qpGraphPen.setStyle(Qt::DotLine);
-				qpGraphPen.setWidth(4);
+				if (item->selected() || graph->selected()){
+					qpGraphPen.setStyle(Qt::DotLine);
+					qpGraphPen.setWidth(4);
+				}
+				else
+				{
+					qpGraphPen.setStyle(Qt::SolidLine);
+					qpGraphPen.setWidth(2);
+				}
+				l->parentPlot()->graph(i)->setPen(qpGraphPen);
 			}
-			else{
-				qpGraphPen.setStyle(Qt::SolidLine);
-				qpGraphPen.setWidth(2);
-			}
-			l->parentPlot()->graph(i)->setPen(qpGraphPen);
 		}
 	}
 }
@@ -561,22 +555,26 @@ void MainWindow::on_pushButtonZoomMeno_clicked()
 	updateUiTimeEdit(dNewRangeX0);
 }
 
-//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void MainWindow::on_LoadFile_clicked()
 {
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
-	strFileNameIn ="I:/GMM/__PROJECTs_SVN/Qt Projects/GitFileLogger_Tool/build-QCustomPlot_Logs-Desktop_Qt_5_13_0_MinGW_32_bit-Release/_TableLog_2019_09_02.txt";
-//		strFileNameIn = QFileDialog::getOpenFileName(this,
-//													 "Open Full Log",
-//													 QDir::currentPath(),
-//													 "Text files (*.txt);;All files (*.*)",
-//													 &selFilter);
+	QString strPrevPath = iSettings.load(ISettings::SET_CURR_PATH).toString();
+//	strFileNameIn ="I:/GMM/Drawer WIP/Test Macchine/GE$/Mercy St Vincent/Performance 02/TableLog_2020_11_05.txt";
+		strFileNameIn = QFileDialog::getOpenFileName(this,
+													 "Open Full Log",
+													 strPrevPath,
+													 "Text files (*.txt);;All files (*.*)",
+													 &selFilter);
+	QFileInfo fileInfo(strFileNameIn);
+	strPrevPath = fileInfo.absolutePath();
+	iSettings.save(ISettings::SET_CURR_PATH, strPrevPath);
 	on_LoadFile();
 	qDebug()<<"File loaded";
 	on_SaveButton_clicked();
 }
-//-------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void MainWindow::on_LoadFile()
 {
 
@@ -585,6 +583,7 @@ void MainWindow::on_LoadFile()
 		QMessageBox::warning(this,"op","file not open");
 		return;
 	}
+
 	QTextStream in(&file);
 	QString text = in.read(1000);
 	text.append("\r\n [...]");
@@ -682,6 +681,7 @@ void MainWindow::on_pushButtonProcess_clicked()
 	qDebug()<<ulTimeStart;
 	qDebug()<<ulTimeStop;
 	cDecorator.cleanGraph(ui->customPlot);
+	crunchLog.setPerformance( ui->cbxPerform->isChecked() );
 	crunchLog.processFile(caDummy, caOutfile, ulTimeStart, ulTimeStop);
 	QFile file (strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -764,13 +764,8 @@ void MainWindow::on_pushButtonDiretta_clicked()
 //--------------------------------------------------------------------------
 void MainWindow::on_timeEdit_timeChanged(const QTime &time)
 {
-	int hour = time.hour();
-	int min =  time.minute();
-	int sec =  time.second();
 
-	int sommaMsec = (hour*60*60) + (min*60) + (sec) ;
 
-	ui->lineEditMin->setText(QString::number(sommaMsec));
 }
 
 //--------------------------------------------------------------------------
@@ -782,7 +777,24 @@ void MainWindow::on_pbScreenShot_clicked()
 
 void MainWindow::on_timeEdit_editingFinished()
 {
-	//	on_pushButtonProcess_clicked();
+	QTime time = ui->timeEdit->time();
+	int hour = time.hour();
+	int min =  time.minute();
+	int sec =  time.second();
+
+	int sommaMsec = (hour*60*60) + (min*60) + (sec) ;
+
+	ui->lineEditMin->setText(QString::number(sommaMsec));
+	double dInterval = ui->lineEditInterval->text().toDouble();
+	if ( dInterval > 120 )
+	{
+		dInterval = 10;
+		ui->lineEditInterval->setText(QString::number((int)dInterval));
+	}
+
+	ui->customPlot->xAxis->setRange(sommaMsec , sommaMsec+(int)dInterval);
+	ui->customPlot->replot();
+	updateUiTimeEdit(sommaMsec);
 }
 //--------------------------------------------------------------------------
 
@@ -849,4 +861,47 @@ void MainWindow::on_pbnAprAnalysis_clicked()
 	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
 
 	crunchLog.processApr(caDummy, caOutfile);
+}
+
+void MainWindow::showHideElements(QString sTxt2Find)
+{
+	for (int i=0; i<ui->customPlot->graphCount(); ++i)
+	{
+		QCPGraph *graph = ui->customPlot->graph(i);
+		QString strLegendText = graph->name();
+		if (strLegendText.contains(sTxt2Find, Qt::CaseInsensitive))
+		{
+			bool bVisibility = graph->visible();
+			if ( bVisibility )
+			{
+				graph->removeFromLegend();
+			}else
+			{
+				graph->addToLegend();
+			}
+
+			graph->setVisible(!bVisibility);
+
+		}
+	}
+	ui->customPlot->replot();
+}
+
+void MainWindow::on_pbnPid_clicked()
+{
+
+	showHideElements(" PID ");
+
+}
+
+void MainWindow::on_pbnGen_clicked()
+{
+
+	showHideElements(" GEN ");
+
+}
+
+void MainWindow::on_pbnTable_clicked()
+{
+	showHideElements(" TAB ");
 }

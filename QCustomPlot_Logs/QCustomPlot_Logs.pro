@@ -9,6 +9,7 @@ TARGET = FileLoggerTool
 TEMPLATE = app
 
 SOURCES += access.cpp \
+	ISettings.cpp \
 		  main.cpp\
 		   mainwindow.cpp \
 		 ../qcustomplot.cpp \
@@ -16,6 +17,7 @@ SOURCES += access.cpp \
 	CDecorator.cpp
 
 HEADERS  += access.h \
+	ISettings.h \
 		  mainwindow.h \
 		 ../qcustomplot.h \
 	CrunchLog.h \
