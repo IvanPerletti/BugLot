@@ -491,12 +491,12 @@ void MainWindow::on_LoadFile_clicked()
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
 	QString strPrevPath = iSettings.load(ISettings::SET_CURR_PATH).toString();
-    strFileNameIn ="./logC_arm.txt";
-//		strFileNameIn = QFileDialog::getOpenFileName(this,
-//													 "Open Full Log",
-//													 strPrevPath,
-//													 "Text files (*.txt);;All files (*.*)",
-//													 &selFilter);
+//    strFileNameIn ="./logC_arm.txt";
+        strFileNameIn = QFileDialog::getOpenFileName(this,
+                                                     "Open Full Log",
+                                                     strPrevPath,
+                                                     "Text files (*.txt);;All files (*.*)",
+                                                     &selFilter);
 	QFileInfo fileInfo(strFileNameIn);
 	strPrevPath = fileInfo.absolutePath();
 	iSettings.save(ISettings::SET_CURR_PATH, strPrevPath);
