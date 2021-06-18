@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <inttypes.h>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -46,29 +47,24 @@ void CrunchLogC_Arm::processFile (const char * ucaNameFileIn,
     {
         getline(infile,STRING); // Saves the line in STRING.
         string strTime = STRING;
-        unsigned long ulTimeN = 0;
-        removeCharsUntil( &strTime , ";" );
-        ulTimeN = unpackTimeString( strTime.data() );
+        unsigned long ulTimeN = 4567890;
 
         if ( infile.eof() || infile.bad() || ulTimeN > ulTimeStop )
         {
             break;
         }
-        else if ( ulTimeN >= ulTimeStart )
+        else if ( 1 )
         {
             if (STRING != previousLine)// true in the end of file or file corrupted
             {
                 previousLine = STRING;
-                std::size_t pos = STRING.find("<Id = 0652");// if "find" fails then pos  = 4000000
-                if (pos < STRING.size() )
-                { // found <Id = 0652
-                    processId652(STRING,
-                                 strOut,
-                                 outFile,
-                                 ulTime,
-                                 ulTimeStart,
-                                 &strLog);
-                }
+                processController(STRING,
+                                  strOut,
+                                  outFile,
+                                  ulTime,
+                                  ulTimeStart,
+                                  &strLog);
+
             }
 
         }
@@ -89,35 +85,31 @@ void CrunchLogC_Arm::processController(string & STRING,
                                        CrunchLog::structLog * pstrLog
                                        )
 {
-    removeCharsUntil(&STRING,"; ");
-    unsigned long ulTimeN = unpackTimeString( STRING.data() );
-    ulTime = MAX(ulTime+1, ulTimeN);
-    if (ulTimeN > ulTimeStart)
+    //    1907715.2 107942 10
+    //    1907821.2 239014 10
+    //    1907822.2 501158 11
+    //    1907834.2 501190 11
+    //    1907835.2 501158 11
+    uint32_t
+            ulTimeN,
+            ulBitMaskNew;
+    int lMcStatus;
+    float fTime;
+    int32_t iNumFound = sscanf( STRING.data() , "%f %lu %d" , &fTime , &ulBitMaskNew, &lMcStatus );
+    if ( iNumFound >= 2 )
     {
-        long unsigned int ulaData[6]={0,};
-        removeCharsUntil(&STRING,"DEBUG data = ");
-        removeChars(&STRING,"0X");// replace 0X with blank spaces
-        sscanf( STRING.data() , "%lx %lx %lx %lx %lx %lx",
-                &ulaData[0] ,
-                &ulaData[1] ,
-                &ulaData[2] ,
-                &ulaData[3] ,
-                &ulaData[4] ,
-                &ulaData[5] ); // extract numbers
-        // ACHTUNG: warning is necessary for proper conversion
-        unsigned long ulBitMaskNew = ulaData[1];
-        ulBitMaskNew += (ulaData[2]<<8);
-        ulBitMaskNew += (ulaData[3]<<16);
-        ulBitMaskNew += (ulaData[4]<<24);
-        long lMcStatus = ulaData[5];
-        bool bNeedToSave = true;
-        if ( isPerformanceOn() )
+        ulTimeN = fTime;
+        ulTime = MAX(ulTime+1, ulTimeN);
+
+        if ( ulTimeN > ulTimeStart )
         {
-            bNeedToSave = ( lMcStatus > 3 );
-        }
-        switch(ulaData[0])
-        {
-        case 6:
+            bool bNeedToSave = true;
+
+            if ( isPerformanceOn() )
+            {
+                bNeedToSave = ( lMcStatus > 3 );
+            }
+
             if (bNeedToSave)
             {
                 if ( pstrLog->ulBitMask != ulBitMaskNew || pstrLog->lMcStatus != lMcStatus )
@@ -129,14 +121,13 @@ void CrunchLogC_Arm::processController(string & STRING,
             }
             ulTime++;
             pstrLog->ulBitMask = ulBitMaskNew;
-            pstrLog->lMcStatus = ulaData[5] ;
+            pstrLog->lMcStatus = lMcStatus ;
             if (bNeedToSave)
             {
                 finalizeString(&strOut, ulTime, pstrLog);
                 cout<< strOut.c_str(); // Prints out STRING
                 outFile << strOut;
             }
-            break;
         }
     }
 }

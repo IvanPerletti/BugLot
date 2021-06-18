@@ -30,13 +30,13 @@ class CrunchLog
 public:
     typedef struct
     {
-        unsigned long  ulBitMask    ;
-        long           lMcStatus    ;
-        unsigned long  ulTableBit   ;
-        int            ulGenStat    ;
-        int            iDllStat     ;
-        unsigned long  ulTableBitExt;
-        unsigned char  u8LogicalMode;
+        uint32_t ulBitMask    ;
+        int32_t  lMcStatus    ;
+        uint32_t ulTableBit   ;
+        int32_t  ulGenStat    ;
+        int32_t  iDllStat     ;
+        uint32_t ulTableBitExt;
+        uint8_t  u8LogicalMode;
     } structLog;
 
 

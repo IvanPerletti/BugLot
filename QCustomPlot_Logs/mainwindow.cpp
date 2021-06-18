@@ -1,43 +1,3 @@
-/***************************************************************************
-**                                                                        **
-**  QCustomPlot, an easy to use, modern plotting widget for Qt            **
-**  Copyright (C) 2011-2017 Emanuel Eichhammer                            **
-**                                                                        **
-**  This program is free software: you can redistribute it and/or modify  **
-**  it under the terms of the GNU General Public License as published by  **
-**  the Free Software Foundation, either version 3 of the License, or     **
-**  (at your option) any later version.                                   **
-**                                                                        **
-**  This program is distributed in the hope that it will be useful,       **
-**  but WITHOUT ANY WARRANTY; without even the implied warranty of        **
-**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         **
-**  GNU General Public License for more details.                          **
-**                                                                        **
-**  You should have received a copy of the GNU General Public License     **
-**  along with this program.  If not, see http://www.gnu.org/licenses/.   **
-**                                                                        **
-****************************************************************************
-**           Author: Emanuel Eichhammer                                   **
-**  Website/Contact: http://www.qcustomplot.com/                          **
-**             Date: 04.09.17                                             **
-**          Version: 2.0.0                                                **
-****************************************************************************/
-
-/************************************************************************************************************
-**                                                                                                         **
-**  This is the example code for QCustomPlot.                                                              **
-**                                                                                                         **
-**  It demonstrates basic and some advanced capabilities of the widget. The interesting code is inside     **
-**  the "setup(...)Demo" functions of MainWindow.                                                          **
-**                                                                                                         **
-**  In order to see a demo in action, call the respective "setup(...)Demo" function inside the             **
-**  MainWindow constructor. Alternatively you may call setupDemo(i) where i is the index of the demo       **
-**  you want (for those, see MainWindow constructor comments). All other functions here are merely a       **
-**  way to easily create screenshots of all demos for the website. I.e. a timer is set to successively     **
-**  setup all the demos and make a screenshot of the window area and save it in the ./screenshots          **
-**  directory.                                                                                             **
-**                                                                                                         **
-*************************************************************************************************************/
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -49,11 +9,11 @@
 #include <QFileDialog>
 #include <QShortcut>
 #include "CrunchLogDiscovery.h"
+#include "CrunchLogC_Arm.h"
 #include "CDecorator.h"
 #include <iostream>
 #include "ISettings.h"
-//#include <QDebug>
-
+#include "ITimePerform.h"
 //-----------------------------------------------------------------------------
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -91,37 +51,7 @@ void MainWindow::setupDemo(int demoIndex)
 	ui->customPlot->replot();
 
 }
-//-----------------------------------------------------------------------------
-void MainWindow::realtimeDataSlot()
-{
-	static QTime time(QTime::currentTime());
-	// calculate two new data points:
-	double key = time.elapsed()/1000.0; // time elapsed since start of demo, in seconds
-	static double lastPointKey = 0;
-	if (key-lastPointKey > 0.002) // at most add point every 2 ms
-	{
-		// add data to lines:
-		ui->customPlot->graph(0)->addData(key, qSin(key)+qrand()/(double)RAND_MAX*1*qSin(key/0.3843));
-		ui->customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-		// rescale value (vertical) axis to fit the current data:
-		//ui->customPlot->graph(0)->rescaleValueAxis();
-		//ui->customPlot->graph(1)->rescaleValueAxis(true);
-		lastPointKey = key;
-	}
-	// make key axis range scroll with the data (at a constant range size of 8):
-	ui->customPlot->xAxis->setRange(key, 8, Qt::AlignRight);
-	ui->customPlot->replot();
 
-	// calculate frames per second:
-	static double lastFpsKey;
-	static int frameCount;
-	++frameCount;
-	if (key-lastFpsKey > 2) // average fps over 2 seconds
-	{
-		lastFpsKey = key;
-		frameCount = 0;
-	}
-}
 //-----------------------------------------------------------------------------
 
 void MainWindow::bracketDataSlot()
@@ -561,12 +491,12 @@ void MainWindow::on_LoadFile_clicked()
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
 	QString strPrevPath = iSettings.load(ISettings::SET_CURR_PATH).toString();
-//	strFileNameIn ="I:/GMM/Drawer WIP/Test Macchine/GE$/Mercy St Vincent/Performance 02/TableLog_2020_11_05.txt";
-		strFileNameIn = QFileDialog::getOpenFileName(this,
-													 "Open Full Log",
-													 strPrevPath,
-													 "Text files (*.txt);;All files (*.*)",
-													 &selFilter);
+    strFileNameIn ="./logC_arm.txt";
+//		strFileNameIn = QFileDialog::getOpenFileName(this,
+//													 "Open Full Log",
+//													 strPrevPath,
+//													 "Text files (*.txt);;All files (*.*)",
+//													 &selFilter);
 	QFileInfo fileInfo(strFileNameIn);
 	strPrevPath = fileInfo.absolutePath();
 	iSettings.save(ISettings::SET_CURR_PATH, strPrevPath);
@@ -665,7 +595,7 @@ void MainWindow::on_PulisciButton_clicked()
 void MainWindow::on_pushButtonProcess_clicked()
 {
 
-    CrunchLogDiscovery crunchLog;
+    CrunchLogC_Arm crunchLog;
 	char caDummy[256] = {0,};
 	char caOutfile[256] = {0,};
 	memcpy(caDummy, strFileNameIn.toStdString().c_str() ,sizeof(caDummy));

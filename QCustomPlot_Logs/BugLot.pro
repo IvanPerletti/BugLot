@@ -12,6 +12,7 @@ SOURCES += access.cpp \
     CrunchLogC_Arm.cpp \
     CrunchLogDiscovery.cpp \
 	ISettings.cpp \
+    ITimePerform.cpp \
 		  main.cpp\
 		   mainwindow.cpp \
 		 ../qcustomplot.cpp \
@@ -22,6 +23,7 @@ HEADERS  += access.h \
     CrunchLogC_Arm.h \
     CrunchLogDiscovery.h \
 	ISettings.h \
+    ITimePerform.h \
 		  mainwindow.h \
 		 ../qcustomplot.h \
 	CrunchLog.h \
