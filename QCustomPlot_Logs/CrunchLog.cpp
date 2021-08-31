@@ -18,11 +18,13 @@ using namespace std;
 
 
 //--------------------------------------------------------
-void CrunchLog::unpackBit8(string * pstrOut, unsigned char u8Val)
+void CrunchLog::unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit)
 {
 	int ii, iBit;
 
-	for (ii=0; ii<8; ii++)
+    if (iNbit > 8)
+        iNbit = 8;
+    for (ii=0; ii<iNbit; ii++)
 	{
 		char u8aNum[4];
 		iBit = ( u8Val & (1<<ii) ) !=0;
@@ -32,11 +34,13 @@ void CrunchLog::unpackBit8(string * pstrOut, unsigned char u8Val)
 	}
 }
 //--------------------------------------------------------
-void CrunchLog::unpackBit32(string * pstrOut, unsigned int uiVal)
+void CrunchLog::unpackBit32(string *pstrOut, unsigned int uiVal, int iNbit)
 {
 	int ii, iBit;
 
-	for (ii=0; ii<19; ii++)
+    if (iNbit > 32)
+        iNbit = 32;
+    for (ii=0; ii<iNbit; ii++)
 	{
 		char u8aNum[4];
 		iBit = ( uiVal & (1<<ii) ) !=0;
@@ -44,6 +48,15 @@ void CrunchLog::unpackBit32(string * pstrOut, unsigned int uiVal)
 		pstrOut->append(u8aNum);
 		pstrOut->append(" ");
 	}
+}
+//--------------------------------------------------------
+void CrunchLog::intToStr(string *pStrOut, unsigned int uiVal, string sfx)
+{
+    char s8aChar[16]={0,};
+
+    itoa(uiVal, s8aChar, 10);
+    pStrOut->append(s8aChar);
+    pStrOut->append(sfx);
 }
 //--------------------------------------------------------
 unsigned long CrunchLog::unpackTimeString(const char * u8aData)
@@ -60,6 +73,20 @@ unsigned long CrunchLog::unpackTimeString(const char * u8aData)
 	if (ulTime >= 47018074)
 		ulTime++;
 	return(ulTime);
+}
+//--------------------------------------------------------
+bool CrunchLog::decodeTimeString(const char * u8aData, unsigned long &ulTime)
+{
+    unsigned int l_hour=0, l_min=0, l_sec=0, l_ms=0;
+    int32_t iNumFound = sscanf( u8aData , "%02d:%02d:%02d.%03d",
+            &l_hour	,
+            &l_min	,
+            &l_sec	,
+            &l_ms	);
+
+    if (iNumFound == 4)
+        ulTime = l_ms + (l_sec + l_min*60 + l_hour * 3600)*1000;
+    return(iNumFound == 4);
 }
 
 //--------------------------------------------------------
@@ -85,63 +112,6 @@ void CrunchLog::removeChars(string * strProcessed, string strMatchToFind)
 		szPos = strProcessed->find(strMatchToFind);
 	}
 }
-//--------------------------------------------------------
-
-void CrunchLog::finalizeString2(string *pStrOut,
-							   unsigned long ulTime,
-							   unsigned long lBitMask,
-							   long lMcStatus,
-							   unsigned long ulTableBit,
-							   int u8GenStat,
-							   int iDllStat,
-							   unsigned long ulTableBitExt,
-							   unsigned char u8LogicalMode)
-{
-	char s8aDummy[16]={0,}; // more than max Int number: 9 digits + sign
-	char s8aChar[10]={0,};
-
-	pStrOut->clear();
-	itoa(ulTime, s8aDummy, 10);
-	pStrOut->append(s8aDummy);
-	pStrOut->append(" " );
-	unpackBit32(pStrOut, lBitMask);
-	itoa( lMcStatus,s8aDummy, 10);
-	pStrOut->append(s8aDummy);
-	pStrOut->append(" " );
-	unpackBit8(pStrOut, static_cast<unsigned char>( ulTableBit ));
-	//	pStrOut->append(" " );already in unpack8Bit
-	itoa(u8GenStat, s8aChar, 10);
-	pStrOut->append(s8aChar);
-	pStrOut->append(" " );
-	memset(s8aChar,0,sizeof(s8aChar));
-	itoa(iDllStat, s8aChar, 10);
-	pStrOut->append(s8aChar);
-	pStrOut->append(" " );
-	unpackBit8(pStrOut, static_cast<unsigned char>(ulTableBitExt) );
-	itoa( u8LogicalMode, s8aDummy, 10);
-	pStrOut->append(s8aDummy) ;
-	pStrOut->append("\n");
-}
-//--------------------------------------------------------
-void CrunchLog::finalizeString(string *pStrOut,
-							   unsigned long ulTime,
-                               CrunchLog::structLog * pstrLog)
-{
-	if ( pstrLog != nullptr && pStrOut != nullptr )
-	{
-        finalizeString2( pStrOut                ,
-						ulTime                 ,
-						pstrLog->ulBitMask      ,
-						pstrLog->lMcStatus     ,
-						pstrLog->ulTableBit    ,
-						pstrLog->ulGenStat     ,
-						pstrLog->iDllStat      ,
-						pstrLog->ulTableBitExt ,
-						pstrLog->u8LogicalMode );
-	}
-}
-
-
 //--------------------------------------------------------
 void CrunchLog::strReplaceOccurrence(string *pStrOut,
 									 const string csSubStrLook,

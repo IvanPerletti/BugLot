@@ -22,24 +22,14 @@ private:
  */
 #ifndef CRUNCHLOG_H
 #define CRUNCHLOG_H
+
+#include <QFile>
 #include <string>
+
 using namespace std;
 
 class CrunchLog
 {
-public:
-    typedef struct
-    {
-        uint32_t ulBitMask    ;
-        int32_t  lMcStatus    ;
-        uint32_t ulTableBit   ;
-        int32_t  ulGenStat    ;
-        int32_t  iDllStat     ;
-        uint32_t ulTableBitExt;
-        uint8_t  u8LogicalMode;
-    } structLog;
-
-
 public:
     CrunchLog();
     void extractLog (const char * ucaNameFileIn,
@@ -49,23 +39,13 @@ public:
 
 
 protected:
-    static void unpackBit8(string * pstrOut, unsigned char u8Val);
-    static void unpackBit32(string * pstrOut, unsigned int uiVal);
+    static void unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit = 8);
+    static void unpackBit32(string * pstrOut, unsigned int uiVal, int iNbit = 32);
+    static void intToStr(string *pStrOut, unsigned int uiVal, string sfx = " ");
     static unsigned long unpackTimeString(const char * u8aData);
+    static bool decodeTimeString(const char * u8aData, unsigned long &ulTime);
     static void removeCharsUntil(string * strProcessed, string strMatchToFind);
     static void removeChars( string * strProcessed, string strMatchToFind);
-    static void finalizeString2(string *pStrOut,
-                        unsigned long ulTime,
-                        unsigned long lBitMask,
-                        long lMcStatus,
-                        unsigned long ulTableBit,
-                        int u8GenStat,
-                        int iDllStat,
-                        unsigned long ulTableBitExt,
-                        unsigned char u8LogicalMode);
-    static void finalizeString(string *pStrOut,
-                        unsigned long ulTime,
-                        structLog *pstrLog);
     static void strReplaceOccurrence(string *pStrOut,
                               const string csSubStrLook,
                               const string csSubStrSubst );

@@ -8,7 +8,6 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QShortcut>
-#include "CrunchLogDiscovery.h"
 #include "CrunchLogC_Arm.h"
 #include "CDecorator.h"
 #include <iostream>
@@ -612,7 +611,7 @@ void MainWindow::on_pushButtonProcess_clicked()
 	qDebug()<<ulTimeStop;
 	cDecorator.cleanGraph(ui->customPlot);
 	crunchLog.setPerformance( ui->cbxPerform->isChecked() );
-	crunchLog.processFile(caDummy, caOutfile, ulTimeStart, ulTimeStop);
+    crunchLog.processFile(strFileNameIn, ulTimeStart, ulTimeStop);
 	QFile file (strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","Cannot open file");
@@ -761,36 +760,36 @@ void MainWindow::checkUserDirs(void)
 
 void MainWindow::on_pbnDoseAnalysis_clicked()
 {
-    CrunchLogDiscovery crunchLog;
-	char caDummy[256] = {0,};
-	char caOutfile[256] = {0,};
-	QString strOutFileDose(strFileNameIn);
-	int pos= strOutFileDose.lastIndexOf("/");
-	pos = strOutFileDose.lastIndexOf("/", -40 );
-	strOutFileDose.remove(0,pos);
-	strOutFileDose.replace("/", "_");
-	strOutFileDose.prepend("Dose_");
-	memcpy(caDummy, strFileNameIn.toStdString().c_str()  ,sizeof(caDummy));
-	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
+//    CrunchLogDiscovery crunchLog;
+//	char caDummy[256] = {0,};
+//	char caOutfile[256] = {0,};
+//	QString strOutFileDose(strFileNameIn);
+//	int pos= strOutFileDose.lastIndexOf("/");
+//	pos = strOutFileDose.lastIndexOf("/", -40 );
+//	strOutFileDose.remove(0,pos);
+//	strOutFileDose.replace("/", "_");
+//	strOutFileDose.prepend("Dose_");
+//	memcpy(caDummy, strFileNameIn.toStdString().c_str()  ,sizeof(caDummy));
+//	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
 
-	crunchLog.processDose(caDummy, caOutfile);
+//	crunchLog.processDose(caDummy, caOutfile);
 }
 
 void MainWindow::on_pbnAprAnalysis_clicked()
 {
-    CrunchLogDiscovery crunchLog;
-	char caDummy[256] = {0,};
-	char caOutfile[256] = {0,};
-	QString strOutFileDose(strFileNameIn);
-	int pos= strOutFileDose.lastIndexOf("/");
-	pos = strOutFileDose.lastIndexOf("/", -40 );
-	strOutFileDose.remove(0,pos);
-	strOutFileDose.replace("/", "_");
-	strOutFileDose.prepend("Dose_");
-	memcpy(caDummy, strFileNameIn.toStdString().c_str()  ,sizeof(caDummy));
-	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
+//    CrunchLogDiscovery crunchLog;
+//	char caDummy[256] = {0,};
+//	char caOutfile[256] = {0,};
+//	QString strOutFileDose(strFileNameIn);
+//	int pos= strOutFileDose.lastIndexOf("/");
+//	pos = strOutFileDose.lastIndexOf("/", -40 );
+//	strOutFileDose.remove(0,pos);
+//	strOutFileDose.replace("/", "_");
+//	strOutFileDose.prepend("Dose_");
+//	memcpy(caDummy, strFileNameIn.toStdString().c_str()  ,sizeof(caDummy));
+//	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
 
-	crunchLog.processApr(caDummy, caOutfile);
+//	crunchLog.processApr(caDummy, caOutfile);
 }
 
 void MainWindow::showHideElements(QString sTxt2Find)
