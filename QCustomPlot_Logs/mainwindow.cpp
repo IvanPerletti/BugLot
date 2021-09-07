@@ -593,12 +593,9 @@ void MainWindow::on_PulisciButton_clicked()
 
 void MainWindow::on_pushButtonProcess_clicked()
 {
-
     CrunchLogC_Arm crunchLog;
-	char caDummy[256] = {0,};
-	char caOutfile[256] = {0,};
-	memcpy(caDummy, strFileNameIn.toStdString().c_str() ,sizeof(caDummy));
-	memcpy(caOutfile, strFileNameOut.toStdString().c_str() ,sizeof(caOutfile));
+    QList<CrunchLogC_Arm::enumIdCAN> iDs;
+
 	qDebug()<<"calling crunch";
 	ulTimeStart = ui->timeEdit_2->time().msecsSinceStartOfDay();
 	ulTimeStop = ui->timeEdit_3->time().msecsSinceStartOfDay();
@@ -609,9 +606,16 @@ void MainWindow::on_pushButtonProcess_clicked()
 
 	qDebug()<<ulTimeStart;
 	qDebug()<<ulTimeStop;
+
+    iDs << CrunchLogC_Arm::ID_CAN_CONTR << CrunchLogC_Arm::ID_CAN_INV_A << CrunchLogC_Arm::ID_CAN_INV_B;
+
 	cDecorator.cleanGraph(ui->customPlot);
 	crunchLog.setPerformance( ui->cbxPerform->isChecked() );
-    crunchLog.processFile(strFileNameIn, ulTimeStart, ulTimeStop);
+    crunchLog.processFile(strFileNameIn, iDs, ulTimeStart, ulTimeStop);
+
+    strFileNameOut = strFileNameIn;
+    strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_A));
+
 	QFile file (strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","Cannot open file");

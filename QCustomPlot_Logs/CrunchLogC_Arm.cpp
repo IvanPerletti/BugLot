@@ -105,6 +105,7 @@ void CrunchLogC_Arm::processPayloadInvB(string *pStrOut, unsigned long ulTime, u
 
 //--------------------------------------------------------
 void CrunchLogC_Arm::processFile (QString strFileNameIn,
+                                  QList<enumIdCAN> iDs,
                                   const unsigned long ulTimeStart,
                                   const unsigned long ulTimeStop)
 {
@@ -116,14 +117,9 @@ void CrunchLogC_Arm::processFile (QString strFileNameIn,
     uint32_t idCAN;
     unsigned int ulaData[6]={0,};
 
-    QList<enumIdCAN> iDs;
-
     if (strFileNameIn.length() == 0 ){
         return;
     }
-
-    // !!! to be replaced with input parameter
-    iDs << ID_CAN_CONTR << ID_CAN_INV_A << ID_CAN_INV_B;
 
     QFileInfo fi=strFileNameIn;
 

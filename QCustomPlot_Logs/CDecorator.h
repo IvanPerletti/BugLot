@@ -13,7 +13,7 @@ class CDecorator
 	public:
 	CDecorator();
 	void cleanGraph(QCustomPlot *customPlot);
-	void buildGraph(QCustomPlot *customPlot, QFile *file);
+    bool buildGraph(QCustomPlot *customPlot, QFile *file);
 	private:
 	typedef enum {
 		TIME                 	 = 	0  ,
@@ -58,26 +58,15 @@ class CDecorator
 		LOGICAL_MODE            =	39	,
 	} enumIO;
 	QRect qrAxisDim;
-	void addIOSignalToPlot(QVector<double> qvTime,
-						   QVector<double> qvDataArranged,
-						   QString qStrLegend,
-						   QVector <QVector <int> > qvMyVect,
-						   int iDataIdx,
-						   QCustomPlot *customPlot);
 
-	void addIntSignalToPlot(QVector<double> qvTime,
-							QVector<double> qvDataArranged,
+    void addSignalToPlot(QVector<double> qvTime,
 							QString qStrLegend,
-							QVector <QVector <int> > qvMyVect,
+                            QVector <QVector <double> > qvMyVect,
+                            QVector<double> &qvDataArranged,
 							int iDataIdx,
 							QCustomPlot *customPlot);
 	QVector<QString> buildLegend();
 	void addGraph(QPen pen, QVector<double> qvDataArranged, QVector<double> qvTime, QString qStrLegend, QCustomPlot *customPlot);
-		void plotTableIo(QVector<double> qvTime,
-						  QVector<double> qvDataArranged,
-						  QVector<QString> LegendList,
-						  QVector <QVector <int> > qvMyVect,
-						  QCustomPlot *customPlot);
 };
 extern CDecorator cDecorator;
 #endif // CDECORATOR_H

@@ -21,37 +21,7 @@ uint8_t u8aColB[64]={ 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 127, 127, 127, 127, 127, 1
  * @param qvTime	array of time
  * @param qvDataArranged
  * @param LegendList	Legend List to be procesed
- * @param qvMyVect	array of y -output
- * @param iSzVet
- * @param iDataIdx
- * @param customPlot
- */
-void CDecorator::addIOSignalToPlot(QVector<double> qvTime,
-								   QVector<double> qvDataArranged,
-								   QString qStrLegend,
-								   QVector <QVector <int> > qvMyVect,
-								   int iDataIdx,
-								   QCustomPlot *customPlot)
-{
-	const int iSzVet = qvMyVect.size();
-	QPen pen;
-	const int iColPos = (3*iDataIdx) % 63; // position Color choice
-	pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
-	pen.setWidth(2);
-
-	for ( int jj=0; jj<iSzVet; jj++ ){
-		qvDataArranged[jj] = qvMyVect[jj][iDataIdx]*0.5 + (MC_STATUS-iDataIdx) ;
-	}
-	addGraph(pen, qvDataArranged, qvTime, qStrLegend, customPlot);
-}
-
-//-----------------------------------------------------------------------------
-/**
- * @brief CDecorator::addSignalToPlot draw single IO plot
- * @param qvTime	array of time
- * @param qvDataArranged
- * @param LegendList	Legend List to be procesed
- * @param qvMyVect
+ * @param qvVect
  * @param iSzVet
  * @param iDataIdx
  * @param customPlot
@@ -65,14 +35,14 @@ void CDecorator::addGraph(QPen pen, QVector<double> qvDataArranged, QVector<doub
 	customPlot->graph(iGraphCount-1)->setData(qvTime, qvDataArranged);
 }
 
-void CDecorator::addIntSignalToPlot(QVector<double> qvTime,
-									QVector<double> qvDataArranged,
+void CDecorator::addSignalToPlot(QVector<double> qvTime,
 									QString qStrLegend,
-									QVector <QVector <int> > qvMyVect,
+                                    QVector <QVector <double> > qvVect,
+                                    QVector<double> &qvDataArranged,
 									int iDataIdx,
 									QCustomPlot *customPlot)
 {
-	int iSzVet = qvMyVect.size();
+    int iSzVet = qvVect.size();
 	QPen pen;
 	const int iColPos = (3*iDataIdx) % 63; // position Color choice
 	pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
@@ -80,8 +50,9 @@ void CDecorator::addIntSignalToPlot(QVector<double> qvTime,
 	if ( iSzVet > ARRAY_DIM ){
 		iSzVet = ARRAY_DIM;
 	}
-	for ( int jj=0; jj<iSzVet; jj++ ){
-		qvDataArranged[jj] = qvMyVect[jj][iDataIdx] ;
+    qvDataArranged.resize(iSzVet); // resize optimze time with memory alloc
+    for ( int jj=0; jj<iSzVet; jj++ ){
+        qvDataArranged[jj] = qvVect[jj][iDataIdx] ;
 	}
 	addGraph(pen, qvDataArranged, qvTime, qStrLegend, customPlot);
 }
@@ -141,14 +112,11 @@ QVector<QString> CDecorator::buildLegend()
 //-----------------------------------------------------------------------------
 void CDecorator::cleanGraph(QCustomPlot *customPlot)
 {
-	// this is how to remove the legend item again (e.g. before graph removal):
-	QCPLegend *arLegend = customPlot->legend;
-
-	for( int ii=0; ii<customPlot->graphCount(); ii++ )
+    for( int ii=0; ii<customPlot->graphCount(); ii++ )
 	{
-		QCPGraph  *pGraph = customPlot->graph(ii);
-		//		arLegend->remove(arLegend->itemWithPlottable(pGraph));
-		customPlot->graph(ii)->data().data()->clear();
+        QCPGraph  *pGraph = customPlot->graph(ii);
+        //		arLegend->remove(arLegend->itemWithPlottable(pGraph));
+        customPlot->graph(ii)->data().data()->clear();
 	}
 	//	customPlot->clearPlottables();
 	customPlot->replot(); // last thing to do
@@ -158,39 +126,23 @@ void CDecorator::cleanGraph(QCustomPlot *customPlot)
 /**
  * @brief CDecorator::buildGraph build the graph accordin to own method implementation
  */
-/**
- * @brief CDecorator::plotTableIo
- * @param qvTime              vector of time values
- * @param qvDataArranged	  vrcotr of y values [0,1]
- * @param LegendList		  string list of legend's names
- * @param qvMyVect
- * @param customPlot
- */
-void CDecorator::plotTableIo(QVector<double> qvTime,
-							 QVector<double> qvDataArranged,
-							 QVector<QString> LegendList,
-							 QVector <QVector <int> > qvMyVect,
-							 QCustomPlot *customPlot) // data array)
+bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 {
-	QVector<int> qVTablePlot = {
-		I_CNS_PREP, I_CNS_FL  ,
-		I_CNS_RAD , O_TAB_x   ,
-		O_TAB_FL  , O_TAB_PREP,
-		O_TAB_RAD , O_TAB_EN   };
-	for (int ii=0; ii < qVTablePlot.size(); ii++)
-	{	// OBS:  index move from 1: data(0,:) are time values
-		int iDataIdx = qVTablePlot.at(ii);
-		addIOSignalToPlot(qvTime, qvDataArranged,
-						  LegendList.at(iDataIdx), qvMyVect,
-						  iDataIdx, customPlot);
-	}
-}
-//-----------------------------------------------------------------------------
-/**
- * @brief CDecorator::buildGraph build the graph accordin to own method implementation
- */
-void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
-{
+    unsigned int uiNumBitField = 0;
+    QTextStream in(file);
+
+    QString line = in.readLine(); //read one line at a time
+    if (line.isEmpty()) {
+        return false; // if here means "reached end of file"
+    }
+
+    // counting of bit fields
+    foreach( QString numStr, line.split(" ", QString::SkipEmptyParts) )
+    {
+        if (numStr.contains('.') == false)
+            ++uiNumBitField;
+    }
+
 
 	customPlot->legend->setVisible(true);
 	customPlot->legend->setFont(QFont("Helvetica", 8));
@@ -213,101 +165,62 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 	//  .  .  .  .  .  .  .  .  .  .  .  .
 
 
-	QTextStream in(file);
-	QVector <QVector <int> > qvMyVect;
+    QVector <QVector <double> > qvVect;
 
 	unsigned long ulMaxLi; // MAX legnth of "photograms" to draw
-	for (ulMaxLi=0; ulMaxLi<ARRAY_DIM; ulMaxLi++) // reached certain num of lines break!
+    for (ulMaxLi=1; ulMaxLi<ARRAY_DIM; ulMaxLi++) // reached certain num of lines break!
 	{
-		QString line = in.readLine(); //read one line at a time
-		if (line.isEmpty()) {
-			break; // if here means "reached end of file"
-		}
+        QVector <double> tempVector;
+        unsigned int idxBitField = 0;
 
-		QVector<int> tempVector;
 		foreach( QString numStr, line.split(" ", QString::SkipEmptyParts) )
 		{	// unroll each line into current Time array and into current
 			bool bCheck = false; // flag to signalize double value found
 			double dVal = numStr.toDouble(&bCheck);
 			if( !bCheck ){
 				continue;
-			}
-			else {
+            } else {
+                if (numStr.contains('.') == false) {
+                    ++idxBitField;
+                    dVal = dVal * 0.5 + ((uiNumBitField / 2) - idxBitField) ;
+                }
 				tempVector.push_back(dVal);
 			}
 		}
-		qvMyVect.push_back(tempVector);
-		//  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
-	}
+        qvVect.push_back(tempVector);
+
+        line = in.readLine(); //read one line at a time
+        if (line.isEmpty()) {
+            break; // if here means "reached end of file"
+        }
+    }
 	if (ulMaxLi > 0)
 	{
 		QVector<QString> LegendList = buildLegend();
 
 
-		const int iSzVet = qvMyVect.size(); // array Size
-		const int iNumElem = qvMyVect[0].size(); // num of plots
+        const int iSzVet = qvVect.size(); // array Size
+        const int iNumElem = qvVect[0].size(); // num of plots
 		QVector<double> qvTime; // time array
 		QVector<double> qvDataArranged; // data array
 
 		if (iSzVet> 0 )
 		{
-			qvDataArranged.resize(iSzVet); // resize optimze time with memory alloc
-			qvTime.resize(iSzVet); // resize optimze time with memory alloc
-			qDebug()<<"ResizeOk";
-			for (int jj=0; jj<iSzVet; jj++){
-				qvTime[jj] = qvMyVect[jj][0]/1000.0 ;
-			}
-			qDebug()<<"Time Array";
+            double dMinYAxis = 0.0;
+            double dMaxYAxis = 0.0;
 
-			for (int iDataIdx=I_PID_SDCAL_STP; iDataIdx <= O_PID_EXON; iDataIdx++)
-			{	// OBS:  index move from 1: data(0,:) are time values
-				addIOSignalToPlot(qvTime, qvDataArranged,
-								  LegendList.at(iDataIdx), qvMyVect,
-								  iDataIdx, customPlot);
+            qvTime.resize(iSzVet); // resize optimze time with memory alloc
+            for (int jj=0; jj<iSzVet; jj++) {
+                qvTime[jj] = qvVect[jj][0]/1000.0 ;
 			}
-			qDebug()<<"Plot IO";
 
-			plotTableIo(qvTime, qvDataArranged,LegendList,qvMyVect,customPlot);
-			qDebug()<<"Plot Table";
+            for (int iDataIdx=1; iDataIdx < iNumElem; iDataIdx++) {
+                addSignalToPlot(qvTime, LegendList.at(iDataIdx), qvVect, qvDataArranged,
+								  iDataIdx, customPlot);
+                dMinYAxis = fmin(dMinYAxis, *std::min_element(qvDataArranged.constBegin(), qvDataArranged.constEnd()));
+                dMaxYAxis = fmax(dMaxYAxis, *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd()));
+            }
 
-			QVector<int> qVIntPlot = {MC_STATUS, GEN_STAT, DLL_GE_STAT};
-			for (int ii=0; ii <qVIntPlot.size(); ii++)
-			{	// OBS:  index move from 1: data(0,:) are time values
-				int iDataIdx = qVIntPlot.at(ii);
-				addIntSignalToPlot(qvTime, qvDataArranged,
-								   LegendList.at(iDataIdx), qvMyVect,
-								   iDataIdx, customPlot);
-			}
-			qDebug()<<"Plot Int ";
-			QVector<int> qVTableExtPlot = {
-				GEN_REQ_BIT        ,
-				GEN_XRAY_ON_BIT    ,
-				PREPARATION_BIT_EXT,
-				FLUORO_BIT_EXT     ,
-				EXPOSURE_BIT_EXT,
-				CONS1_PREP_HW   ,
-				CONS1_RAD_HW    ,
-				CONS1_FL_HW     ,
-			};
-			for (int ii=0; ii < qVTableExtPlot.size(); ii++)
-			{	// OBS:  index move from 1: data(0,:) are time values
-				int iDataIdx = qVTableExtPlot.at(ii);
-				addIOSignalToPlot(qvTime, qvDataArranged,
-								  LegendList.at(iDataIdx), qvMyVect,
-								  iDataIdx, customPlot);
-			}
-			qDebug()<<"Logical  mode";
-			QVector<int> qVLogicalMode = {
-				LOGICAL_MODE,
-			};
-			for (int ii=0; ii < qVLogicalMode.size(); ii++)
-			{	// OBS:  index move from 1: data(0,:) are time values
-				int iDataIdx = qVLogicalMode.at(ii);
-				addIntSignalToPlot(qvTime, qvDataArranged,
-								  LegendList.at(iDataIdx), qvMyVect,
-								  iDataIdx, customPlot);
-			}
-			qDebug()<<"Plot TableExt";
 			// give the axes some labels:
 			customPlot->xAxis->setLabel("t [s]");
 			QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);
@@ -321,9 +234,9 @@ void CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 			double dMaxXAxis = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
 
 			customPlot->xAxis->setRange(dMinXAxis-1,dMaxXAxis+1);
-			dMaxXAxis = *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
-			customPlot->yAxis->setRange(19-iNumElem, 20); // Y axis range
+            customPlot->yAxis->setRange(dMinYAxis, dMaxYAxis); // Y axis range
 			customPlot->setInteractions(QCP::iSelectLegend);
 		}
 	}
+    return (ulMaxLi > 0);
 }

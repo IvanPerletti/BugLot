@@ -15,19 +15,20 @@ protected:
     bool mbPerformance;
     long mlRowCounter;
 public:
-    CrunchLogC_Arm();
-    void setPerformance(bool bFlad){mbPerformance = bFlad;}
-    bool isPerformanceOn(){return mbPerformance ;}
-    void processFile(QString strFileNameIn,
-                     const unsigned long ulTimeStart = 0,
-                     const unsigned long ulTimeStop = 24*60*60);
-private:
     typedef enum {
         ID_CAN_CONTR    = 0x5A0,
         ID_CAN_INV_A    = 0x6A0,
         ID_CAN_INV_B    = 0x6A1
     } enumIdCAN;
 
+    CrunchLogC_Arm();
+    void setPerformance(bool bFlad){mbPerformance = bFlad;}
+    bool isPerformanceOn(){return mbPerformance ;}
+    void processFile(QString strFileNameIn,
+                     QList<enumIdCAN> iDs,
+                     const unsigned long ulTimeStart = 0,
+                     const unsigned long ulTimeStop = 24*60*60);
+private:
     typedef struct
     {
         uint32_t ulBitMask    ;
