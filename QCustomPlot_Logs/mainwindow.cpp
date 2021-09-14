@@ -614,7 +614,7 @@ void MainWindow::on_pushButtonProcess_clicked()
     crunchLog.processFile(strFileNameIn, iDs, ulTimeStart, ulTimeStop);
 
     strFileNameOut = strFileNameIn;
-    strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_A));
+    strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_B));
 
 	QFile file (strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {

@@ -17,8 +17,17 @@ CrunchLogC_Arm::CrunchLogC_Arm()
     mlRowCounter = 0;
 
     outFile[ID_CAN_CONTR].processPayload = processPayloadContr;
+
     outFile[ID_CAN_INV_A].processPayload = processPayloadInvA;
+    outFile[ID_CAN_INV_A].legendList << "Kv0" << "Kv+" << "Kv-" <<"MaGain" << "Ma0" << "Ma";
+
     outFile[ID_CAN_INV_B].processPayload = processPayloadInvB;
+    outFile[ID_CAN_INV_B].legendList << "FilGain" << "Fil0" << "Fil";
+    outFile[ID_CAN_INV_B].typeList << TYPE_INT << TYPE_INT << TYPE_INT;
+    outFile[ID_CAN_INV_B].legendList << "B0" << "B1" << "B2" << "B3" << "B4" << "B5" << "B6" << "B7";
+    outFile[ID_CAN_INV_B].typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT;
+    outFile[ID_CAN_INV_B].legendList << "Focus" << "Fluo" << "Exp" << "Status";
+    outFile[ID_CAN_INV_B].typeList << TYPE_INT << TYPE_INT << TYPE_INT << TYPE_INT;
 }
 
 //--------------------------------------------------------
@@ -168,13 +177,25 @@ void CrunchLogC_Arm::processFile (QString strFileNameIn,
                 {
                     if (outFile[id].outFile)
                     {
+                        QTextStream stream( outFile[id].outFile );
+
                         outFile[id].processPayload(&strOut, ulTime, ulaData);
-                        if (!outFile[id].outFile->isOpen())
+                        if (!outFile[id].outFile->isOpen()) {
                             outFile[id].outFile->open(QIODevice::WriteOnly);
-                        {
-                            QTextStream stream( outFile[id].outFile );
-                            stream << strOut.c_str();
+                            if (outFile[id].legendList.empty() == false) {
+                                stream << HEADER_PREFIX << " " << LEGENDS_TAG;
+                                foreach( QString legend, outFile[id].legendList)
+                                    stream << " " << legend;
+                                stream << endl;
+                            }
+                            if (outFile[id].typeList.empty() == false) {
+                                stream << HEADER_PREFIX << " " << TYPES_TAG;
+                                foreach( QString type, outFile[id].typeList)
+                                    stream << " " << type;
+                                stream << endl;
+                            }
                         }
+                        stream << strOut.c_str();
                     }
                 }
             }

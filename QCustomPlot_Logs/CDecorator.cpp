@@ -1,9 +1,8 @@
 
 #include "CDecorator.h"
+
 //#include <QDebug>
-#define ARRAY_DIM (250*1000) /// max number of lines to auto-stop proessing
-
-
+#define ARRAY_DIM       (250*1000) /// max number of lines to auto-stop proessing
 
 CDecorator cDecorator;
 CDecorator::CDecorator()
@@ -37,9 +36,10 @@ void CDecorator::addGraph(QPen pen, QVector<double> qvDataArranged, QVector<doub
 
 void CDecorator::addSignalToPlot(QVector<double> qvTime,
 									QString qStrLegend,
+                                    QString qStrType,
                                     QVector <QVector <double> > qvVect,
                                     QVector<double> &qvDataArranged,
-									int iDataIdx,
+                                    int iDataIdx, int uiNumBitField,
 									QCustomPlot *customPlot)
 {
     int iSzVet = qvVect.size();
@@ -52,61 +52,13 @@ void CDecorator::addSignalToPlot(QVector<double> qvTime,
 	}
     qvDataArranged.resize(iSzVet); // resize optimze time with memory alloc
     for ( int jj=0; jj<iSzVet; jj++ ){
-        qvDataArranged[jj] = qvVect[jj][iDataIdx] ;
+        if (qStrType == TYPE_BIT)
+            qvDataArranged[jj] = qvVect[jj][iDataIdx] * 0.5 + ((uiNumBitField / 2) - iDataIdx) ;
+        else
+            qvDataArranged[jj] = qvVect[jj][iDataIdx];
+
 	}
 	addGraph(pen, qvDataArranged, qvTime, qStrLegend, customPlot);
-}
-//-----------------------------------------------------------------------------
-/**
- * @brief CDecorator::buildLegend buil legend array
- * @return Full Filled Legend
- */
-QVector<QString> CDecorator::buildLegend()
-{
-	QVector<QString> LegendList;
-	LegendList<< "TIME                "
-			  << "I PID SDCAL STP     "
-			  << "I PID APPOPEN       "
-			  << "I PID READY         "
-			  << "I PID PULSE MODE    "
-			  << "O PID HCF MODE      "
-			  << "I GEN REQ FL HCF    "
-			  << "I GEN PREP RAD      "
-			  << "I GEN COM REQ       "
-			  << "I GEN READY         "
-			  << "I GEN REQ RAD       "
-			  << "O PID CFL           "
-			  << "O PREP PID          "
-			  << "O CRAD PID          "
-			  << "I PID EXP RX        "
-			  << "O PID DOSE ADJ      "
-			  << "O GEN READY ACQ FL  "
-			  << "O READY ACQ RAD HCF "
-			  << "I GEN EXON          "
-			  << "O PID EXON          "
-			  << "STATUS              "
-			  << "I CNS PREP          "	// stato del segnale di preparazione dato dai 2 segnali in arrivo
-			  << "I CNS FL            "	// stato del segnale di fluoro dato dai 2 segnali in arrivo
-			  << "I CNS RAD           "	// stato del segnale di esposizione dato dai 2 segnali in arrivo
-			  << "O TAB ?             "	// fluoroscopia (pedale fluoro)
-			  << "O TAB FL            "	// preparazione (tasto di preparazione su consolle)
-			  << "O TAB PREP          "	// esposizione rx (consenso finale rx)
-			  << "O TAB RAD           "	// grafia (second step)
-			  << "O TAB EN            "
-			  << "GEN STAT            "
-			  << "DLL STAT            "
-			  << "I TAB REQ_RAD       "
-			  << "I TAB XRAY_ON       "
-			  << "O TAB PREP_EXT      "
-			  << "O TAB FLUORO_EXT    "
-			  << "O TAB EXP_EXT       "
-			  << "CNS 1_PREP_HW       "
-			  << "CNS 1_RAD_HW        "
-			  << "CNS 1_FL_HW         "
-			  << "LM"
-				 ;
-	qDebug()<<"Legend";
-	return LegendList;
 }
 
 //-----------------------------------------------------------------------------
@@ -114,14 +66,11 @@ void CDecorator::cleanGraph(QCustomPlot *customPlot)
 {
     for( int ii=0; ii<customPlot->graphCount(); ii++ )
 	{
-        QCPGraph  *pGraph = customPlot->graph(ii);
-        //		arLegend->remove(arLegend->itemWithPlottable(pGraph));
         customPlot->graph(ii)->data().data()->clear();
 	}
-	//	customPlot->clearPlottables();
-	customPlot->replot(); // last thing to do
-
+    customPlot->replot();
 }
+
 //-----------------------------------------------------------------------------
 /**
  * @brief CDecorator::buildGraph build the graph accordin to own method implementation
@@ -130,19 +79,22 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 {
     unsigned int uiNumBitField = 0;
     QTextStream in(file);
+    QString line;
+    int pos;
 
-    QString line = in.readLine(); //read one line at a time
-    if (line.isEmpty()) {
-        return false; // if here means "reached end of file"
-    }
-
-    // counting of bit fields
-    foreach( QString numStr, line.split(" ", QString::SkipEmptyParts) )
-    {
-        if (numStr.contains('.') == false)
-            ++uiNumBitField;
-    }
-
+    do {
+        line = in.readLine(); //read one line at a time
+        if (line.isEmpty()) {
+            return false; // if here means "reached end of file"
+        }
+        if (line.startsWith(HEADER_PREFIX) == false)
+            break;
+        if ((pos = line.indexOf(LEGENDS_TAG)) >= 0) {
+            legendList = line.mid(pos + QString(LEGENDS_TAG).length()).split(" ", QString::SkipEmptyParts);
+        } else if ((pos = line.indexOf(TYPES_TAG)) >= 0) {
+            typeList = line.mid(pos + QString(TYPES_TAG).length()).split(" ", QString::SkipEmptyParts);
+        }
+    } while (true);
 
 	customPlot->legend->setVisible(true);
 	customPlot->legend->setFont(QFont("Helvetica", 8));
@@ -155,15 +107,8 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 	customPlot->plotLayout()->addElement(0, 1, subLayout);
 	subLayout->setMargins(QMargins(5, 0, 5, 5));
 	subLayout->addElement(0, 0, customPlot->legend);
-	// change the fill order of the legend, so it's filled left to right in columns:
-	//	customPlot->legend->setFillOrder(QCPLegend::foColumnsFirst);
-	// set legend's row stretch factor very small so it ends up with minimum height:
-	//	customPlot->plotLayout()->setRowStretchFactor(1, 0.001);
 
 	customPlot->plotLayout()->setColumnStretchFactor (1, 0.001);
-	//customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::RightButton);
-	//  .  .  .  .  .  .  .  .  .  .  .  .
-
 
     QVector <QVector <double> > qvVect;
 
@@ -171,7 +116,6 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
     for (ulMaxLi=1; ulMaxLi<ARRAY_DIM; ulMaxLi++) // reached certain num of lines break!
 	{
         QVector <double> tempVector;
-        unsigned int idxBitField = 0;
 
 		foreach( QString numStr, line.split(" ", QString::SkipEmptyParts) )
 		{	// unroll each line into current Time array and into current
@@ -180,10 +124,6 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 			if( !bCheck ){
 				continue;
             } else {
-                if (numStr.contains('.') == false) {
-                    ++idxBitField;
-                    dVal = dVal * 0.5 + ((uiNumBitField / 2) - idxBitField) ;
-                }
 				tempVector.push_back(dVal);
 			}
 		}
@@ -196,9 +136,6 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
     }
 	if (ulMaxLi > 0)
 	{
-		QVector<QString> LegendList = buildLegend();
-
-
         const int iSzVet = qvVect.size(); // array Size
         const int iNumElem = qvVect[0].size(); // num of plots
 		QVector<double> qvTime; // time array
@@ -209,14 +146,32 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
             double dMinYAxis = 0.0;
             double dMaxYAxis = 0.0;
 
+            if (legendList.length() < iNumElem) {
+                for (int iLegendIdx = legendList.length() + 1; iLegendIdx <= iNumElem; iLegendIdx++) {
+                    legendList << QString("Item ") + QString("%1").arg(iLegendIdx);
+                }
+            }
+
+            if (typeList.length() < iNumElem) {
+                for (int iTypeIdx = typeList.length() + 1; iTypeIdx <= iNumElem; iTypeIdx++) {
+                    typeList << TYPE_INT;
+                }
+            }
+            foreach (QString type, typeList) {
+                if (type == QString(TYPE_BIT))
+                    ++uiNumBitField;
+            }
+
             qvTime.resize(iSzVet); // resize optimze time with memory alloc
             for (int jj=0; jj<iSzVet; jj++) {
                 qvTime[jj] = qvVect[jj][0]/1000.0 ;
 			}
 
             for (int iDataIdx=1; iDataIdx < iNumElem; iDataIdx++) {
-                addSignalToPlot(qvTime, LegendList.at(iDataIdx), qvVect, qvDataArranged,
-								  iDataIdx, customPlot);
+                addSignalToPlot(qvTime,
+                                legendList.at(iDataIdx - 1), typeList.at(iDataIdx - 1),
+                                qvVect, qvDataArranged,
+                                iDataIdx, uiNumBitField, customPlot);
                 dMinYAxis = fmin(dMinYAxis, *std::min_element(qvDataArranged.constBegin(), qvDataArranged.constEnd()));
                 dMaxYAxis = fmax(dMaxYAxis, *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd()));
             }
@@ -228,7 +183,7 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 			dateTicker->setDateTimeSpec(Qt::UTC);
 			customPlot->xAxis->setTicker(dateTicker);
 			customPlot->yAxis->setLabel("y");
-			qDebug()<<"Set Axis";
+
 			// set axes ranges, so we see all data:
 			double dMinXAxis = *std::min_element(qvTime.constBegin(), qvTime.constEnd());
 			double dMaxXAxis = *std::max_element(qvTime.constBegin(), qvTime.constEnd());

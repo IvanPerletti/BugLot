@@ -28,6 +28,12 @@ private:
 
 using namespace std;
 
+#define HEADER_PREFIX   "%"
+#define LEGENDS_TAG     "Legends:"
+#define TYPES_TAG       "Types:"
+#define TYPE_INT        "I"
+#define TYPE_BIT        "B"
+
 class CrunchLog
 {
 public:

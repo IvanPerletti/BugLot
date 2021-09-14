@@ -54,7 +54,7 @@ void CrunchLog::intToStr(string *pStrOut, unsigned int uiVal, string sfx)
 {
     char s8aChar[16]={0,};
 
-    sprintf(s8aChar, "%.1lf", (double)uiVal);
+    sprintf(s8aChar, "%d", uiVal);
     pStrOut->append(s8aChar);
     pStrOut->append(sfx);
 }

@@ -70,6 +70,8 @@ private:
     {
         PF_ProcessPayload processPayload;
         QFile *outFile;
+        QStringList legendList;
+        QStringList typeList;
     } structOutFile;
 
     QMap<enumIdCAN, structOutFile> outFile;
