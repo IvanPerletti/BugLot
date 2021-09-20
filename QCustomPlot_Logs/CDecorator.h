@@ -18,15 +18,12 @@ public:
 
 private:
 	QRect qrAxisDim;
+    QVector<double> qvTime;
+    QVector <QVector <double> > qvVect;
     QStringList legendList;
     QStringList typeList;
-    void addSignalToPlot(QVector<double> qvTime,
-							QString qStrLegend,
-                            QString qStrType,
-                            QVector <QVector <double> > qvMyVect,
-                            QVector<double> &qvDataArranged,
-                            int iDataIdx, int iNumElem,
-							QCustomPlot *customPlot);
+
+    void addSignalToPlot(int iSignalIdx, double dMaxYAxis, QCustomPlot *customPlot);
     void addGraph(QPen pen, QVector<double> qvDataArranged, QVector<double> qvTime, QString qStrLegend, QCustomPlot *customPlot);
 };
 extern CDecorator cDecorator;

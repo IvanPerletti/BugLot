@@ -1,14 +1,17 @@
-
 #include "CDecorator.h"
+#include <QMath.h>
 
 //#include <QDebug>
 #define ARRAY_DIM       (250*1000) /// max number of lines to auto-stop proessing
 
+#define BITFIELD_DELTA_Y        10
+#define ROUND_MAX_Y_AXIS        10
+
 CDecorator cDecorator;
 CDecorator::CDecorator()
 {
-
 }
+
 //------------------------------------------------------------------------------
 // color table " colorcube "
 uint8_t u8aColR[64]={ 85, 85, 85, 170, 170, 170, 255, 255, 255, 0, 0, 0, 85, 85, 85, 85, 170, 170, 170, 170, 255, 255, 255, 255, 0, 0, 0, 85, 85, 85, 85, 170, 170, 170, 170, 255, 255, 255, 42, 85, 127, 170, 212, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 72, 109, 145, 182, 218, 255, };
@@ -34,31 +37,47 @@ void CDecorator::addGraph(QPen pen, QVector<double> qvDataArranged, QVector<doub
 	customPlot->graph(iGraphCount-1)->setData(qvTime, qvDataArranged);
 }
 
-void CDecorator::addSignalToPlot(QVector<double> qvTime,
-									QString qStrLegend,
-                                    QString qStrType,
-                                    QVector <QVector <double> > qvVect,
-                                    QVector<double> &qvDataArranged,
-                                    int iDataIdx, int uiNumBitField,
-									QCustomPlot *customPlot)
+void CDecorator::addSignalToPlot(int iSignalIdx, double dMaxYAxis, QCustomPlot *customPlot)
 {
+    QVector<double> qvDataArranged;
+    QString qStrLegend = legendList.at(iSignalIdx);
+
     int iSzVet = qvVect.size();
 	QPen pen;
-	const int iColPos = (3*iDataIdx) % 63; // position Color choice
-	pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
+    const int iColPos = (3*iSignalIdx + 1) % 63; // position Color choice
+
+    pen.setColor(QColor(u8aColR[iColPos], u8aColG[iColPos], u8aColB[iColPos]));
 	pen.setWidth(2);
-	if ( iSzVet > ARRAY_DIM ){
+
+    if ( iSzVet > ARRAY_DIM ){
 		iSzVet = ARRAY_DIM;
 	}
-    qvDataArranged.resize(iSzVet); // resize optimze time with memory alloc
-    for ( int jj=0; jj<iSzVet; jj++ ){
-        if (qStrType == TYPE_BIT)
-            qvDataArranged[jj] = qvVect[jj][iDataIdx] * 0.5 + ((uiNumBitField / 2) - iDataIdx) ;
-        else
-            qvDataArranged[jj] = qvVect[jj][iDataIdx];
 
-	}
-	addGraph(pen, qvDataArranged, qvTime, qStrLegend, customPlot);
+    qvDataArranged.resize(iSzVet); // resize optimze time with memory alloc
+    for ( int jj=0; jj<iSzVet; jj++ ) {
+        qvDataArranged[jj] = qvVect[jj][iSignalIdx + 1];
+    }
+
+    if (typeList.at(iSignalIdx) == TYPE_BIT) {
+        int iDeltaY = ((int)(dMaxYAxis / typeList.count(TYPE_BIT)) / 10) * 10;
+        int iOfsY = iDeltaY * (typeList.count(TYPE_BIT) - (typeList.mid(0, iSignalIdx).count(TYPE_BIT)));
+        for ( int jj=0; jj<iSzVet; jj++ ) {
+            qvDataArranged[jj] = iOfsY + (qvDataArranged[jj] * (iDeltaY / 2));
+        }
+        qStrLegend += QString(" ^%1").arg(iOfsY);
+    } else if (typeList.at(iSignalIdx) == TYPE_INT) {
+        int iFactor = 1;
+        double dMax = *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
+        while ((dMax * iFactor * 10) < dMaxYAxis) {
+            iFactor *= 10;
+        }
+        for ( int jj=0; jj<iSzVet; jj++ ) {
+            qvDataArranged[jj] *= iFactor;
+        }
+        if (iFactor > 1)
+            qStrLegend += QString(" x%1").arg(iFactor);
+    }
+    addGraph(pen, qvDataArranged, qvTime, qStrLegend, customPlot);
 }
 
 //-----------------------------------------------------------------------------
@@ -77,11 +96,13 @@ void CDecorator::cleanGraph(QCustomPlot *customPlot)
  */
 bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 {
-    unsigned int uiNumBitField = 0;
     QTextStream in(file);
     QString line;
     int pos;
+    unsigned long ulMaxLi;
 
+    legendList.clear();
+    typeList.clear();
     do {
         line = in.readLine(); //read one line at a time
         if (line.isEmpty()) {
@@ -96,6 +117,7 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
         }
     } while (true);
 
+    customPlot->clearGraphs();
 	customPlot->legend->setVisible(true);
 	customPlot->legend->setFont(QFont("Helvetica", 8));
 	customPlot->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
@@ -110,9 +132,10 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 
 	customPlot->plotLayout()->setColumnStretchFactor (1, 0.001);
 
-    QVector <QVector <double> > qvVect;
+    qvVect.clear();
+    double dMinYAxis = 0.0;
+    double dMaxYAxis = 0.0;
 
-	unsigned long ulMaxLi; // MAX legnth of "photograms" to draw
     for (ulMaxLi=1; ulMaxLi<ARRAY_DIM; ulMaxLi++) // reached certain num of lines break!
 	{
         QVector <double> tempVector;
@@ -128,6 +151,8 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 			}
 		}
         qvVect.push_back(tempVector);
+        dMinYAxis = fmin(dMinYAxis, *std::min_element(tempVector.constBegin() + 1, tempVector.constEnd()));
+        dMaxYAxis = fmax(dMaxYAxis, *std::max_element(tempVector.constBegin() + 1, tempVector.constEnd()));
 
         line = in.readLine(); //read one line at a time
         if (line.isEmpty()) {
@@ -137,29 +162,21 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 	if (ulMaxLi > 0)
 	{
         const int iSzVet = qvVect.size(); // array Size
-        const int iNumElem = qvVect[0].size(); // num of plots
-		QVector<double> qvTime; // time array
-		QVector<double> qvDataArranged; // data array
+        const int iNumSignal = qvVect[0].size() - 1; // num of plots
 
 		if (iSzVet> 0 )
 		{
-            double dMinYAxis = 0.0;
-            double dMaxYAxis = 0.0;
 
-            if (legendList.length() < iNumElem) {
-                for (int iLegendIdx = legendList.length() + 1; iLegendIdx <= iNumElem; iLegendIdx++) {
+            if (legendList.length() < iNumSignal) {
+                for (int iLegendIdx = legendList.length() + 1; iLegendIdx <= iNumSignal; iLegendIdx++) {
                     legendList << QString("Item ") + QString("%1").arg(iLegendIdx);
                 }
             }
 
-            if (typeList.length() < iNumElem) {
-                for (int iTypeIdx = typeList.length() + 1; iTypeIdx <= iNumElem; iTypeIdx++) {
+            if (typeList.length() < iNumSignal) {
+                for (int iTypeIdx = typeList.length() + 1; iTypeIdx <= iNumSignal; iTypeIdx++) {
                     typeList << TYPE_INT;
                 }
-            }
-            foreach (QString type, typeList) {
-                if (type == QString(TYPE_BIT))
-                    ++uiNumBitField;
             }
 
             qvTime.resize(iSzVet); // resize optimze time with memory alloc
@@ -167,13 +184,14 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
                 qvTime[jj] = qvVect[jj][0]/1000.0 ;
 			}
 
-            for (int iDataIdx=1; iDataIdx < iNumElem; iDataIdx++) {
-                addSignalToPlot(qvTime,
-                                legendList.at(iDataIdx - 1), typeList.at(iDataIdx - 1),
-                                qvVect, qvDataArranged,
-                                iDataIdx, uiNumBitField, customPlot);
-                dMinYAxis = fmin(dMinYAxis, *std::min_element(qvDataArranged.constBegin(), qvDataArranged.constEnd()));
-                dMaxYAxis = fmax(dMaxYAxis, *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd()));
+//            int iLogMaxYAxis = (int)log10(dMaxYAxis);
+//            double dMult = pow(10, (double)iLogMaxYAxis);
+//            dMaxYAxis = (((int)((dMaxYAxis - 1) / dMult)) + 1) * dMult;
+            dMaxYAxis = fmax((((int)(dMaxYAxis / ROUND_MAX_Y_AXIS)) + 1) * ROUND_MAX_Y_AXIS, (typeList.count(TYPE_BIT) + 1) * BITFIELD_DELTA_Y);
+            for (int iSignalIdx=0; iSignalIdx < iNumSignal; iSignalIdx++) {
+                addSignalToPlot(iSignalIdx,
+                                dMaxYAxis,
+                                customPlot);
             }
 
 			// give the axes some labels:

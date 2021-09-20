@@ -613,7 +613,7 @@ void MainWindow::on_pushButtonProcess_clicked()
 	crunchLog.setPerformance( ui->cbxPerform->isChecked() );
     crunchLog.processFile(strFileNameIn, iDs, ulTimeStart, ulTimeStop);
 
-    strFileNameOut = strFileNameIn;
+    strFileNameOut = "Table_C_Arm.txt"; //strFileNameIn;
     strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_B));
 
 	QFile file (strFileNameOut);
