@@ -88,7 +88,7 @@ void CrunchLog::removeChars(string * strProcessed, string strMatchToFind)
 //--------------------------------------------------------
 
 void CrunchLog::finalizeString2(string *pStrOut,
-							   unsigned long ulTime,
+                               float ulTime,
 							   unsigned long lBitMask,
 							   long lMcStatus,
 							   unsigned long ulTableBit,
@@ -101,7 +101,8 @@ void CrunchLog::finalizeString2(string *pStrOut,
 	char s8aChar[10]={0,};
 
 	pStrOut->clear();
-	itoa(ulTime, s8aDummy, 10);
+    itoa(ulTime, s8aDummy, 16);
+    snprintf(s8aDummy, 16, "%.1f", ulTime);
 	pStrOut->append(s8aDummy);
 	pStrOut->append(" " );
 	unpackBit32(pStrOut, lBitMask);
@@ -124,7 +125,7 @@ void CrunchLog::finalizeString2(string *pStrOut,
 }
 //--------------------------------------------------------
 void CrunchLog::finalizeString(string *pStrOut,
-							   unsigned long ulTime,
+                               float ulTime,
                                CrunchLog::structLog * pstrLog)
 {
 	if ( pstrLog != nullptr && pStrOut != nullptr )

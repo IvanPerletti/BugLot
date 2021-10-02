@@ -55,7 +55,7 @@ protected:
     static void removeCharsUntil(string * strProcessed, string strMatchToFind);
     static void removeChars( string * strProcessed, string strMatchToFind);
     static void finalizeString2(string *pStrOut,
-                        unsigned long ulTime,
+                        float ulTime,
                         unsigned long lBitMask,
                         long lMcStatus,
                         unsigned long ulTableBit,
@@ -64,7 +64,7 @@ protected:
                         unsigned long ulTableBitExt,
                         unsigned char u8LogicalMode);
     static void finalizeString(string *pStrOut,
-                        unsigned long ulTime,
+                        float ulTime,
                         structLog *pstrLog);
     static void strReplaceOccurrence(string *pStrOut,
                               const string csSubStrLook,
