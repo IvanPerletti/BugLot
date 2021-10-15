@@ -206,7 +206,7 @@ void MainWindow::setupPlotLogs(void)
 	}
 	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
 
-	cDecorator.buildGraph(ui->customPlot, &file);
+    cDecorator.buildGraph(ui->customPlot, ui->lswLegend, &file);
 
 	double dMinXAxis = ui->customPlot->xAxis->range().lower;
 	double dMaxXAxis = ui->customPlot->xAxis->range().upper;
@@ -214,14 +214,14 @@ void MainWindow::setupPlotLogs(void)
 
 	ui->lineEditMin->setText(QString::number(dMinXAxis));
 	ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
-	disconnect(ui->customPlot,
-			   SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)));
+//	disconnect(ui->customPlot,
+//			   SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)));
 
 	// connect some interaction slots:
-	connect(ui->customPlot,
-			SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)),
-			this,
-			SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
+//	connect(ui->customPlot,
+//			SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)),
+//			this,
+//			SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
 
 	connect(ui->customPlot,
 			SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
@@ -613,8 +613,13 @@ void MainWindow::on_pushButtonProcess_clicked()
 	crunchLog.setPerformance( ui->cbxPerform->isChecked() );
     crunchLog.processFile(strFileNameIn, iDs, ulTimeStart, ulTimeStop);
 
-    strFileNameOut = "Table_C_Arm.txt"; //strFileNameIn;
-    strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_B));
+    strFileNameOut = strFileNameIn;
+    if (ui->rbn6A0->isChecked())
+        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_CONTR));
+    else if (ui->rbn5A0->isChecked())
+        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_A));
+    else if (ui->rbn5A1->isChecked())
+        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_B));
 
 	QFile file (strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -805,15 +810,16 @@ void MainWindow::showHideElements(QString sTxt2Find)
 		if (strLegendText.contains(sTxt2Find, Qt::CaseInsensitive))
 		{
 			bool bVisibility = graph->visible();
-			if ( bVisibility )
-			{
-				graph->removeFromLegend();
-			}else
-			{
-				graph->addToLegend();
-			}
+//			if ( bVisibility )
+//			{
+//				graph->removeFromLegend();
+//			}else
+//			{
+//				graph->addToLegend();
+//			}
 
-			graph->setVisible(!bVisibility);
+            ui->customPlot->legend->elementAt(i)->setVisible(!bVisibility);
+            graph->setVisible(!bVisibility);
 
 		}
 	}
@@ -823,14 +829,14 @@ void MainWindow::showHideElements(QString sTxt2Find)
 void MainWindow::on_pbnPid_clicked()
 {
 
-	showHideElements(" PID ");
+    cDecorator.showHideElements();
 
 }
 
 void MainWindow::on_pbnGen_clicked()
 {
 
-	showHideElements(" GEN ");
+    showHideElements("F");
 
 }
 

@@ -10,6 +10,7 @@
 CDecorator cDecorator;
 CDecorator::CDecorator()
 {
+
 }
 
 //------------------------------------------------------------------------------
@@ -30,11 +31,18 @@ uint8_t u8aColB[64]={ 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 127, 127, 127, 127, 127, 1
  */
 void CDecorator::addGraph(QPen pen, QVector<double> qvDataArranged, QVector<double> qvTime, QString qStrLegend, QCustomPlot *customPlot)
 {
-	customPlot->addGraph();// create graph
+    customPlot->addGraph();
 	customPlot->graph()->setPen(pen);
-	customPlot->graph()->setName(qStrLegend);
-	int iGraphCount = customPlot->graphCount();
-	customPlot->graph(iGraphCount-1)->setData(qvTime, qvDataArranged);
+    customPlot->graph()->setData(qvTime, qvDataArranged);
+
+    QLegendWidgetItem *legendWidgetItem = new QLegendWidgetItem(customPlot->graph(), qStrLegend, lswLegend);
+    QBrush qItemBrush = legendWidgetItem->background();
+    qItemBrush.setColor(Qt::black);
+    legendWidgetItem->setBackground(qItemBrush);
+    qItemBrush = legendWidgetItem->foreground();
+    qItemBrush.setColor(pen.color());
+    legendWidgetItem->setForeground(qItemBrush);
+    lswLegend->addItem (legendWidgetItem);
 }
 
 void CDecorator::addSignalToPlot(int iSignalIdx, double dMaxYAxis, QCustomPlot *customPlot)
@@ -78,6 +86,7 @@ void CDecorator::addSignalToPlot(int iSignalIdx, double dMaxYAxis, QCustomPlot *
             qStrLegend += QString(" x%1").arg(iFactor);
     }
     addGraph(pen, qvDataArranged, qvTime, qStrLegend, customPlot);
+    markedItemMap[qStrLegend] = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -94,12 +103,20 @@ void CDecorator::cleanGraph(QCustomPlot *customPlot)
 /**
  * @brief CDecorator::buildGraph build the graph accordin to own method implementation
  */
-bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
+bool CDecorator::buildGraph(QCustomPlot *customPlot, QListWidget *lswLegend, QFile *file)
 {
     QTextStream in(file);
     QString line;
     int pos;
     unsigned long ulMaxLi;
+
+    if (this->lswLegend) {
+        this->lswLegend->clear();
+        disconnect(this->lswLegend, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)));
+    }
+
+    this->customPlot = customPlot;
+    this->lswLegend = lswLegend;
 
     legendList.clear();
     typeList.clear();
@@ -117,19 +134,18 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
         }
     } while (true);
 
+    // connect some interaction slots:
+    connect(this->lswLegend,
+            SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
+            this,
+            SLOT(currentItemChanged(QListWidgetItem *, QListWidgetItem *)));
+    connect(this->lswLegend,
+            SIGNAL(itemSelectionChanged()),
+            this,
+            SLOT(itemSelectionChanged()));
+
     customPlot->clearGraphs();
-	customPlot->legend->setVisible(true);
-	customPlot->legend->setFont(QFont("Helvetica", 8));
-	customPlot->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
-
-	// now we move the legend from the inset layout of the axis rect into the main grid layout.
-	// We create a sub layout so we can generate a small gap between the plot layout cell border
-	// and the legend border:
-	QCPLayoutGrid *subLayout = new QCPLayoutGrid;
-	customPlot->plotLayout()->addElement(0, 1, subLayout);
-	subLayout->setMargins(QMargins(5, 0, 5, 5));
-	subLayout->addElement(0, 0, customPlot->legend);
-
+    customPlot->legend->setVisible(false);
 	customPlot->plotLayout()->setColumnStretchFactor (1, 0.001);
 
     qvVect.clear();
@@ -188,6 +204,8 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 //            double dMult = pow(10, (double)iLogMaxYAxis);
 //            dMaxYAxis = (((int)((dMaxYAxis - 1) / dMult)) + 1) * dMult;
             dMaxYAxis = fmax((((int)(dMaxYAxis / ROUND_MAX_Y_AXIS)) + 1) * ROUND_MAX_Y_AXIS, (typeList.count(TYPE_BIT) + 1) * BITFIELD_DELTA_Y);
+
+            // add plots
             for (int iSignalIdx=0; iSignalIdx < iNumSignal; iSignalIdx++) {
                 addSignalToPlot(iSignalIdx,
                                 dMaxYAxis,
@@ -212,4 +230,53 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QFile *file)
 		}
 	}
     return (ulMaxLi > 0);
+}
+
+void CDecorator::currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    QCPGraph *graph;
+
+    if (previous) {
+        graph = ((QLegendWidgetItem *)previous)->plottable();
+        if (graph) {
+            QPen qpGraphPen = graph->pen();
+            qpGraphPen.setStyle(Qt::SolidLine);
+            qpGraphPen.setWidth(2);
+            ((QLegendWidgetItem *)previous)->plottable()->setPen(qpGraphPen);
+        }
+    }
+
+    if (current) {
+        graph = ((QLegendWidgetItem *)current)->plottable();
+        if (graph) {
+            QPen qpGraphPen = graph->pen ();
+            qpGraphPen.setStyle(Qt::DotLine);
+            qpGraphPen.setWidth(4);
+            graph->setPen(qpGraphPen);
+            graph->parentPlot()->replot();
+            current->setSelected(true);
+        }
+    }
+}
+
+void CDecorator::itemSelectionChanged()
+{
+    QListWidgetItem *item;
+    QList<QListWidgetItem *> selItems = lswLegend->selectedItems();
+    foreach(item, selItems) {
+        ;
+    }
+}
+
+void CDecorator::showHideElements(void)
+{
+    QListWidgetItem *item;
+    QList<QListWidgetItem *> selItems = lswLegend->selectedItems();
+
+    foreach(item, selItems) {
+        QCPGraph *graph = ((QLegendWidgetItem *)item)->plottable();
+
+        graph->setVisible(!graph->visible());
+    }
+    customPlot->replot();
 }

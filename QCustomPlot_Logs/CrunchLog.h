@@ -48,6 +48,7 @@ protected:
     static void unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit = 8);
     static void unpackBit32(string * pstrOut, unsigned int uiVal, int iNbit = 32);
     static void intToStr(string *pStrOut, unsigned int uiVal, string sfx = " ");
+    static void floatToStr(string *pStrOut, float fVal, string sfx = " ");
     static unsigned long unpackTimeString(const char * u8aData);
     static bool decodeTimeString(const char * u8aData, unsigned long &ulTime);
     static void removeCharsUntil(string * strProcessed, string strMatchToFind);

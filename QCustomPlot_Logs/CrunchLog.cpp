@@ -59,6 +59,15 @@ void CrunchLog::intToStr(string *pStrOut, unsigned int uiVal, string sfx)
     pStrOut->append(sfx);
 }
 //--------------------------------------------------------
+void CrunchLog::floatToStr(string *pStrOut, float fVal, string sfx)
+{
+    char s8aChar[16]={0,};
+
+    sprintf(s8aChar, "%.1f", fVal);
+    pStrOut->append(s8aChar);
+    pStrOut->append(sfx);
+}
+//--------------------------------------------------------
 unsigned long CrunchLog::unpackTimeString(const char * u8aData)
 {
 	unsigned long  ulTime;

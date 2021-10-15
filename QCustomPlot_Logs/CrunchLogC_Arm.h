@@ -16,9 +16,9 @@ protected:
     long mlRowCounter;
 public:
     typedef enum {
-        ID_CAN_CONTR    = 0x5A0,
-        ID_CAN_INV_A    = 0x6A0,
-        ID_CAN_INV_B    = 0x6A1
+        ID_CAN_CONTR    = 0x6A0,
+        ID_CAN_INV_A    = 0x5A0,
+        ID_CAN_INV_B    = 0x5A1
     } enumIdCAN;
 
     CrunchLogC_Arm();
@@ -64,7 +64,7 @@ private:
 #define EXPTECH_BIT_SHIFT   4
 #define EXPTECH_BIT_MASK    0x3
 
-    typedef void (*PF_ProcessPayload)(string *pStrOut, unsigned long ulTime, unsigned int *pPayload);
+    typedef void (*PF_ProcessPayload)(string *pStrOut, float fTime, unsigned int *pPayload);
 
     typedef struct
     {
@@ -72,13 +72,14 @@ private:
         QFile *outFile;
         QStringList legendList;
         QStringList typeList;
+        unsigned int ulaDataPrev[6];
     } structOutFile;
 
     QMap<enumIdCAN, structOutFile> outFile;
 
-    static void processPayloadContr(string *pStrOut, unsigned long ulTime, unsigned int *pPayload);
-    static void processPayloadInvA(string *pStrOut, unsigned long ulTime, unsigned int *pPayload);
-    static void processPayloadInvB(string *pStrOut, unsigned long ulTime, unsigned int *pPayload);
+    static void processPayloadContr(string *pStrOut, float fTime, unsigned int *pPayload);
+    static void processPayloadInvA(string *pStrOut, float fTime, unsigned int *pPayload);
+    static void processPayloadInvB(string *pStrOut, float fTime, unsigned int *pPayload);
 };
 
 #endif // CRUNCHLOGC_ARM_H

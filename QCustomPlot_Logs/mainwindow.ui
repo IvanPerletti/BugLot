@@ -2215,7 +2215,7 @@ PlotWidget {
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -2331,6 +2331,77 @@ PlotWidget {
             <property name="checked">
              <bool>false</bool>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>300</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);</string>
+            </property>
+            <property name="title">
+             <string/>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+            <widget class="QRadioButton" name="rbn6A0">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>82</width>
+               <height>17</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>6A0</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="rbn5A0">
+             <property name="geometry">
+              <rect>
+               <x>105</x>
+               <y>20</y>
+               <width>82</width>
+               <height>17</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>5A0</string>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="rbn5A1">
+             <property name="geometry">
+              <rect>
+               <x>210</x>
+               <y>20</y>
+               <width>82</width>
+               <height>17</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>5A1</string>
+             </property>
+            </widget>
            </widget>
           </item>
           <item>
@@ -2457,6 +2528,37 @@ PlotWidget {
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="lswLegend">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>29</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(255, 255, 255);</string>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_2">

@@ -17,6 +17,12 @@ CrunchLogC_Arm::CrunchLogC_Arm()
     mlRowCounter = 0;
 
     outFile[ID_CAN_CONTR].processPayload = processPayloadContr;
+    outFile[ID_CAN_CONTR].typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT;
+    outFile[ID_CAN_CONTR].typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT;
+    outFile[ID_CAN_CONTR].legendList << "I_PID_SDCAL" << "I_PID_APPOPEN" << "I_PID_READY" <<"I_PID_PULSE_MODE" << "O_PID_HCF_MODE";
+    outFile[ID_CAN_CONTR].legendList << "I_GEN_REQ_FL_HCF" << "I_GEN_PREP_RAD" << "I_GEN_COM_REQ" << "I_GEN_READY" << "I_GEN_REQ_RAD";
+    outFile[ID_CAN_CONTR].legendList << "O_PID_CFL" << "O_PREP_PID" << "O_CRAD_PID" << "I_PID_EXP_RX" << "O_PID_DOSE_ADJ";
+    outFile[ID_CAN_CONTR].legendList << "O_GEN_READY_ACQ_FL" << "O_READY_ACQ_RAD_FL" << "I_GEN_EXON" << "O_PID_EXON";
 
     outFile[ID_CAN_INV_A].processPayload = processPayloadInvA;
     outFile[ID_CAN_INV_A].legendList << "Kv0" << "Kv+" << "Kv-" <<"MaGain" << "Ma0" << "Ma";
@@ -31,7 +37,7 @@ CrunchLogC_Arm::CrunchLogC_Arm()
 }
 
 //--------------------------------------------------------
-void CrunchLogC_Arm::processPayloadContr(string *pStrOut, unsigned long ulTime, unsigned int *pPayload)
+void CrunchLogC_Arm::processPayloadContr(string *pStrOut, float fTime, unsigned int *pPayload)
 {
     structLogContr strLogContr;
     unsigned long ulBitMaskNew;
@@ -46,19 +52,14 @@ void CrunchLogC_Arm::processPayloadContr(string *pStrOut, unsigned long ulTime, 
 
     pStrOut->clear();
 
-    intToStr(pStrOut, ulTime);
+    floatToStr(pStrOut, fTime);
 
     unpackBit32(pStrOut, strLogContr.ulBitMask, 19);
-    intToStr(pStrOut, strLogContr.lMcStatus);
-    unpackBit8(pStrOut, static_cast<unsigned char>( strLogContr.ulTableBit ));
-    intToStr(pStrOut, strLogContr.ulGenStat);
-    intToStr(pStrOut, strLogContr.iDllStat);
-    unpackBit8(pStrOut, static_cast<unsigned char>(strLogContr.ulTableBitExt) );
-    intToStr(pStrOut, strLogContr.u8LogicalMode, "\n");
+    pStrOut->append("\n");
 }
 
 //--------------------------------------------------------
-void CrunchLogC_Arm::processPayloadInvA(string *pStrOut, unsigned long ulTime, unsigned int *pPayload)
+void CrunchLogC_Arm::processPayloadInvA(string *pStrOut, float fTime, unsigned int *pPayload)
 {
     structLogInv strLogInv;
 
@@ -72,7 +73,7 @@ void CrunchLogC_Arm::processPayloadInvA(string *pStrOut, unsigned long ulTime, u
 
     pStrOut->clear();
 
-    intToStr(pStrOut, ulTime);
+    floatToStr(pStrOut, fTime);
 
     intToStr(pStrOut, strLogInv.u8Kv0);
     intToStr(pStrOut, strLogInv.u8KvPlus);
@@ -83,7 +84,7 @@ void CrunchLogC_Arm::processPayloadInvA(string *pStrOut, unsigned long ulTime, u
 }
 
 //--------------------------------------------------------
-void CrunchLogC_Arm::processPayloadInvB(string *pStrOut, unsigned long ulTime, unsigned int *pPayload)
+void CrunchLogC_Arm::processPayloadInvB(string *pStrOut, float fTime, unsigned int *pPayload)
 {
     structLogInv strLogInv;
 
@@ -97,7 +98,7 @@ void CrunchLogC_Arm::processPayloadInvB(string *pStrOut, unsigned long ulTime, u
 
     pStrOut->clear();
 
-    intToStr(pStrOut, ulTime);
+    floatToStr(pStrOut, fTime);
 
     intToStr(pStrOut, strLogInv.u8FilGain);
     intToStr(pStrOut, strLogInv.u8Fil0);
@@ -121,7 +122,7 @@ void CrunchLogC_Arm::processFile (QString strFileNameIn,
     string strLine, strOut;
     int iMaxIterator = 0;
     ifstream infile;
-    unsigned long ulTime = 0;
+    float fTime = 0;
     int iNumFound;
     uint32_t idCAN;
     unsigned int ulaData[6]={0,};
@@ -169,8 +170,8 @@ void CrunchLogC_Arm::processFile (QString strFileNameIn,
 
         if (iNumFound == 11)
         {
-            ulTime = l_ms + (l_sec + l_min*60 + l_hour * 3600)*1000;
-            if ( ulTime >= ulTimeStart || ulTime <= ulTimeStop )
+            fTime = (float)(l_ms + (l_sec + l_min*60 + l_hour * 3600)*1000);
+            if ( fTime >= ulTimeStart || fTime <= ulTimeStop )
             {
                 enumIdCAN id = (enumIdCAN)idCAN;
                 if (outFile.contains(id))
@@ -179,7 +180,6 @@ void CrunchLogC_Arm::processFile (QString strFileNameIn,
                     {
                         QTextStream stream( outFile[id].outFile );
 
-                        outFile[id].processPayload(&strOut, ulTime, ulaData);
                         if (!outFile[id].outFile->isOpen()) {
                             outFile[id].outFile->open(QIODevice::WriteOnly);
                             if (outFile[id].legendList.empty() == false) {
@@ -195,7 +195,13 @@ void CrunchLogC_Arm::processFile (QString strFileNameIn,
                                 stream << endl;
                             }
                         }
-                        stream << strOut.c_str();
+                        if (memcmp((void *)outFile[id].ulaDataPrev, (void *)ulaData, sizeof(ulaData))) {
+                            outFile[id].processPayload(&strOut, (fTime - 0.1), outFile[id].ulaDataPrev);
+                            stream << strOut.c_str();
+                            outFile[id].processPayload(&strOut, fTime, ulaData);
+                            stream << strOut.c_str();
+                            memcpy((void *)outFile[id].ulaDataPrev, (void *)ulaData, sizeof(ulaData));
+                        }
                     }
                 }
             }
