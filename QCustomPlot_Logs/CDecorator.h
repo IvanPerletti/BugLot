@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include <QElapsedTimer>
 #include "../../qcustomplot.h"
-#include "qlegendwidgetitem.h"
+#include "legenditem.h"
 #include "CrunchLog.h"
 
 class CDecorator : public QObject
@@ -20,6 +20,7 @@ public:
 	void cleanGraph(QCustomPlot *customPlot);
     bool buildGraph(QCustomPlot *customPlot, QListWidget *lswLegend, QFile *file);
     void showHideElements(void);
+    void toggleSelection(void);
 
 private:
     QVector<double> qvTime;
@@ -33,7 +34,7 @@ private:
     QList <QListWidgetItem *> actSelectedItems;
 
     void addSignalToPlot(int iSignalIdx, double dMaxYAxis, QCustomPlot *customPlot);
-    void addGraph(QPen pen, QVector<double> qvDataArranged, QVector<double> qvTime, QString qStrLegend, QCustomPlot *customPlot);
+    void addGraph(QPen pen, QVector<double> qvDataArranged, QVector<double> qvTime, QString qStrLegend, QString qStrFactor, QCustomPlot *customPlot);
 
 private slots:
     void currentItemChanged(QListWidgetItem *, QListWidgetItem *);

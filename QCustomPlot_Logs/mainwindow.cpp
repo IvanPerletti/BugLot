@@ -828,19 +828,19 @@ void MainWindow::showHideElements(QString sTxt2Find)
 
 void MainWindow::on_pbnPid_clicked()
 {
-
     cDecorator.showHideElements();
-
 }
 
 void MainWindow::on_pbnGen_clicked()
 {
-
-    showHideElements("F");
-
+    cDecorator.toggleSelection();
 }
 
 void MainWindow::on_pbnTable_clicked()
 {
 	showHideElements(" TAB ");
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
 }

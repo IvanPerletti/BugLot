@@ -10,28 +10,31 @@ TEMPLATE = app
 
 SOURCES += access.cpp \
     CrunchLogC_Arm.cpp \
+    Drivers/ClickableLabel.cpp \
+    Drivers/IAnimationShow.cpp \
 	ISettings.cpp \
     ITimePerform.cpp \
-    ilegenditemwidget.cpp \
+    legenditem.cpp \
 		  main.cpp\
 		   mainwindow.cpp \
 		 ../qcustomplot.cpp \
 	CrunchLog.cpp \
-	CDecorator.cpp \
-    qlegendwidgetitem.cpp
+	CDecorator.cpp
 
 HEADERS  += access.h \
-    CrunchLogC_Arm.h \
+        Drivers/ClickableLabel.h \
+        Drivers/IAnimationShow.h \
+        CrunchLogC_Arm.h \
 	ISettings.h \
     ITimePerform.h \
-    ilegenditemwidget.h \
+    legenditem.h \
 		  mainwindow.h \
 		 ../qcustomplot.h \
 	CrunchLog.h \
-	CDecorator.h \
-    qlegendwidgetitem.h
+	CDecorator.h
 
 FORMS    += access.ui \
+			legenditem.ui \
 			mainwindow.ui
 
 INCLUDEPATH += $$PWD/..

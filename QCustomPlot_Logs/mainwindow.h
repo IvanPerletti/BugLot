@@ -130,7 +130,9 @@ class MainWindow : public QMainWindow
 
 	void on_pbnTable_clicked();
 
-	private:
+    void on_tabWidget_currentChanged(int index);
+
+private:
 	Ui::MainWindow *ui;
 	QString demoName;
 	QTimer dataTimer;

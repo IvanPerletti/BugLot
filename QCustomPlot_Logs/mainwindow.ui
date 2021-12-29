@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1290</width>
+    <width>1322</width>
     <height>782</height>
    </rect>
   </property>
@@ -2215,7 +2215,7 @@ PlotWidget {
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -2521,7 +2521,7 @@ color: rgb(0, 0, 0);</string>
            <widget class="QCustomPlot" name="customPlot" native="true">
             <property name="minimumSize">
              <size>
-              <width>0</width>
+              <width>840</width>
               <height>400</height>
              </size>
             </property>
@@ -2532,25 +2532,22 @@ color: rgb(0, 0, 0);</string>
         <item>
          <widget class="QListWidget" name="lswLegend">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>200</width>
             <height>29</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>100</width>
+            <width>200</width>
             <height>16777215</height>
            </size>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);</string>
@@ -2564,13 +2561,13 @@ color: rgb(0, 0, 0);</string>
          <widget class="QGroupBox" name="groupBox_2">
           <property name="minimumSize">
            <size>
-            <width>100</width>
+            <width>220</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>217</width>
+            <width>220</width>
             <height>16777215</height>
            </size>
           </property>
@@ -3041,6 +3038,17 @@ p, li { white-space: pre-wrap; }
         <property name="text">
          <string>APR anlaysis</string>
         </property>
+       </widget>
+       <widget class="QWidget" name="verticalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>45</x>
+          <y>90</y>
+          <width>441</width>
+          <height>606</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="testLayout"/>
        </widget>
       </widget>
      </widget>
