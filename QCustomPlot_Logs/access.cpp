@@ -97,7 +97,7 @@ void access::on_pushButton_login_clicked()
         {
             access::close();
             mainWindow = new MainWindow;
-            mainWindow->show();
+            mainWindow->showMaximized();
         }
         else {
             if( username!="" ){

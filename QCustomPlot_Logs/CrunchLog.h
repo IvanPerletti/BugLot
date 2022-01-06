@@ -36,6 +36,7 @@ using namespace std;
 
 class CrunchLog
 {
+    Q_GADGET
 public:
     CrunchLog();
     void extractLog (const char * ucaNameFileIn,

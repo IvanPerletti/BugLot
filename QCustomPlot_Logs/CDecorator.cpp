@@ -49,7 +49,7 @@ void CDecorator::addGraph(QPen pen, QVector<double> qvDataArranged, QVector<doub
     lswLegend->setItemWidget (listWidgetItem, legendItem);
 }
 
-void CDecorator::addSignalToPlot(int iSignalIdx, double dMaxYAxis, QCustomPlot *customPlot)
+void CDecorator::addSignalToPlot(int iSignalIdx, QVector<QVector<double>> qvVect, QVector<double> qvTime, double dMaxYAxis, QCustomPlot *customPlot)
 {
     QVector<double> qvDataArranged;
     QString qStrLegend = legendList.at(iSignalIdx);
@@ -91,7 +91,6 @@ void CDecorator::addSignalToPlot(int iSignalIdx, double dMaxYAxis, QCustomPlot *
             qStrFactor = QString("x%1").arg(iFactor);
     }
     addGraph(pen, qvDataArranged, qvTime, qStrLegend, qStrFactor, customPlot);
-    markedItemMap[qStrLegend] = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -110,15 +109,12 @@ void CDecorator::cleanGraph(QCustomPlot *customPlot)
  */
 bool CDecorator::buildGraph(QCustomPlot *customPlot, QListWidget *lswLegend, QFile *file)
 {
+    QVector<double> qvTime;
+    QVector <QVector <double> > qvVect;
     QTextStream in(file);
     QString line;
     int pos;
     unsigned long ulMaxLi;
-
-    if (this->lswLegend) {
-        this->lswLegend->clear();
-        disconnect(this->lswLegend, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)));
-    }
 
     this->customPlot = customPlot;
     this->lswLegend = lswLegend;
@@ -212,9 +208,7 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QListWidget *lswLegend, QFi
 
             // add plots
             for (int iSignalIdx=0; iSignalIdx < iNumSignal; iSignalIdx++) {
-                addSignalToPlot(iSignalIdx,
-                                dMaxYAxis,
-                                customPlot);
+                addSignalToPlot(iSignalIdx, qvVect, qvTime, dMaxYAxis, customPlot);
             }
 
 			// give the axes some labels:
@@ -242,25 +236,25 @@ void CDecorator::currentItemChanged(QListWidgetItem *current, QListWidgetItem *p
     QCPGraph *graph;
 
     if (previous) {
-        graph = ((LegendItem *)lswLegend->itemWidget(previous))->plottable();
+        graph = ((LegendItem *)previous->listWidget()->itemWidget(previous))->plottable();
         if (graph) {
             QPen qpGraphPen = graph->pen();
             qpGraphPen.setStyle(Qt::SolidLine);
             qpGraphPen.setWidth(2);
             graph->setPen(qpGraphPen);
-            ((LegendItem *)lswLegend->itemWidget(previous))->setAsCurrent(false);
+            ((LegendItem *)previous->listWidget()->itemWidget(previous))->setAsCurrent(false);
         }
     }
 
     if (current) {
-        graph = ((LegendItem *)lswLegend->itemWidget(current))->plottable();
+        graph = ((LegendItem *)current->listWidget()->itemWidget(current))->plottable();
         if (graph) {
             QPen qpGraphPen = graph->pen ();
             qpGraphPen.setStyle(Qt::DotLine);
             qpGraphPen.setWidth(4);
             graph->setPen(qpGraphPen);
             graph->parentPlot()->replot();
-            ((LegendItem *)lswLegend->itemWidget(current))->setAsCurrent(true);
+            ((LegendItem *)current->listWidget()->itemWidget(current))->setAsCurrent(true);
         }
     }
 }

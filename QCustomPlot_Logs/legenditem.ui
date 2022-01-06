@@ -89,7 +89,7 @@
          <enum>QFrame::Plain</enum>
         </property>
         <property name="lineWidth">
-         <number>6</number>
+         <number>1</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -106,17 +106,28 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>105</width>
+          <width>80</width>
           <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>80</width>
+          <height>16777215</height>
          </size>
         </property>
         <property name="font">
          <font>
+          <family>MS Shell Dlg 2</family>
           <pointsize>8</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">color: rgb(0, 0, 0);</string>
+         <string notr="true">color: rgb(0, 0, 0);
+font: 8pt &quot;MS Shell Dlg 2&quot;;</string>
         </property>
         <property name="text">
          <string/>
@@ -135,6 +146,12 @@
          <size>
           <width>25</width>
           <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>25</width>
+          <height>16777215</height>
          </size>
         </property>
         <property name="font">

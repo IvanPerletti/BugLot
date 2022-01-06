@@ -7,7 +7,7 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QElapsedTimer>
-#include "../../qcustomplot.h"
+#include "qcustomplot.h"
 #include "legenditem.h"
 #include "CrunchLog.h"
 
@@ -23,17 +23,13 @@ public:
     void toggleSelection(void);
 
 private:
-    QVector<double> qvTime;
-    QVector <QVector <double> > qvVect;
+
     QStringList legendList;
     QStringList typeList;
-    QMap<QString, bool> markedItemMap;
     QCustomPlot *customPlot;
     QListWidget *lswLegend;
 
-    QList <QListWidgetItem *> actSelectedItems;
-
-    void addSignalToPlot(int iSignalIdx, double dMaxYAxis, QCustomPlot *customPlot);
+    void addSignalToPlot(int iSignalIdx, QVector<QVector<double>> qvVect, QVector<double> qvTime, double dMaxYAxis, QCustomPlot *customPlot);
     void addGraph(QPen pen, QVector<double> qvDataArranged, QVector<double> qvTime, QString qStrLegend, QString qStrFactor, QCustomPlot *customPlot);
 
 private slots:

@@ -1,6 +1,7 @@
 #ifndef CRUNCHLOGC_ARM_H
 #define CRUNCHLOGC_ARM_H
 
+#include <QObject>
 #include <QString>
 #include <QMap>
 #include <QFile>
@@ -15,11 +16,12 @@ protected:
     bool mbPerformance;
     long mlRowCounter;
 public:
-    typedef enum {
+    enum enumIdCAN {
         ID_CAN_CONTR    = 0x6A0,
         ID_CAN_INV_A    = 0x5A0,
         ID_CAN_INV_B    = 0x5A1
-    } enumIdCAN;
+    };
+    Q_ENUM(enumIdCAN);
 
     CrunchLogC_Arm();
     void setPerformance(bool bFlad){mbPerformance = bFlad;}

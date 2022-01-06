@@ -44,8 +44,9 @@
 
 #include <QMainWindow>
 #include <QElapsedTimer>
-#include "../../qcustomplot.h" // the header file of QCustomPlot. Don't forget to add it to your project, if you use an IDE, so it gets compiled.
+#include "qcustomplot.h" // the header file of QCustomPlot. Don't forget to add it to your project, if you use an IDE, so it gets compiled.
 #include "zoomplot.h"
+#include "figurewidget.h"
 
 namespace Ui {
 	class MainWindow;
@@ -59,19 +60,13 @@ class MainWindow : public QMainWindow
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
-	void setupDemo(int demoIndex);
-
-	void setupPlotLogs(void);
+    void setupPlotLogs(FigureWidget *figure);
 	void setupPlayground(QCustomPlot *customPlot);
 
 	void bracketDataSlot();
-	void screenShot();
-	void allScreenShots();
+
 	private:
 	QTimer *timer;
-	void updateUiTimeEdit(long l_ms);
-	void checkUserDirs(void);
-
 
 	private slots:
 	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);
@@ -81,8 +76,6 @@ class MainWindow : public QMainWindow
 	void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);
 
 	void MyTimerSlot();
-
-	void on_pushButtonZoomRange_clicked();
 
 	void on_dial_valueChanged(int Msec);
 
@@ -110,25 +103,9 @@ class MainWindow : public QMainWindow
 
 	void on_pushButtonDiretta_clicked();
 
-	void on_timeEdit_timeChanged(const QTime &time);
-
-	void on_pbScreenShot_clicked();
-
-	void on_timeEdit_editingFinished();
-
 	void on_timeEdit_2_timeChanged(const QTime &time);
 
 	void on_timeEdit_3_timeChanged(const QTime &time);
-
-	void on_pbnDoseAnalysis_clicked();
-
-	void on_pbnAprAnalysis_clicked();
-
-	void on_pbnPid_clicked();
-
-	void on_pbnGen_clicked();
-
-	void on_pbnTable_clicked();
 
     void on_tabWidget_currentChanged(int index);
 
@@ -150,7 +127,6 @@ private:
 	double dTimeA;
 	double dTimeB;
 	void setShortCutKeys();
-	void showHideElements(QString sTxt2Find);
 };
 
 #endif // MAINWINDOW_H

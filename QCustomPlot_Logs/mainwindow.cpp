@@ -13,6 +13,7 @@
 #include <iostream>
 #include "ISettings.h"
 #include "ITimePerform.h"
+#include "figurewidget.h"
 //-----------------------------------------------------------------------------
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -29,27 +30,31 @@ MainWindow::MainWindow(QWidget *parent) :
 	ulTimeStop = ( 23*3600 + 59*60 )* 1000;
 	qDebug()<<"Setup";
 	ui->pushButtonProcess->setEnabled(true);
-	setShortCutKeys();
+    setShortCutKeys();
+
+//    QMetaEnum e = QMetaEnum::fromType<CrunchLogC_Arm::enumIdCAN>();
+//    qDebug() << "test" << e.valueToKey(CrunchLogC_Arm::ID_CAN_CONTR);
+//    for (int k = 0; k < e.keyCount(); k++)
+//    {
+//      CrunchLogC_Arm::enumIdCAN id = (CrunchLogC_Arm::enumIdCAN) e.value(k);
+//      QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswIDs);
+//      listWidgetItem->setText(QString().sprintf("0x%X", (int)id));
+//      ui->lswIDs->addItem (listWidgetItem);
+//    }
+    QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswIDs);
+    listWidgetItem->setText(QString().sprintf("0x%X", (int)CrunchLogC_Arm::ID_CAN_CONTR));
+    listWidgetItem->setCheckState(Qt::Unchecked);
+    ui->lswIDs->addItem (listWidgetItem);
+    QListWidgetItem *listWidgetItem1 = new QListWidgetItem(ui->lswIDs);
+    listWidgetItem1->setText(QString().sprintf("0x%X", (int)CrunchLogC_Arm::ID_CAN_INV_A));
+    listWidgetItem1->setCheckState(Qt::Unchecked);
+    ui->lswIDs->addItem (listWidgetItem1);
+    QListWidgetItem *listWidgetItem2 = new QListWidgetItem(ui->lswIDs);
+    listWidgetItem2->setText(QString().sprintf("0x%X", (int)CrunchLogC_Arm::ID_CAN_INV_B));
+    listWidgetItem2->setCheckState(Qt::Unchecked);
+    ui->lswIDs->addItem (listWidgetItem2);
 }
 
-//-----------------------------------------------------------------------------
-
-void MainWindow::setupDemo(int demoIndex)
-{
-	switch (demoIndex)
-	{
-	case 20:
-		demoName.append("GMM BugLot");
-		setupPlotLogs();
-		break;
-	}
-	setWindowTitle(demoName);
-	statusBar()->clearMessage();
-	currentDemoIndex = demoIndex;
-	ui->tabWidget->setCurrentIndex(0);
-	ui->customPlot->replot();
-
-}
 
 //-----------------------------------------------------------------------------
 
@@ -67,11 +72,11 @@ void MainWindow::bracketDataSlot()
 		x[i] = i/(double)(n-1)*34 - 17;
 		y[i] = qExp(-x[i]*x[i]/20.0)*qSin(k*x[i]+phase);
 	}
-	ui->customPlot->graph()->setData(x, y);
+    //ui->customPlot->graph()->setData(x, y);
 
 	itemDemoPhaseTracer->setGraphKey((8*M_PI+fmod(M_PI*1.5-phase, 6*M_PI))/k);
 
-	ui->customPlot->replot();
+    //ui->customPlot->replot();
 
 	// calculate frames per second:
 	double key = secs;
@@ -96,65 +101,6 @@ MainWindow::~MainWindow()
 {
 	delete ui;
 }
-//-----------------------------------------------------------------------------
-
-void MainWindow::screenShot()
-{
-
-	QString qsNow = QDate::currentDate().toString("yyyy-MM-dd hh:mm:ss");
-	qsNow.append(".png");
-	ui->centralWidget->grab().save("./"+qsNow);
-
-	//	QScreen *screen = QGuiApplication::primaryScreen();
-	//	if (const QWindow *window = windowHandle())
-	//		screen = window->screen();
-	//	if (!screen)
-	//		return;
-	//	QPixmap originalPixmap = screen->grabWindow(QWidget::winId());
-
-	//	const QString fileName = "img.png";
-	//	if (!originalPixmap.save(fileName)) {
-	//		QMessageBox::warning(this, tr("Save Error"), tr("The image could not be saved to \"%1\".")
-	//							 .arg(QDir::toNativeSeparators(fileName)));
-	//	}
-}
-//-----------------------------------------------------------------------------
-
-void MainWindow::allScreenShots()
-{
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	QPixmap pm = QPixmap::grabWindow(qApp->desktop()->winId(), this->x()+2, this->y()+2, this->frameGeometry().width()-4, this->frameGeometry().height()-4);
-#elif QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
-	QPixmap pm = qApp->primaryScreen()->grabWindow(qApp->desktop()->winId(), this->x()+2, this->y()+2, this->frameGeometry().width()-4, this->frameGeometry().height()-4);
-#else
-	QPixmap pm = qApp->primaryScreen()->grabWindow(qApp->desktop()->winId(), this->x()-7, this->y()-7, this->frameGeometry().width()+14, this->frameGeometry().height()+14);
-#endif
-	QString fileName = demoName.toLower()+".png";
-	fileName.replace(" ", "");
-	pm.save("./screenshots/"+fileName);
-
-	if (currentDemoIndex < 19)
-	{
-		if (dataTimer.isActive())
-			dataTimer.stop();
-		dataTimer.disconnect();
-		delete ui->customPlot;
-		ui->customPlot = new QCustomPlot(ui->centralWidget);
-
-		setupDemo(currentDemoIndex+1);
-		// setup delay for demos that need time to develop proper look:
-		int delay = 250;
-		if (currentDemoIndex == 10) // Next is Realtime data demo
-			delay = 12000;
-		else if (currentDemoIndex == 15) // Next is Item demo
-			delay = 5000;
-		QTimer::singleShot(delay, this, SLOT(allScreenShots()));
-	} else
-	{
-		qApp->quit();
-	}
-}
-
 
 //------------------------------------------------------------------------------
 /**
@@ -189,7 +135,7 @@ void MainWindow::setShortCutKeys()
 			SLOT(on_pushButtonZoomMeno_clicked()));
 }
 
-void MainWindow::setupPlotLogs(void)
+void MainWindow::setupPlotLogs(FigureWidget *figure)
 {
 	/* QString selFilter="Text files(*.txt)";
 	QString LoadFile;
@@ -206,14 +152,14 @@ void MainWindow::setupPlotLogs(void)
 	}
 	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
 
-    cDecorator.buildGraph(ui->customPlot, ui->lswLegend, &file);
+    cDecorator.buildGraph(figure->customPlot(), figure->lswLegend(), &file);
 
-	double dMinXAxis = ui->customPlot->xAxis->range().lower;
-	double dMaxXAxis = ui->customPlot->xAxis->range().upper;
-	dLastTimeVal = dMaxXAxis; // used for "OnAir option"
+    double dMinXAxis = figure->customPlot()->xAxis->range().lower;
+    double dMaxXAxis = figure->customPlot()->xAxis->range().upper;
+    dLastTimeVal = dMaxXAxis; // used for "OnAir option"
 
-	ui->lineEditMin->setText(QString::number(dMinXAxis));
-	ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
+    ui->lineEditMin->setText(QString::number(dMinXAxis));
+    ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
 //	disconnect(ui->customPlot,
 //			   SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)));
 
@@ -223,20 +169,20 @@ void MainWindow::setupPlotLogs(void)
 //			this,
 //			SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
 
-	connect(ui->customPlot,
-			SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
-			this,
-			SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
-	// tooltip on mouse hover
-	connect(ui->customPlot,
-			SIGNAL(mouseMove(QMouseEvent*)),
-			this,
-			SLOT(showPointToolTip(QMouseEvent*)));
-	//	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
-	connect(ui->customPlot,
-			SIGNAL(mouseDoubleClick(QMouseEvent*)),
-			this,
-			SLOT(onMouseDuobleClick(QMouseEvent*)));
+    connect(figure->customPlot(),
+            SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
+            this,
+            SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+    // tooltip on mouse hover
+    connect(figure->customPlot(),
+            SIGNAL(mouseMove(QMouseEvent*)),
+            this,
+            SLOT(showPointToolTip(QMouseEvent*)));
+    //	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(screenShot()));
+    connect(figure->customPlot(),
+            SIGNAL(mouseDoubleClick(QMouseEvent*)),
+            this,
+            SLOT(onMouseDuobleClick(QMouseEvent*)));
 }
 //-----------------------------------------------------------------------------
 /**
@@ -251,26 +197,26 @@ void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMo
 
 	if(NULL != l && NULL != ai)
 	{
-		for (int i=0; i<ui->customPlot->graphCount(); ++i)
-		{
-			QCPGraph *graph = ui->customPlot->graph(i);
-			if( graph->visible() )
-			{
-				QCPPlottableLegendItem *item = ui->customPlot->legend->itemWithPlottable(graph);
-				QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
+//		for (int i=0; i<ui->customPlot->graphCount(); ++i)
+//		{
+//			QCPGraph *graph = ui->customPlot->graph(i);
+//			if( graph->visible() )
+//			{
+//				QCPPlottableLegendItem *item = ui->customPlot->legend->itemWithPlottable(graph);
+//				QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
 
-				if (item->selected() || graph->selected()){
-					qpGraphPen.setStyle(Qt::DotLine);
-					qpGraphPen.setWidth(4);
-				}
-				else
-				{
-					qpGraphPen.setStyle(Qt::SolidLine);
-					qpGraphPen.setWidth(2);
-				}
-				l->parentPlot()->graph(i)->setPen(qpGraphPen);
-			}
-		}
+//				if (item->selected() || graph->selected()){
+//					qpGraphPen.setStyle(Qt::DotLine);
+//					qpGraphPen.setWidth(4);
+//				}
+//				else
+//				{
+//					qpGraphPen.setStyle(Qt::SolidLine);
+//					qpGraphPen.setWidth(2);
+//				}
+//				l->parentPlot()->graph(i)->setPen(qpGraphPen);
+//			}
+//		}
 	}
 }
 //------------------------------------------------------------------------------
@@ -278,21 +224,21 @@ void MainWindow::onMouseDuobleClick(QMouseEvent *event)
 {
 	if(event->button() == Qt::LeftButton)
 	{
-		if(ui->customPlot->axisRect()->rect().contains(event->pos()))
-		{
-			dTimeA = ui->customPlot->xAxis->pixelToCoord(event->x());
-			QString msgA = QString ("%1").arg (dTimeA);
-			ui->lneTimeA->setText(msgA);
-		}
+//		if(ui->customPlot->axisRect()->rect().contains(event->pos()))
+//		{
+//			dTimeA = ui->customPlot->xAxis->pixelToCoord(event->x());
+//			QString msgA = QString ("%1").arg (dTimeA);
+//			ui->lneTimeA->setText(msgA);
+//		}
 	}
 	else if(event->button() == Qt::RightButton)
 	{
-		if(ui->customPlot->axisRect()->rect().contains(event->pos()))
-		{
-			dTimeB = ui->customPlot->xAxis->pixelToCoord(event->x());
-			QString msgB = QString ("%1").arg (dTimeB);
-			ui->lneTimeB->setText(msgB);
-		}
+//		if(ui->customPlot->axisRect()->rect().contains(event->pos()))
+//		{
+//			dTimeB = ui->customPlot->xAxis->pixelToCoord(event->x());
+//			QString msgB = QString ("%1").arg (dTimeB);
+//			ui->lneTimeB->setText(msgB);
+//		}
 	}
 	double dDeltaTime = dTimeB - dTimeA;
 	QString msg = QString ("d: %1 s").arg (dDeltaTime);
@@ -305,15 +251,15 @@ void MainWindow::onMouseDuobleClick(QMouseEvent *event)
  */
 void MainWindow::showPointToolTip(QMouseEvent *event)
 {
-	const double dTimeS = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
+//	const double dTimeS = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
 
-	int ss = static_cast<int>(dTimeS);
-	int mm = ( ss / 60    ) % 60;
-	int hh = ( ss / 3660  ) % 24;
-	int ms = static_cast<int>((dTimeS *1000.0)) - ss*1000;
-	ss = ss % 60;
+//	int ss = static_cast<int>(dTimeS);
+//	int mm = ( ss / 60    ) % 60;
+//	int hh = ( ss / 3660  ) % 24;
+//	int ms = static_cast<int>((dTimeS *1000.0)) - ss*1000;
+//	ss = ss % 60;
 
-	setToolTip(QString::asprintf("%02d:%02d:%02d.%03d",hh,mm,ss,ms));
+//	setToolTip(QString::asprintf("%02d:%02d:%02d.%03d",hh,mm,ss,ms));
 
 }
 //------------------------------------------------------------------------------
@@ -334,7 +280,7 @@ void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *ite
 		if (ok)
 		{
 			plItem->plottable()->setName(newName);
-			ui->customPlot->replot();
+            //ui->customPlot->replot();
 		}
 	}
 }
@@ -387,43 +333,9 @@ void MainWindow::on_UpgradePlot()
 		//            QMessageBox::warning(this,"attenzione","range non corretti");
 		//        }
 
-		ui->customPlot->xAxis->setRange(minFinale, minFinale+interval);
-		ui->customPlot->replot();
+        //ui->customPlot->xAxis->setRange(minFinale, minFinale+interval);
+        //ui->customPlot->replot();
 	}
-}
-//------------------------------------------------------------------------------
-void MainWindow::on_pushButtonZoomRange_clicked()
-{
-	CrunchLog crunchLog;
-	ui->textEditLogExtract->clear(); // clear all the text
-
-	QString stringTime = ui->timeEdit->time().toString();
-	char caInFile[256] = {0,};
-	char caOutfile[256] = {0,};
-	memcpy(caInFile, strFileNameIn.toStdString().c_str() ,sizeof(caInFile));
-	memcpy(caOutfile, strFileNameExtractLog.toStdString().c_str() ,sizeof(caOutfile));
-
-	QByteArray ba = stringTime.toLatin1(); // necessary to conevert tpo char *
-	const char *c_str2;
-	ba.prepend(' ');
-	ba.prepend(';');
-	c_str2 = ba.data();
-
-	crunchLog.extractLog(caInFile ,
-						 caOutfile,
-						 c_str2,
-						 1000);
-	QFile file (strFileNameExtractLog);
-
-	if (!file.open(QFile::ReadOnly | QFile::Text)) {
-		QMessageBox::warning(this,"op","Cannot open Extract Log file");
-		return;
-	}
-	QString contents = file.readAll().constData();
-	ui->textEditLogExtract->setPlainText(contents);
-
-	file.close();
-
 }
 //------------------------------------------------------------------------------------------------
 
@@ -439,8 +351,8 @@ void MainWindow::on_dial_valueChanged(int Msec)
 	double dDelta = Msec*(dInterval)/200;
 	dRangeX0 += dDelta;
 	dRangeX1 += dDelta;
-	ui->customPlot->xAxis->setRange(dRangeX0,dRangeX1);
-	ui->customPlot->replot();
+    //ui->customPlot->xAxis->setRange(dRangeX0,dRangeX1);
+    //ui->customPlot->replot();
 	//    ui->lineEditInterval->setText(QString::number(rangeX1-rangeX0));
 	//    ui->lineEditMin->setText(QString::number(rangeX0)); Ba
 }
@@ -461,7 +373,6 @@ void MainWindow::on_pushButtonZoomPiu_clicked()
 	// ui->customPlot->replot();
 	on_UpgradePlot();
 	ui->dial->setValue(0);
-	updateUiTimeEdit(newRangeX0);
 }
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomMeno_clicked()
@@ -481,7 +392,6 @@ void MainWindow::on_pushButtonZoomMeno_clicked()
 	// ui->customPlot->replot();
 	on_UpgradePlot();
 	ui->dial->setValue(0);
-	updateUiTimeEdit(dNewRangeX0);
 }
 
 //------------------------------------------------------------------------------
@@ -582,7 +492,6 @@ void MainWindow::on_save()
 void MainWindow::on_PulisciButton_clicked()
 {
 	ui->textEdit->setText("");
-	ui->qlTestoFinito->setText("");
 	ui->FinishTextEdit->setPlainText("");
 }
 
@@ -595,6 +504,9 @@ void MainWindow::on_pushButtonProcess_clicked()
 {
     CrunchLogC_Arm crunchLog;
     QList<CrunchLogC_Arm::enumIdCAN> iDs;
+
+    FigureWidget *figure = new FigureWidget(NULL);
+    ui->vrlFigure->addWidget(figure);
 
 	qDebug()<<"calling crunch";
 	ulTimeStart = ui->timeEdit_2->time().msecsSinceStartOfDay();
@@ -609,16 +521,16 @@ void MainWindow::on_pushButtonProcess_clicked()
 
     iDs << CrunchLogC_Arm::ID_CAN_CONTR << CrunchLogC_Arm::ID_CAN_INV_A << CrunchLogC_Arm::ID_CAN_INV_B;
 
-	cDecorator.cleanGraph(ui->customPlot);
+    cDecorator.cleanGraph(figure->customPlot());
 	crunchLog.setPerformance( ui->cbxPerform->isChecked() );
     crunchLog.processFile(strFileNameIn, iDs, ulTimeStart, ulTimeStop);
 
     strFileNameOut = strFileNameIn;
-    if (ui->rbn6A0->isChecked())
+    if (ui->lswIDs->item(0)->checkState() == Qt::Checked)
         strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_CONTR));
-    else if (ui->rbn5A0->isChecked())
+    else if (ui->lswIDs->item(1)->checkState() == Qt::Checked)
         strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_A));
-    else if (ui->rbn5A1->isChecked())
+    else if (ui->lswIDs->item(2)->checkState() == Qt::Checked)
         strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_B));
 
 	QFile file (strFileNameOut);
@@ -631,22 +543,13 @@ void MainWindow::on_pushButtonProcess_clicked()
 	ui->FinishTextEdit->setPlainText(contents);
 
 	file.close();
-	ui->qlTestoFinito->setText("filter text");
-	//ui->customPlot->replot();
+
 	demoName.append("GmmScope");
-	setupPlotLogs();
-	if (customPlotVariable==true){
-		ui->customPlot->replot();
+    setupPlotLogs(figure);
+    if (customPlotVariable==true){
+        figure->customPlot()->replot();
 	}
 	ui->tabWidget->setCurrentIndex(1);
-}
-
-void MainWindow::updateUiTimeEdit(long l_ms)
-{
-	QTime n(0, 0, 0);                // n == 14:00:00
-	QTime t;
-	t = n.addSecs(l_ms);                // t == 14:01:10
-	ui->timeEdit->setTime(t);
 }
 
 void MainWindow::on_pushButtonZoomLeft_clicked()
@@ -660,11 +563,8 @@ void MainWindow::on_pushButtonZoomLeft_clicked()
 	ui->lineEditMin->setText(QString::number(rangeX0));
 	ui->lineEditInterval->setText(QString::number(interval));
 
-	ui->customPlot->xAxis->setRange(rangeX0,rangeX0+interval);
-	ui->customPlot->replot();
-
-	updateUiTimeEdit(rangeX0);
-
+    //ui->customPlot->xAxis->setRange(rangeX0,rangeX0+interval);
+    //ui->customPlot->replot();
 }
 
 //----------------------------------------------------------------------------
@@ -680,9 +580,8 @@ void MainWindow::on_pushButtonZoomRight_clicked()
 	ui->lineEditMin->setText(QString::number(rangeX0));
 	ui->lineEditInterval->setText(QString::number(interval));
 
-	ui->customPlot->xAxis->setRange(rangeX0,rangeX0+interval);
-	ui->customPlot->replot();
-	updateUiTimeEdit(rangeX0);
+    //ui->customPlot->xAxis->setRange(rangeX0,rangeX0+interval);
+    //ui->customPlot->replot();
 }
 
 //--------------------------------------------------------------------------
@@ -698,41 +597,6 @@ void MainWindow::on_pushButtonDiretta_clicked()
 		//        set other buuton text
 		TimerFlag = true;
 	}
-}
-//--------------------------------------------------------------------------
-void MainWindow::on_timeEdit_timeChanged(const QTime &time)
-{
-
-
-}
-
-//--------------------------------------------------------------------------
-void MainWindow::on_pbScreenShot_clicked()
-{
-	screenShot();
-}
-//--------------------------------------------------------------------------
-
-void MainWindow::on_timeEdit_editingFinished()
-{
-	QTime time = ui->timeEdit->time();
-	int hour = time.hour();
-	int min =  time.minute();
-	int sec =  time.second();
-
-	int sommaMsec = (hour*60*60) + (min*60) + (sec) ;
-
-	ui->lineEditMin->setText(QString::number(sommaMsec));
-	double dInterval = ui->lineEditInterval->text().toDouble();
-	if ( dInterval > 120 )
-	{
-		dInterval = 10;
-		ui->lineEditInterval->setText(QString::number((int)dInterval));
-	}
-
-	ui->customPlot->xAxis->setRange(sommaMsec , sommaMsec+(int)dInterval);
-	ui->customPlot->replot();
-	updateUiTimeEdit(sommaMsec);
 }
 //--------------------------------------------------------------------------
 
@@ -751,94 +615,6 @@ void MainWindow::on_timeEdit_3_timeChanged(const QTime &time)
 	int min =  time.minute();
 	int sec =  time.second();
 	ulTimeStop = ((hour*60*60) + (min*60) + (sec))*1000 ;
-}
-
-void MainWindow::checkUserDirs(void)
-{
-	//	QDirIterator it("C:\Users", QDirIterator::Subdirectories);
-	//	while (it.hasNext()) {
-	//		qDebug() << it.next();
-
-	//		// /etc/.
-	//		// /etc/..
-	//		// /etc/X11
-	//		// /etc/X11/fs
-	//		// ...
-	//	}
-}
-
-void MainWindow::on_pbnDoseAnalysis_clicked()
-{
-//    CrunchLogDiscovery crunchLog;
-//	char caDummy[256] = {0,};
-//	char caOutfile[256] = {0,};
-//	QString strOutFileDose(strFileNameIn);
-//	int pos= strOutFileDose.lastIndexOf("/");
-//	pos = strOutFileDose.lastIndexOf("/", -40 );
-//	strOutFileDose.remove(0,pos);
-//	strOutFileDose.replace("/", "_");
-//	strOutFileDose.prepend("Dose_");
-//	memcpy(caDummy, strFileNameIn.toStdString().c_str()  ,sizeof(caDummy));
-//	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
-
-//	crunchLog.processDose(caDummy, caOutfile);
-}
-
-void MainWindow::on_pbnAprAnalysis_clicked()
-{
-//    CrunchLogDiscovery crunchLog;
-//	char caDummy[256] = {0,};
-//	char caOutfile[256] = {0,};
-//	QString strOutFileDose(strFileNameIn);
-//	int pos= strOutFileDose.lastIndexOf("/");
-//	pos = strOutFileDose.lastIndexOf("/", -40 );
-//	strOutFileDose.remove(0,pos);
-//	strOutFileDose.replace("/", "_");
-//	strOutFileDose.prepend("Dose_");
-//	memcpy(caDummy, strFileNameIn.toStdString().c_str()  ,sizeof(caDummy));
-//	memcpy(caOutfile, strOutFileDose.toStdString().c_str() ,sizeof(caOutfile));
-
-//	crunchLog.processApr(caDummy, caOutfile);
-}
-
-void MainWindow::showHideElements(QString sTxt2Find)
-{
-	for (int i=0; i<ui->customPlot->graphCount(); ++i)
-	{
-		QCPGraph *graph = ui->customPlot->graph(i);
-		QString strLegendText = graph->name();
-		if (strLegendText.contains(sTxt2Find, Qt::CaseInsensitive))
-		{
-			bool bVisibility = graph->visible();
-//			if ( bVisibility )
-//			{
-//				graph->removeFromLegend();
-//			}else
-//			{
-//				graph->addToLegend();
-//			}
-
-            ui->customPlot->legend->elementAt(i)->setVisible(!bVisibility);
-            graph->setVisible(!bVisibility);
-
-		}
-	}
-	ui->customPlot->replot();
-}
-
-void MainWindow::on_pbnPid_clicked()
-{
-    cDecorator.showHideElements();
-}
-
-void MainWindow::on_pbnGen_clicked()
-{
-    cDecorator.toggleSelection();
-}
-
-void MainWindow::on_pbnTable_clicked()
-{
-	showHideElements(" TAB ");
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index)

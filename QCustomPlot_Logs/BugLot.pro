@@ -14,6 +14,7 @@ SOURCES += access.cpp \
     Drivers/IAnimationShow.cpp \
 	ISettings.cpp \
     ITimePerform.cpp \
+    figurewidget.cpp \
     legenditem.cpp \
 		  main.cpp\
 		   mainwindow.cpp \
@@ -27,6 +28,7 @@ HEADERS  += access.h \
         CrunchLogC_Arm.h \
 	ISettings.h \
     ITimePerform.h \
+    figurewidget.h \
     legenditem.h \
 		  mainwindow.h \
 		 ../qcustomplot.h \
@@ -34,6 +36,7 @@ HEADERS  += access.h \
 	CDecorator.h
 
 FORMS    += access.ui \
+			figurewidget.ui \
 			legenditem.ui \
 			mainwindow.ui
 
@@ -43,3 +46,5 @@ RESOURCES += \
 	img.qrc
 
 DISTFILES +=
+
+QMAKE_CXXFLAGS += -O0

@@ -10,6 +10,12 @@
     <height>782</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>BUG-LOT v1.0.8.0</string>
   </property>
@@ -212,44 +218,6 @@ QCheckBox::indicator {
   margin-left: 4px;
   height: 16px;
   width: 16px;
-}
-
-QCheckBox::indicator:unchecked {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_unchecked.png&quot;);
-}
-
-QCheckBox::indicator:unchecked:hover, QCheckBox::indicator:unchecked:focus, QCheckBox::indicator:unchecked:pressed {
-  border: none;
-  image: url(&quot;:/Resources/Icons/rc/checkbox_unchecked_focus.png&quot;);
-}
-
-QCheckBox::indicator:unchecked:disabled {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_unchecked_disabled.png&quot;);
-}
-
-QCheckBox::indicator:checked {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_checked.png&quot;);
-}
-
-QCheckBox::indicator:checked:hover, QCheckBox::indicator:checked:focus, QCheckBox::indicator:checked:pressed {
-  border: none;
-  image: url(&quot;:/Resources/Icons/rc/checkbox_checked_focus.png&quot;);
-}
-
-QCheckBox::indicator:checked:disabled {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_checked_disabled.png&quot;);
-}
-
-QCheckBox::indicator:indeterminate {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_indeterminate.png&quot;);
-}
-
-QCheckBox::indicator:indeterminate:disabled {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_indeterminate_disabled.png&quot;);
-}
-
-QCheckBox::indicator:indeterminate:focus, QCheckBox::indicator:indeterminate:hover, QCheckBox::indicator:indeterminate:pressed {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_indeterminate_focus.png&quot;);
 }
 
 /* QGroupBox --------------------------------------------------------------
@@ -1809,42 +1777,6 @@ QTreeView:branch:open:has-children:!has-siblings:hover, QTreeView:branch:open:ha
   image: url(&quot;:/Resources/Icons/rc/branch_open_focus.png&quot;);
 }
 
-QTreeView::indicator:checked,
-QListView::indicator:checked {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_checked.png&quot;);
-}
-
-QTreeView::indicator:checked:hover, QTreeView::indicator:checked:focus, QTreeView::indicator:checked:pressed,
-QListView::indicator:checked:hover,
-QListView::indicator:checked:focus,
-QListView::indicator:checked:pressed {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_checked_focus.png&quot;);
-}
-
-QTreeView::indicator:unchecked,
-QListView::indicator:unchecked {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_unchecked.png&quot;);
-}
-
-QTreeView::indicator:unchecked:hover, QTreeView::indicator:unchecked:focus, QTreeView::indicator:unchecked:pressed,
-QListView::indicator:unchecked:hover,
-QListView::indicator:unchecked:focus,
-QListView::indicator:unchecked:pressed {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_unchecked_focus.png&quot;);
-}
-
-QTreeView::indicator:indeterminate,
-QListView::indicator:indeterminate {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_indeterminate.png&quot;);
-}
-
-QTreeView::indicator:indeterminate:hover, QTreeView::indicator:indeterminate:focus, QTreeView::indicator:indeterminate:pressed,
-QListView::indicator:indeterminate:hover,
-QListView::indicator:indeterminate:focus,
-QListView::indicator:indeterminate:pressed {
-  image: url(&quot;:/Resources/Icons/rc/checkbox_indeterminate_focus.png&quot;);
-}
-
 QTreeView,
 QListView,
 QTableView,
@@ -2215,7 +2147,7 @@ PlotWidget {
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -2334,77 +2266,6 @@ PlotWidget {
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>300</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 0);</string>
-            </property>
-            <property name="title">
-             <string/>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
-            </property>
-            <widget class="QRadioButton" name="rbn6A0">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>20</y>
-               <width>82</width>
-               <height>17</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>6A0</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QRadioButton" name="rbn5A0">
-             <property name="geometry">
-              <rect>
-               <x>105</x>
-               <y>20</y>
-               <width>82</width>
-               <height>17</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>5A0</string>
-             </property>
-            </widget>
-            <widget class="QRadioButton" name="rbn5A1">
-             <property name="geometry">
-              <rect>
-               <x>210</x>
-               <y>20</y>
-               <width>82</width>
-               <height>17</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>5A1</string>
-             </property>
-            </widget>
-           </widget>
-          </item>
-          <item>
            <spacer name="horizontalSpacer_4">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -2442,9 +2303,30 @@ color: rgb(0, 0, 0);</string>
          </layout>
         </item>
         <item>
-         <widget class="QLabel" name="qlTestoFinito">
-          <property name="text">
-           <string/>
+         <widget class="QListWidget" name="lswIDs">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>29</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>45</height>
+           </size>
+          </property>
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="viewMode">
+           <enum>QListView::IconMode</enum>
           </property>
          </widget>
         </item>
@@ -2516,46 +2398,7 @@ color: rgb(0, 0, 0);</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_14">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
-          <item>
-           <widget class="QCustomPlot" name="customPlot" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>840</width>
-              <height>400</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QListWidget" name="lswLegend">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>29</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 255, 255);</string>
-          </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::ExtendedSelection</enum>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="vrlFigure"/>
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_2">
@@ -2586,86 +2429,7 @@ color: rgb(0, 0, 0);</string>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QPushButton" name="pbnPid">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>88</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>50</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>P</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pbnGen">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>88</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>50</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>G</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pbnTable">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>88</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>50</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">font: 7pt &quot;MS Shell Dlg 2&quot;;</string>
-               </property>
-               <property name="text">
-                <string>T</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <layout class="QHBoxLayout" name="horizontalLayout_2"/>
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout">
@@ -2771,69 +2535,6 @@ color: rgb(0, 0, 0);</string>
               <widget class="QLineEdit" name="lneDeltaTime"/>
              </item>
             </layout>
-           </item>
-           <item>
-            <widget class="QTimeEdit" name="timeEdit">
-             <property name="minimumSize">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>150</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Starting time HH:MM:SS to be displayed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
-             </property>
-             <property name="displayFormat">
-              <string>HH:mm:ss</string>
-             </property>
-             <property name="calendarPopup">
-              <bool>false</bool>
-             </property>
-             <property name="currentSectionIndex">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonZoomRange">
-             <property name="font">
-              <font>
-               <family>MS Shell Dlg 2</family>
-               <pointsize>11</pointsize>
-               <weight>50</weight>
-               <italic>false</italic>
-               <bold>false</bold>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Click to plot current time set&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="text">
-              <string>Extract Log</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pbScreenShot">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Take a screen shot CTRL+S&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>ScreenShot</string>
-             </property>
-            </widget>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
@@ -2981,90 +2682,12 @@ color: rgb(0, 0, 0);</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Extract</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Table Log extract</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTextEdit" name="textEditLogExtract">
-          <property name="styleSheet">
-           <string notr="true">font: 11pt &quot;Courier New&quot;;</string>
-          </property>
-          <property name="html">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Courier New'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; .. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Analysis</string>
-       </attribute>
-       <widget class="QPushButton" name="pbnDoseAnalysis">
-        <property name="geometry">
-         <rect>
-          <x>40</x>
-          <y>40</y>
-          <width>88</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Dose 00</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pbnAprAnalysis">
-        <property name="geometry">
-         <rect>
-          <x>170</x>
-          <y>40</y>
-          <width>121</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>APR anlaysis</string>
-        </property>
-       </widget>
-       <widget class="QWidget" name="verticalLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>45</x>
-          <y>90</y>
-          <width>441</width>
-          <height>606</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="testLayout"/>
-       </widget>
-      </widget>
      </widget>
     </item>
    </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>QCustomPlot</class>
-   <extends>QWidget</extends>
-   <header>../../qcustomplot.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="img.qrc"/>
  </resources>
