@@ -9,11 +9,11 @@ TARGET = BugLot
 TEMPLATE = app
 
 SOURCES += access.cpp \
-    CrunchLogC_Arm.cpp \
     Drivers/ClickableLabel.cpp \
     Drivers/IAnimationShow.cpp \
 	ISettings.cpp \
     ITimePerform.cpp \
+    crunchmsg.cpp \
     figurewidget.cpp \
     legenditem.cpp \
 		  main.cpp\
@@ -25,9 +25,9 @@ SOURCES += access.cpp \
 HEADERS  += access.h \
         Drivers/ClickableLabel.h \
         Drivers/IAnimationShow.h \
-        CrunchLogC_Arm.h \
 	ISettings.h \
     ITimePerform.h \
+    crunchmsg.h \
     figurewidget.h \
     legenditem.h \
 		  mainwindow.h \

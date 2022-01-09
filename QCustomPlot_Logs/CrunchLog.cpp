@@ -1,8 +1,11 @@
-#include "CrunchLog.h"
 #include <QString>
-#include "mainwindow.h"
-//#include <QDebug>
-#include "ui_mainwindow.h"
+#include <QFileInfo>
+#include <QMap>
+#include <QDebug>
+#include <fstream>
+
+#include "CrunchLog.h"
+
 #define MAX(A,B)(((A)>=(B))?(A):(B))
 
 CrunchLog::CrunchLog()
@@ -10,179 +13,103 @@ CrunchLog::CrunchLog()
 
 }
 
-
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-using namespace std;
-
-
-//--------------------------------------------------------
-void CrunchLog::unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit)
+CrunchMsg *CrunchLog::newCrunchMsg(CrunchMsg::enumIdCAN id, QString filename)
 {
-	int ii, iBit;
+    CrunchMsg *crunchMsg = nullptr;
 
-    if (iNbit > 8)
-        iNbit = 8;
-    for (ii=0; ii<iNbit; ii++)
-	{
-		char u8aNum[4];
-		iBit = ( u8Val & (1<<ii) ) !=0;
-		itoa(iBit,u8aNum,10);
-		pstrOut->append(u8aNum);
-		pstrOut->append(" ");
-	}
-}
-//--------------------------------------------------------
-void CrunchLog::unpackBit32(string *pstrOut, unsigned int uiVal, int iNbit)
-{
-	int ii, iBit;
+    switch (id) {
+    case CrunchMsg::ID_CAN_CONTR:
+        crunchMsg = new CrunchMsg_0x6A0(filename);
+        break;
+    case CrunchMsg::ID_CAN_INV_A:
+        crunchMsg = new CrunchMsg_0x5A0(filename);
+        break;
+    case CrunchMsg::ID_CAN_INV_B:
+        crunchMsg = new CrunchMsg_0x5A1(filename);
+        break;
+    }
 
-    if (iNbit > 32)
-        iNbit = 32;
-    for (ii=0; ii<iNbit; ii++)
-	{
-		char u8aNum[4];
-		iBit = ( uiVal & (1<<ii) ) !=0;
-		itoa(iBit,u8aNum,10);
-		pstrOut->append(u8aNum);
-		pstrOut->append(" ");
-	}
-}
-//--------------------------------------------------------
-void CrunchLog::intToStr(string *pStrOut, unsigned int uiVal, string sfx)
-{
-    char s8aChar[16]={0,};
-
-    sprintf(s8aChar, "%d", uiVal);
-    pStrOut->append(s8aChar);
-    pStrOut->append(sfx);
-}
-//--------------------------------------------------------
-void CrunchLog::floatToStr(string *pStrOut, float fVal, string sfx)
-{
-    char s8aChar[16]={0,};
-
-    sprintf(s8aChar, "%.1f", fVal);
-    pStrOut->append(s8aChar);
-    pStrOut->append(sfx);
-}
-//--------------------------------------------------------
-unsigned long CrunchLog::unpackTimeString(const char * u8aData)
-{
-	unsigned long  ulTime;
-	unsigned int l_hour=0, l_min=0, l_sec=0, l_ms=0;
-	sscanf( u8aData ,
-			"%02d:%02d:%02d:%03d",
-			&l_hour	,
-			&l_min	,
-			&l_sec	,
-			&l_ms	);
-	ulTime = l_ms + (l_sec + l_min*60 + l_hour * 3600)*1000; // max Num: 90060999ms
-	if (ulTime >= 47018074)
-		ulTime++;
-	return(ulTime);
-}
-//--------------------------------------------------------
-bool CrunchLog::decodeTimeString(const char * u8aData, unsigned long &ulTime)
-{
-    unsigned int l_hour=0, l_min=0, l_sec=0, l_ms=0;
-    int32_t iNumFound = sscanf( u8aData , "%02d:%02d:%02d.%03d",
-            &l_hour	,
-            &l_min	,
-            &l_sec	,
-            &l_ms	);
-
-    if (iNumFound == 4)
-        ulTime = l_ms + (l_sec + l_min*60 + l_hour * 3600)*1000;
-    return(iNumFound == 4);
+    return crunchMsg;
 }
 
 //--------------------------------------------------------
-void CrunchLog::removeCharsUntil(string * strProcessed, string strMatchToFind)
+void CrunchLog::processFile (QString strFileNameIn,
+                                  QList<CrunchMsg::enumIdCAN> iDs,
+                                  const unsigned long ulTimeStart,
+                                  const unsigned long ulTimeStop)
 {
-	size_t szPos;
+    string strLine, strOut;
+    int iMaxIterator = 0;
+    ifstream infile;
+    float fTime = 0;
+    int iNumFound;
+    uint32_t idCAN;
+    unsigned int ulaData[6]={0,};
 
-	szPos = strProcessed->find(strMatchToFind);
-	if (szPos < strProcessed->size() ){
-		strProcessed->erase (0, szPos+strMatchToFind.size());
-	}
-}
-//--------------------------------------------------------
-void CrunchLog::removeChars(string * strProcessed, string strMatchToFind)
-{
-	size_t szPos;
+    if (strFileNameIn.length() == 0 ){
+        return;
+    }
 
-	szPos = strProcessed->find(strMatchToFind);
+    QFileInfo fi=strFileNameIn;
+    QString filename = fi.absoluteFilePath();
 
-	while (szPos < strProcessed->size() )
-	{
-		strProcessed->erase (szPos,strMatchToFind.size());
-		szPos = strProcessed->find(strMatchToFind);
-	}
-}
-//--------------------------------------------------------
-void CrunchLog::strReplaceOccurrence(string *pStrOut,
-									 const string csSubStrLook,
-									 const string csSubStrSubst )
-{
-	int index = 0;
-	while (1)
-	{
-		int length = csSubStrLook.size();
-		index = pStrOut->find(csSubStrLook, index);
-		if (index < 0) {
-			break;
-		}
-		pStrOut->replace(index, length, csSubStrSubst);/* Make the replacement. */
-		index += 1;				/* Advance index */
-	}
-}
+    QListIterator<CrunchMsg::enumIdCAN> idIterator(iDs);
+    while (idIterator.hasNext()) {
+        CrunchMsg *msg;
 
+        CrunchMsg::enumIdCAN id = idIterator.next();
+        if ((msg = newCrunchMsg(id, filename)) != nullptr)
+            crunchMsg[id] = msg;
+    }
 
-//--------------------------------------------------------
-void CrunchLog::extractLog (const char * ucaNameFileIn,
-							const char * ucaNameFileOut,
-							const char * ucaStrToSearch,
-							const unsigned long ulNumLineNext)
-{
-	string STRING;
-	string previousLine="";
-	ifstream infile;
-	ofstream outFile;
-	unsigned long iRowCounter=0;
+    infile.open (strFileNameIn.toStdString().c_str());
+//    outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
 
-	if (ucaNameFileIn == NULL || ucaNameFileOut == NULL ){
-		return;
-	}
+    while(iMaxIterator < 800*1000) //4E5: Max Matlab To get you all the lines.
+    {
+        unsigned int l_hour=0, l_min=0, l_sec=0, l_ms=0;
 
-	infile.open (ucaNameFileIn);
-	outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
+        getline(infile,strLine);
+        if ( infile.eof() || infile.bad())
+        {
+            break;
+        }
 
-	qDebug()<<"processing Extract Log";
-	while(iRowCounter<10000000) // To get you all the lines.
-	{
-		getline(infile,STRING); // Saves the line in STRING.
-		if (infile.eof() || infile.bad() ){
-			break;
-		}
-		if (STRING != previousLine)// true in the end of file or file corrupted
-		{
-			previousLine = STRING;
-			std::size_t pos = STRING.find(ucaStrToSearch);// if "find" fails then pos  = 4000000
-			if (pos < STRING.size() )
-			{ // found <Id = 0652
-				for (unsigned int jj=0; jj< ulNumLineNext; jj++)
-				{
-					getline(infile,STRING); // Saves the line in STRING.
-					if (infile.eof() || infile.bad() ){
-						break;
-					}
-					outFile << STRING <<"\n";
-				}
-			}
-		}
-	}
-	outFile.close();
-	infile.close();
+        iNumFound = sscanf( strLine.data() , "%02d:%02d:%02d.%03d;%X:%X.%X.%X.%X.%X.%X",
+                                    &l_hour	,&l_min	,&l_sec	,&l_ms	,
+                                    &idCAN ,
+                                    &ulaData[0],
+                                    &ulaData[1],
+                                    &ulaData[2],
+                                    &ulaData[3],
+                                    &ulaData[4],
+                                    &ulaData[5]);
+
+        if (iNumFound == 11)
+        {
+            fTime = (float)(l_ms + (l_sec + l_min*60 + l_hour * 3600)*1000);
+            if ( fTime >= ulTimeStart || fTime <= ulTimeStop )
+            {
+                CrunchMsg *msg;
+
+                CrunchMsg::enumIdCAN id = (CrunchMsg::enumIdCAN)idCAN;
+                if (crunchMsg.contains(id)) {
+                    msg = crunchMsg[id];
+                    msg->processMsg(fTime, ulaData);
+                }
+            }
+            iMaxIterator++;
+        }
+    }
+
+    {
+        QMapIterator<CrunchMsg::enumIdCAN, CrunchMsg *> outIterator(crunchMsg);
+        while (outIterator.hasNext()) {
+            outIterator.next();
+            if (outIterator.value())
+                delete outIterator.value();
+        }
+    }
+
+    infile.close();
 }

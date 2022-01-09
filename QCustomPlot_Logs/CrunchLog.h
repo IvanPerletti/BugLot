@@ -26,39 +26,23 @@ private:
 #include <QFile>
 #include <string>
 
-using namespace std;
+#include "crunchmsg.h"
 
-#define HEADER_PREFIX   "%"
-#define LEGENDS_TAG     "Legends:"
-#define TYPES_TAG       "Types:"
-#define TYPE_INT        "I"
-#define TYPE_BIT        "B"
+using namespace std;
 
 class CrunchLog
 {
-    Q_GADGET
 public:
     CrunchLog();
-    void extractLog (const char * ucaNameFileIn,
-                     const char * ucaNameFileOut,
-                     const char * ucaStrToSearch,
-                     const unsigned long ulNumLineNext);
+    void processFile(QString strFileNameIn,
+                     QList<CrunchMsg::enumIdCAN> iDs,
+                     const unsigned long ulTimeStart = 0,
+                     const unsigned long ulTimeStop = 24*60*60);
 
+private:
+    QMap<CrunchMsg::enumIdCAN, CrunchMsg *> crunchMsg;
 
-protected:
-    static void unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit = 8);
-    static void unpackBit32(string * pstrOut, unsigned int uiVal, int iNbit = 32);
-    static void intToStr(string *pStrOut, unsigned int uiVal, string sfx = " ");
-    static void floatToStr(string *pStrOut, float fVal, string sfx = " ");
-    static unsigned long unpackTimeString(const char * u8aData);
-    static bool decodeTimeString(const char * u8aData, unsigned long &ulTime);
-    static void removeCharsUntil(string * strProcessed, string strMatchToFind);
-    static void removeChars( string * strProcessed, string strMatchToFind);
-    static void strReplaceOccurrence(string *pStrOut,
-                              const string csSubStrLook,
-                              const string csSubStrSubst );
-
-
+    CrunchMsg *newCrunchMsg(CrunchMsg::enumIdCAN id, QString filename);
 };
 
 #endif // CRUNCHLOG_H

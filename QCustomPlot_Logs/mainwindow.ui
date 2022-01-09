@@ -2231,13 +2231,6 @@ PlotWidget {
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="cbxPerform">
-            <property name="text">
-             <string>Performance</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QPushButton" name="pushButtonProcess">
             <property name="enabled">
              <bool>false</bool>

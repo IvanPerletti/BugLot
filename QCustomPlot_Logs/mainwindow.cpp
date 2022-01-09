@@ -8,7 +8,7 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QShortcut>
-#include "CrunchLogC_Arm.h"
+#include "CrunchLog.h"
 #include "CDecorator.h"
 #include <iostream>
 #include "ISettings.h"
@@ -42,15 +42,15 @@ MainWindow::MainWindow(QWidget *parent) :
 //      ui->lswIDs->addItem (listWidgetItem);
 //    }
     QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswIDs);
-    listWidgetItem->setText(QString().sprintf("0x%X", (int)CrunchLogC_Arm::ID_CAN_CONTR));
+    listWidgetItem->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_CONTR));
     listWidgetItem->setCheckState(Qt::Unchecked);
     ui->lswIDs->addItem (listWidgetItem);
     QListWidgetItem *listWidgetItem1 = new QListWidgetItem(ui->lswIDs);
-    listWidgetItem1->setText(QString().sprintf("0x%X", (int)CrunchLogC_Arm::ID_CAN_INV_A));
+    listWidgetItem1->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_INV_A));
     listWidgetItem1->setCheckState(Qt::Unchecked);
     ui->lswIDs->addItem (listWidgetItem1);
     QListWidgetItem *listWidgetItem2 = new QListWidgetItem(ui->lswIDs);
-    listWidgetItem2->setText(QString().sprintf("0x%X", (int)CrunchLogC_Arm::ID_CAN_INV_B));
+    listWidgetItem2->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_INV_B));
     listWidgetItem2->setCheckState(Qt::Unchecked);
     ui->lswIDs->addItem (listWidgetItem2);
 }
@@ -502,8 +502,8 @@ void MainWindow::on_PulisciButton_clicked()
 
 void MainWindow::on_pushButtonProcess_clicked()
 {
-    CrunchLogC_Arm crunchLog;
-    QList<CrunchLogC_Arm::enumIdCAN> iDs;
+    CrunchLog crunchLog;
+    QList<CrunchMsg::enumIdCAN> iDs;
 
     FigureWidget *figure = new FigureWidget(NULL);
     ui->vrlFigure->addWidget(figure);
@@ -519,19 +519,20 @@ void MainWindow::on_pushButtonProcess_clicked()
 	qDebug()<<ulTimeStart;
 	qDebug()<<ulTimeStop;
 
-    iDs << CrunchLogC_Arm::ID_CAN_CONTR << CrunchLogC_Arm::ID_CAN_INV_A << CrunchLogC_Arm::ID_CAN_INV_B;
+    iDs << CrunchMsg::ID_CAN_CONTR << CrunchMsg::ID_CAN_INV_A << CrunchMsg::ID_CAN_INV_B;
 
     cDecorator.cleanGraph(figure->customPlot());
-	crunchLog.setPerformance( ui->cbxPerform->isChecked() );
     crunchLog.processFile(strFileNameIn, iDs, ulTimeStart, ulTimeStop);
 
     strFileNameOut = strFileNameIn;
     if (ui->lswIDs->item(0)->checkState() == Qt::Checked)
-        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_CONTR));
+        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_CONTR));
     else if (ui->lswIDs->item(1)->checkState() == Qt::Checked)
-        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_A));
+        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_INV_A));
     else if (ui->lswIDs->item(2)->checkState() == Qt::Checked)
-        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchLogC_Arm::ID_CAN_INV_B));
+        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_INV_B));
+    else
+        return;
 
 	QFile file (strFileNameOut);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
