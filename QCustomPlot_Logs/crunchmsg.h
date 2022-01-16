@@ -13,9 +13,15 @@ class CrunchMsg
 {
 public:
     typedef enum {
-        ID_CAN_CONTR    = 0x6A0,
-        ID_CAN_INV_A    = 0x5A0,
-        ID_CAN_INV_B    = 0x5A1
+        ID_CAN_ARCO_CONTR       = 0x6A0,
+        ID_CAN_ARCO_INV_A       = 0x5A0,
+        ID_CAN_ARCO_INV_B       = 0x5A1,
+        ID_CAN_MAMMO_TO_INV_A   = 0x201,
+        ID_CAN_MAMMO_TO_INV_B   = 0x202,
+        ID_CAN_MAMMO_TO_INV_C   = 0x203,
+        ID_CAN_MAMMO_FROM_INV_A = 0x181,
+        ID_CAN_MAMMO_FROM_INV_B = 0x182,
+        ID_CAN_MAMMO_FROM_INV_C = 0x183
     } enumIdCAN;
 
     CrunchMsg(QString, enumIdCAN idCAN);
@@ -39,7 +45,7 @@ protected:
     QStringList typeList;
     unsigned int payloadPrev[PAYLOAD_SIZE];
 
-    void unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit = 8);
+    void unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit = 8, unsigned char u8Mask = 0xFF);
     void unpackBit32(string * pstrOut, unsigned int uiVal, int iNbit = 32);
     void intToStr(string *pStrOut, unsigned int uiVal, string sfx = " ");
     void floatToStr(string *pStrOut, float fVal, string sfx = " ");
@@ -112,6 +118,108 @@ private:
         uint8_t  u8IOBit      ;
         uint8_t  u8EnumBit    ;
         uint8_t  u8StatusBit  ;
+    } structLog;
+};
+
+class CrunchMsg_0x201 : public CrunchMsg
+{
+public:
+    CrunchMsg_0x201(QString);
+    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+
+private:
+#define ENABLE_BIT          (1 << 0)
+#define PREP_BIT            (1 << 1)
+#define RESET_BIT           (1 << 3)
+
+    typedef struct
+    {
+        uint16_t u16Kv      ;
+        uint16_t u16MaS     ;
+        uint8_t ulBitMask   ;
+    } structLog;
+};
+
+class CrunchMsg_0x202 : public CrunchMsg
+{
+public:
+    CrunchMsg_0x202(QString);
+    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+
+private:
+#define BRAKE_BIT           (1 << 0)
+#define SPEED_BIT           (1 << 4)
+#define MA_STAB_BIT         (1 << 5)
+
+    typedef struct
+    {
+        uint16_t u16Ma        ;
+        uint16_t u16Fil       ;
+        uint8_t ulBitMask     ;
+    } structLog;
+};
+
+class CrunchMsg_0x203 : public CrunchMsg
+{
+public:
+    CrunchMsg_0x203(QString);
+    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+
+private:
+};
+
+class CrunchMsg_0x181 : public CrunchMsg
+{
+public:
+    CrunchMsg_0x181(QString);
+    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+
+private:
+#define FAULT_BIT_SHIFT     3
+#define FAULT_BIT_MASK      0xF
+
+    typedef struct
+    {
+        uint16_t u16Kv      ;
+        uint16_t u16Ma      ;
+        uint16_t u16MaS     ;
+        uint8_t ulBitState  ;
+        uint8_t u8Ver       ;
+    } structLog;
+};
+
+class CrunchMsg_0x182 : public CrunchMsg
+{
+public:
+    CrunchMsg_0x182(QString);
+    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+
+private:
+
+    typedef struct
+    {
+        uint16_t u16Fil     ;
+        uint8_t ulBitState  ;
+        uint8_t u8TempTube  ;
+        uint8_t u8TempInv   ;
+        uint8_t u8PercTube  ;
+        uint8_t u8ContMax   ;
+    } structLog;
+};
+
+class CrunchMsg_0x183 : public CrunchMsg
+{
+public:
+    CrunchMsg_0x183(QString);
+    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+
+private:
+    typedef struct
+    {
+        uint16_t u16Kv      ;
+        uint16_t u16Ma      ;
+        uint16_t u16MaS     ;
+        uint16_t u16Ms      ;
     } structLog;
 };
 

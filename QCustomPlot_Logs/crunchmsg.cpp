@@ -7,6 +7,7 @@ CrunchMsg::CrunchMsg(QString filename, enumIdCAN idCAN)
 {
     QString id_filename(filename);
 
+    this->idCAN = idCAN;
     id_filename.replace(".txt", QString().sprintf("_%03X.txt", (int)idCAN));
     outFile = new QFile(id_filename);
 
@@ -24,19 +25,22 @@ CrunchMsg::~CrunchMsg(void)
 }
 
 //--------------------------------------------------------
-void CrunchMsg::unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit)
+void CrunchMsg::unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit, unsigned char u8Mask)
 {
     int ii, iBit;
+    char u8aNum[4];
 
     if (iNbit > 8)
         iNbit = 8;
     for (ii=0; ii<iNbit; ii++)
     {
-        char u8aNum[4];
-        iBit = ( u8Val & (1<<ii) ) !=0;
-        itoa(iBit,u8aNum,10);
-        pstrOut->append(u8aNum);
-        pstrOut->append(" ");
+        if (u8Mask & (1<<ii))
+        {
+            iBit = ( u8Val & (1<<ii) ) !=0;
+            itoa(iBit,u8aNum,10);
+            pstrOut->append(u8aNum);
+            pstrOut->append(" ");
+        }
     }
 }
 //--------------------------------------------------------
@@ -144,7 +148,7 @@ void CrunchMsg::strReplaceOccurrence(string *pStrOut,
         index += 1;				/* Advance index */
     }
 }
-
+//--------------------------------------------------------
 void CrunchMsg::processMsg(float fTime, unsigned int *pPayload)
 {
     QTextStream stream(outFile);
@@ -176,10 +180,9 @@ void CrunchMsg::processMsg(float fTime, unsigned int *pPayload)
     }
 }
 
-CrunchMsg_0x6A0::CrunchMsg_0x6A0(QString filename) : CrunchMsg(filename, ID_CAN_CONTR)
+//--------------------------------------------------------
+CrunchMsg_0x6A0::CrunchMsg_0x6A0(QString filename) : CrunchMsg(filename, ID_CAN_ARCO_CONTR)
 {
-    idCAN = ID_CAN_CONTR;
-
     typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT;
     legendList << "I_PID_SDCAL" << "I_PID_APPOPEN" << "I_PID_READY" <<"I_PID_PULSE_MODE" << "O_PID_HCF_MODE";
     typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT;
@@ -211,11 +214,10 @@ void CrunchMsg_0x6A0::processPayload(string *pStrOut, float fTime, unsigned int 
     pStrOut->append("\n");
 }
 
-CrunchMsg_0x5A0::CrunchMsg_0x5A0(QString filename) : CrunchMsg(filename, ID_CAN_INV_A)
+//--------------------------------------------------------
+CrunchMsg_0x5A0::CrunchMsg_0x5A0(QString filename) : CrunchMsg(filename, ID_CAN_ARCO_INV_A)
 {
-    idCAN = ID_CAN_INV_A;
-
-    legendList << "Kv0" << "Kv+" << "Kv-" <<"MaGain" << "Ma0" << "Ma";
+    legendList << "Kv0" << "Kv+" << "Kv-" <<"mAGain" << "mA0" << "mA";
 }
 
 void CrunchMsg_0x5A0::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
@@ -242,17 +244,15 @@ void CrunchMsg_0x5A0::processPayload(string *pStrOut, float fTime, unsigned int 
     intToStr(pStrOut, strLog.u8Ma, "\n");
 }
 
-CrunchMsg_0x5A1::CrunchMsg_0x5A1(QString filename) : CrunchMsg(filename, ID_CAN_INV_B)
+//--------------------------------------------------------
+CrunchMsg_0x5A1::CrunchMsg_0x5A1(QString filename) : CrunchMsg(filename, ID_CAN_ARCO_INV_B)
 {
-    idCAN = ID_CAN_INV_B;
-
     legendList << "FilGain" << "Fil0" << "Fil";
     typeList << TYPE_INT << TYPE_INT << TYPE_INT;
     legendList << "B0" << "B1" << "B2" << "B3" << "B4" << "B5" << "B6" << "B7";
     typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT;
     legendList << "Focus" << "Fluo" << "Exp" << "Status";
-    typeList << TYPE_INT << TYPE_INT << TYPE_INT << TYPE_INT;
-}
+    typeList << TYPE_INT << TYPE_INT << TYPE_INT << TYPE_INT;}
 
 void CrunchMsg_0x5A1::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
 {
@@ -281,4 +281,176 @@ void CrunchMsg_0x5A1::processPayload(string *pStrOut, float fTime, unsigned int 
     enumVal = (strLog.u8EnumBit >> EXPTECH_BIT_SHIFT) & EXPTECH_BIT_MASK;
     intToStr(pStrOut, enumVal);
     intToStr(pStrOut, strLog.u8StatusBit, "\n");
+}
+
+//--------------------------------------------------------
+CrunchMsg_0x201::CrunchMsg_0x201(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_A)
+{
+    legendList << "Kv" << "mAs";
+    typeList << TYPE_INT << TYPE_INT;
+    legendList << "Enable" << "Prep" << "Reset";
+    typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT;
+}
+
+void CrunchMsg_0x201::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+{
+    structLog strLog;
+
+    memset((void *)&strLog, '\0', sizeof(structLog));
+    strLog.u16Kv = (uint16_t)pPayload[0] + ((uint16_t)pPayload[1] << 8);
+    strLog.u16MaS = (uint16_t)pPayload[2] + ((uint16_t)pPayload[3] << 8);
+    strLog.ulBitMask = (uint8_t)pPayload[5];
+
+    pStrOut->clear();
+
+    floatToStr(pStrOut, fTime);
+
+    intToStr(pStrOut, strLog.u16Kv);
+    intToStr(pStrOut, strLog.u16MaS);
+    unpackBit8(pStrOut, strLog.ulBitMask, 8, (ENABLE_BIT | PREP_BIT | RESET_BIT));
+    pStrOut->append("\n");
+}
+
+//--------------------------------------------------------
+CrunchMsg_0x202::CrunchMsg_0x202(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_B)
+{
+    legendList << "mA" << "Fil";
+    typeList << TYPE_INT << TYPE_INT;
+    legendList << "Brake" << "Speed Sel" << "mA Stab";
+    typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT;
+}
+
+void CrunchMsg_0x202::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+{
+    structLog strLog;
+
+    memset((void *)&strLog, '\0', sizeof(structLog));
+    strLog.u16Ma = (uint16_t)pPayload[0] + ((uint16_t)pPayload[1] << 8);
+    strLog.u16Fil = (uint16_t)pPayload[2] + ((uint16_t)pPayload[3] << 8);
+    strLog.ulBitMask = (uint8_t)pPayload[4];
+
+    pStrOut->clear();
+
+    floatToStr(pStrOut, fTime);
+
+    intToStr(pStrOut, strLog.u16Ma);
+    intToStr(pStrOut, strLog.u16Fil);
+    unpackBit8(pStrOut, strLog.ulBitMask, 8, (BRAKE_BIT | SPEED_BIT | MA_STAB_BIT));
+    pStrOut->append("\n");
+}
+
+//--------------------------------------------------------
+CrunchMsg_0x203::CrunchMsg_0x203(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_B)
+{
+    legendList << "Req";
+    typeList << TYPE_BIT;
+}
+
+void CrunchMsg_0x203::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+{
+    (void)pPayload;
+
+    pStrOut->clear();
+
+    floatToStr(pStrOut, fTime);
+
+    unpackBit8(pStrOut, (1 << 0), 1);
+}
+
+//--------------------------------------------------------
+CrunchMsg_0x181::CrunchMsg_0x181(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_A)
+{
+    legendList << "Kv" << "mA" << "mAs";
+    typeList << TYPE_INT << TYPE_INT << TYPE_INT;
+    legendList << "ComRx" << "Inv ON" << "Kv > 85" << "Fault" << "mAs Stop";
+    typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_INT << TYPE_BIT;
+}
+
+void CrunchMsg_0x181::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+{
+    structLog strLog;
+
+    memset((void *)&strLog, '\0', sizeof(structLog));
+    strLog.u16Kv = (uint16_t)pPayload[0] + ((uint16_t)pPayload[1] << 8);
+    strLog.u16Ma = (uint16_t)pPayload[2] + ((uint16_t)pPayload[3] << 8);
+    strLog.u16MaS = (uint16_t)pPayload[4] + ((uint16_t)pPayload[5] << 8);
+    strLog.ulBitState = (uint8_t)pPayload[6];
+    strLog.u8Ver = (uint8_t)pPayload[7];
+
+    pStrOut->clear();
+
+    floatToStr(pStrOut, fTime);
+
+    intToStr(pStrOut, strLog.u16Kv);
+    intToStr(pStrOut, strLog.u16Ma);
+    intToStr(pStrOut, strLog.u16MaS);
+    unpackBit8(pStrOut, strLog.ulBitState, 3);
+    int enumVal = (strLog.ulBitState >> FAULT_BIT_SHIFT) & FAULT_BIT_MASK;
+    intToStr(pStrOut, enumVal);
+    unpackBit8(pStrOut, strLog.ulBitState, 8, 0x80);
+    pStrOut->append("\n");
+}
+
+//--------------------------------------------------------
+CrunchMsg_0x182::CrunchMsg_0x182(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_A)
+{
+    legendList << "Fil";
+    typeList << TYPE_INT;
+    legendList << "Rot OK" << "Fil OK" << "Fil ERR";
+    typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT;
+    legendList << "Temp Tube" << "Temp Inv" << "% UT Tube" << "Cont MAX UT";
+    typeList << TYPE_INT << TYPE_INT << TYPE_INT << TYPE_INT;
+}
+
+void CrunchMsg_0x182::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+{
+    structLog strLog;
+
+    memset((void *)&strLog, '\0', sizeof(structLog));
+    strLog.u16Fil = (uint16_t)pPayload[0] + ((uint16_t)pPayload[1] << 8);
+    strLog.ulBitState = (uint8_t)pPayload[2];
+    strLog.u8TempTube = (uint8_t)pPayload[3];
+    strLog.u8TempInv = (uint8_t)pPayload[4];
+    strLog.u8PercTube = (uint8_t)pPayload[5];
+    strLog.u8ContMax = (uint8_t)pPayload[6];
+
+    pStrOut->clear();
+
+    floatToStr(pStrOut, fTime);
+
+    intToStr(pStrOut, strLog.u16Fil);
+    unpackBit8(pStrOut, strLog.ulBitState, 3);
+    intToStr(pStrOut, strLog.u8TempTube);
+    intToStr(pStrOut, strLog.u8TempInv);
+    intToStr(pStrOut, strLog.u8PercTube);
+    intToStr(pStrOut, strLog.u8ContMax);
+    pStrOut->append("\n");
+}
+
+//--------------------------------------------------------
+CrunchMsg_0x183::CrunchMsg_0x183(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_A)
+{
+    legendList << "Kv" << "mA" << "mAs" << "Ms";
+    typeList << TYPE_INT << TYPE_INT << TYPE_INT << TYPE_INT;
+}
+
+void CrunchMsg_0x183::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+{
+    structLog strLog;
+
+    memset((void *)&strLog, '\0', sizeof(structLog));
+    strLog.u16Kv = (uint16_t)pPayload[0] + ((uint16_t)pPayload[1] << 8);
+    strLog.u16Ma = (uint16_t)pPayload[2] + ((uint16_t)pPayload[3] << 8);
+    strLog.u16MaS = (uint16_t)pPayload[4] + ((uint16_t)pPayload[5] << 8);
+    strLog.u16Ms = (uint16_t)pPayload[6] + ((uint16_t)pPayload[7] << 8);
+
+    pStrOut->clear();
+
+    floatToStr(pStrOut, fTime);
+
+    intToStr(pStrOut, strLog.u16Kv);
+    intToStr(pStrOut, strLog.u16Ma);
+    intToStr(pStrOut, strLog.u16MaS);
+    intToStr(pStrOut, strLog.u16Ms);
+    pStrOut->append("\n");
 }

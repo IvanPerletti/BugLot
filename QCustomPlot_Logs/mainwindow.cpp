@@ -42,15 +42,15 @@ MainWindow::MainWindow(QWidget *parent) :
 //      ui->lswIDs->addItem (listWidgetItem);
 //    }
     QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswIDs);
-    listWidgetItem->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_CONTR));
+    listWidgetItem->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_ARCO_CONTR));
     listWidgetItem->setCheckState(Qt::Unchecked);
     ui->lswIDs->addItem (listWidgetItem);
     QListWidgetItem *listWidgetItem1 = new QListWidgetItem(ui->lswIDs);
-    listWidgetItem1->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_INV_A));
+    listWidgetItem1->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_ARCO_INV_A));
     listWidgetItem1->setCheckState(Qt::Unchecked);
     ui->lswIDs->addItem (listWidgetItem1);
     QListWidgetItem *listWidgetItem2 = new QListWidgetItem(ui->lswIDs);
-    listWidgetItem2->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_INV_B));
+    listWidgetItem2->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_ARCO_INV_B));
     listWidgetItem2->setCheckState(Qt::Unchecked);
     ui->lswIDs->addItem (listWidgetItem2);
 }
@@ -519,18 +519,18 @@ void MainWindow::on_pushButtonProcess_clicked()
 	qDebug()<<ulTimeStart;
 	qDebug()<<ulTimeStop;
 
-    iDs << CrunchMsg::ID_CAN_CONTR << CrunchMsg::ID_CAN_INV_A << CrunchMsg::ID_CAN_INV_B;
+    iDs << CrunchMsg::ID_CAN_ARCO_CONTR << CrunchMsg::ID_CAN_ARCO_INV_A << CrunchMsg::ID_CAN_ARCO_INV_B;
 
     cDecorator.cleanGraph(figure->customPlot());
     crunchLog.processFile(strFileNameIn, iDs, ulTimeStart, ulTimeStop);
 
     strFileNameOut = strFileNameIn;
     if (ui->lswIDs->item(0)->checkState() == Qt::Checked)
-        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_CONTR));
+        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_ARCO_CONTR));
     else if (ui->lswIDs->item(1)->checkState() == Qt::Checked)
-        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_INV_A));
+        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_ARCO_INV_A));
     else if (ui->lswIDs->item(2)->checkState() == Qt::Checked)
-        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_INV_B));
+        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_ARCO_INV_B));
     else
         return;
 
