@@ -32,27 +32,16 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->pushButtonProcess->setEnabled(true);
     setShortCutKeys();
 
-//    QMetaEnum e = QMetaEnum::fromType<CrunchLogC_Arm::enumIdCAN>();
-//    qDebug() << "test" << e.valueToKey(CrunchLogC_Arm::ID_CAN_CONTR);
-//    for (int k = 0; k < e.keyCount(); k++)
-//    {
-//      CrunchLogC_Arm::enumIdCAN id = (CrunchLogC_Arm::enumIdCAN) e.value(k);
-//      QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswIDs);
-//      listWidgetItem->setText(QString().sprintf("0x%X", (int)id));
-//      ui->lswIDs->addItem (listWidgetItem);
-//    }
-    QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswIDs);
-    listWidgetItem->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_ARCO_CONTR));
-    listWidgetItem->setCheckState(Qt::Unchecked);
-    ui->lswIDs->addItem (listWidgetItem);
-    QListWidgetItem *listWidgetItem1 = new QListWidgetItem(ui->lswIDs);
-    listWidgetItem1->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_ARCO_INV_A));
-    listWidgetItem1->setCheckState(Qt::Unchecked);
-    ui->lswIDs->addItem (listWidgetItem1);
-    QListWidgetItem *listWidgetItem2 = new QListWidgetItem(ui->lswIDs);
-    listWidgetItem2->setText(QString().sprintf("0x%X", (int)CrunchMsg::ID_CAN_ARCO_INV_B));
-    listWidgetItem2->setCheckState(Qt::Unchecked);
-    ui->lswIDs->addItem (listWidgetItem2);
+    QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
+    for (int k = 0; k < e.keyCount(); k++)
+    {
+        QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswIDs);
+        listWidgetItem->setText(QString().sprintf("0x%X", e.value(k)));
+        auto currentFlags = listWidgetItem->flags();
+        listWidgetItem->setFlags(currentFlags & (~Qt::ItemIsEnabled));
+        listWidgetItem->setCheckState(Qt::Unchecked);
+        ui->lswIDs->addItem (listWidgetItem);
+    }
 }
 
 
@@ -137,22 +126,18 @@ void MainWindow::setShortCutKeys()
 
 void MainWindow::setupPlotLogs(FigureWidget *figure)
 {
-	/* QString selFilter="Text files(*.txt)";
-	QString LoadFile;
-	LoadFile = QFileDialog::getOpenFileName(this,"Open Full Log",
-											QDir::currentPath(),
-											"Text files(*.txt)",
-											&selFilter);
-	*/
+    QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
+    QStringList files;
 
-	QFile file(strFileNameOut);
-	if (!file.open(QFile::ReadOnly | QFile::Text)) {
-		QMessageBox::warning(this,"op","file not open");
-		return;
-	}
-	/// Alcohol may be man's worst enemy, but the bible says love your enemy.
+    for (int i = 0; i < ui->lswIDs->count(); i++) {
+        if (ui->lswIDs->item(i)->checkState() == Qt::Checked) {
+            strFileNameOut = strFileNameIn;
+            strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", e.value(i)));
+            files.append(strFileNameOut);
+        }
+    }
 
-    cDecorator.buildGraph(figure->customPlot(), figure->lswLegend(), &file);
+    cDecorator.buildGraph(figure, files);
 
     double dMinXAxis = figure->customPlot()->xAxis->range().lower;
     double dMaxXAxis = figure->customPlot()->xAxis->range().upper;
@@ -294,7 +279,6 @@ void MainWindow::MyTimerSlot()
 	if(TimerFlag == true)
 	{
 		on_LoadFile();
-		on_save();
 		//double minFinale = ui->lineEditMin->text().toDouble() ;
 		//double interval = ui->lineEditInterval->text().toDouble();
 		customPlotVariable = false;
@@ -400,89 +384,66 @@ void MainWindow::on_LoadFile_clicked()
 	QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
 	QString strPrevPath = iSettings.load(ISettings::SET_CURR_PATH).toString();
-//    strFileNameIn ="./logC_arm.txt";
-        strFileNameIn = QFileDialog::getOpenFileName(this,
-                                                     "Open Full Log",
-                                                     strPrevPath,
-                                                     "Text files (*.txt);;All files (*.*)",
-                                                     &selFilter);
+    strFileNameIn = QFileDialog::getOpenFileName(this,
+                                                 "Open Full Log",
+                                                 strPrevPath,
+                                                 "Text files (*.txt);;All files (*.*)",
+                                                 &selFilter);
 	QFileInfo fileInfo(strFileNameIn);
 	strPrevPath = fileInfo.absolutePath();
 	iSettings.save(ISettings::SET_CURR_PATH, strPrevPath);
 	on_LoadFile();
 	qDebug()<<"File loaded";
-	on_SaveButton_clicked();
 }
 //------------------------------------------------------------------------------
 void MainWindow::on_LoadFile()
 {
-
 	QFile file(strFileNameIn);
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
 		QMessageBox::warning(this,"op","file not open");
 		return;
 	}
-
 	QTextStream in(&file);
 	QString text = in.read(1000);
+    file.close();
+
 	text.append("\r\n [...]");
 	ui->textEdit->setText(text);
-	//ui->qlFileName->setText("NOME FILE SCELTO:" + strFileNameIn );
 	QFileInfo fi=strFileNameIn;
-	QString str = fi.fileName();
-	QString path= fi.baseName();
-	ui->qlFileName->setText("Input File: " + path);
+    ui->qlFileName->setText("Input File: " + fi.baseName());
 
-}
-//------------------------------------------------------------------------------------------------
-/**
- * @brief save the new file in the .txt format
- */
+    CrunchLog crunchLog;
 
-void MainWindow::on_SaveButton_clicked()
-{
-	QString selFilter="Text files (*.i1)";
-	ulTimeStart = 0; // reset time intervals
-	ulTimeStop = ( 23*3600 + 59*60 )* 1000;
-	strFileNameOut.clear();
-	//	strFileNameOut = QFileDialog::getSaveFileName(this,
-	//												  "Choose Output filename",
-	//												  QDir::currentPath()+"/out.txt",
-	//												  "Text files (*.txt);;All files (*.*)",
-	//												  &selFilter);
-	QFileInfo fi=strFileNameIn;
-	QString path= fi.absoluteFilePath();
-	path.replace(".txt",".i1");
-	//	strFileNameOut = QDir::currentPath()+"/out" + path + ".i1";
-	strFileNameOut = path;
-	strFileNameExtractLog = QDir::currentPath()+"/extractLog.txt";
-	on_save();
-	qDebug()<<"save";
-}
+    qDebug() << "calling crunch";
+    ulTimeStart = ui->timeEdit_2->time().msecsSinceStartOfDay();
+    ulTimeStop = ui->timeEdit_3->time().msecsSinceStartOfDay();
+    if ( ulTimeStart > ulTimeStop )
+        ulTimeStop = ulTimeStart + 10000;
+    qDebug()<< "Start " << ulTimeStart << " Stop " << ulTimeStop;
 
-void MainWindow::on_save()
-{
-	if (strFileNameOut.size() > 0)
-	{
-		QFile file(strFileNameOut);
+    QList<CrunchMsg::enumIdCAN> iDsFound = crunchLog.processFile(strFileNameIn, ulTimeStart, ulTimeStop);
 
-		if (!file.open(QFile::WriteOnly | QFile::Text)) {
-			QMessageBox::warning(this,"op","file not open");
-			return;
-		}
-
-		file.flush();
-		file.close();
-		ui->pushButtonProcess->setEnabled(true);
-		QFileInfo fi=strFileNameOut;
-		QString str = fi.fileName();
-		QString path= fi.baseName();
-		ui->SaveLabel->setText("Processed File: " + path);
-	}
-	else{
-		//		ui->pushButtonProcess->setEnabled(false);
-		// -qmesage box
-	}
+    ui->FinishTextEdit->clear();
+    QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
+    for (int k = 0; k < e.keyCount(); k++)
+    {
+        ui->lswIDs->item(k)->setCheckState(Qt::Unchecked);
+        auto currentFlags = ui->lswIDs->item(k)->flags();
+        if (iDsFound.contains((CrunchMsg::enumIdCAN)e.value(k))) {
+            ui->lswIDs->item(k)->setFlags(currentFlags | (Qt::ItemIsEnabled));
+            strFileNameOut = strFileNameIn;
+            strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", e.value(k)));
+            QFile file (strFileNameOut);
+            if (!file.open(QFile::ReadOnly | QFile::Text)) {
+                QMessageBox::warning(this,"op","Cannot open file");
+            } else {
+                QString contents = file.readAll().constData();
+                ui->FinishTextEdit->appendPlainText(contents);
+                file.close();
+            }
+        } else
+            ui->lswIDs->item(k)->setFlags(currentFlags & (~Qt::ItemIsEnabled));
+    }
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -502,50 +463,15 @@ void MainWindow::on_PulisciButton_clicked()
 
 void MainWindow::on_pushButtonProcess_clicked()
 {
-    CrunchLog crunchLog;
-    QList<CrunchMsg::enumIdCAN> iDs;
-
     FigureWidget *figure = new FigureWidget(NULL);
     ui->vrlFigure->addWidget(figure);
 
-	qDebug()<<"calling crunch";
-	ulTimeStart = ui->timeEdit_2->time().msecsSinceStartOfDay();
-	ulTimeStop = ui->timeEdit_3->time().msecsSinceStartOfDay();
-	if ( ulTimeStart > ulTimeStop )
-	{
-		ulTimeStop = ulTimeStart + 10000;
-	}
-
-	qDebug()<<ulTimeStart;
-	qDebug()<<ulTimeStop;
-
-    iDs << CrunchMsg::ID_CAN_ARCO_CONTR << CrunchMsg::ID_CAN_ARCO_INV_A << CrunchMsg::ID_CAN_ARCO_INV_B;
-
-    cDecorator.cleanGraph(figure->customPlot());
-    crunchLog.processFile(strFileNameIn, iDs, ulTimeStart, ulTimeStop);
-
-    strFileNameOut = strFileNameIn;
-    if (ui->lswIDs->item(0)->checkState() == Qt::Checked)
-        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_ARCO_CONTR));
-    else if (ui->lswIDs->item(1)->checkState() == Qt::Checked)
-        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_ARCO_INV_A));
-    else if (ui->lswIDs->item(2)->checkState() == Qt::Checked)
-        strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", (int)CrunchMsg::ID_CAN_ARCO_INV_B));
-    else
-        return;
-
-	QFile file (strFileNameOut);
-	if (!file.open(QFile::ReadOnly | QFile::Text)) {
-		QMessageBox::warning(this,"op","Cannot open file");
-		return;
-	}
-
-	QString contents = file.readAll().constData();
-	ui->FinishTextEdit->setPlainText(contents);
-
-	file.close();
+//    if (iDs.count() == 0) {
+//        return;
+//    }
 
 	demoName.append("GmmScope");
+    cDecorator.cleanGraph(figure);
     setupPlotLogs(figure);
     if (customPlotVariable==true){
         figure->customPlot()->replot();
@@ -616,8 +542,4 @@ void MainWindow::on_timeEdit_3_timeChanged(const QTime &time)
 	int min =  time.minute();
 	int sec =  time.second();
 	ulTimeStop = ((hour*60*60) + (min*60) + (sec))*1000 ;
-}
-
-void MainWindow::on_tabWidget_currentChanged(int index)
-{
 }

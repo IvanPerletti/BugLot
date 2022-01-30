@@ -34,15 +34,13 @@ class CrunchLog
 {
 public:
     CrunchLog();
-    void processFile(QString strFileNameIn,
-                     QList<CrunchMsg::enumIdCAN> iDs,
+    QList<CrunchMsg::enumIdCAN> processFile(QString strFileNameIn,
                      const unsigned long ulTimeStart = 0,
                      const unsigned long ulTimeStop = 24*60*60);
 
 private:
     QMap<CrunchMsg::enumIdCAN, CrunchMsg *> crunchMsg;
 
-    CrunchMsg *newCrunchMsg(CrunchMsg::enumIdCAN id, QString filename);
 };
 
 #endif // CRUNCHLOG_H

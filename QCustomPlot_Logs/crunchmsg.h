@@ -11,8 +11,9 @@ using namespace std;
 
 class CrunchMsg
 {
+    Q_GADGET;
 public:
-    typedef enum {
+    enum enumIdCAN {
         ID_CAN_ARCO_CONTR       = 0x6A0,
         ID_CAN_ARCO_INV_A       = 0x5A0,
         ID_CAN_ARCO_INV_B       = 0x5A1,
@@ -22,12 +23,14 @@ public:
         ID_CAN_MAMMO_FROM_INV_A = 0x181,
         ID_CAN_MAMMO_FROM_INV_B = 0x182,
         ID_CAN_MAMMO_FROM_INV_C = 0x183
-    } enumIdCAN;
+    } ;
+    Q_ENUM(enumIdCAN);
 
     CrunchMsg(QString, enumIdCAN idCAN);
     virtual ~CrunchMsg();
     void processMsg(float fTime, unsigned int *pPayload);
     virtual void processPayload(string *pStrOut, float fTime, unsigned int *pPayload) = 0;
+    static CrunchMsg *newCrunchMsg(CrunchMsg::enumIdCAN id, QString filename);
 
 private:
 #define HEADER_PREFIX   "%"

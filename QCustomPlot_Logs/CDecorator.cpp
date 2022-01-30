@@ -1,8 +1,9 @@
-#include "CDecorator.h"
 #include <QMath.h>
 #include <QDebug>
 
-//#include <QDebug>
+#include "CDecorator.h"
+#include "CrunchLog.h"
+
 #define ARRAY_DIM       (250*1000) /// max number of lines to auto-stop proessing
 
 #define BITFIELD_DELTA_Y        10
@@ -94,95 +95,98 @@ void CDecorator::addSignalToPlot(int iSignalIdx, QVector<QVector<double>> qvVect
 }
 
 //-----------------------------------------------------------------------------
-void CDecorator::cleanGraph(QCustomPlot *customPlot)
+void CDecorator::cleanGraph(FigureWidget *figure)
 {
-    for( int ii=0; ii<customPlot->graphCount(); ii++ )
+    for( int ii=0; ii<figure->customPlot()->graphCount(); ii++ )
 	{
-        customPlot->graph(ii)->data().data()->clear();
+        figure->customPlot()->graph(ii)->data().data()->clear();
 	}
-    customPlot->replot();
+    figure->customPlot()->replot();
 }
 
 //-----------------------------------------------------------------------------
 /**
  * @brief CDecorator::buildGraph build the graph accordin to own method implementation
  */
-bool CDecorator::buildGraph(QCustomPlot *customPlot, QListWidget *lswLegend, QFile *file)
+bool CDecorator::buildGraph(FigureWidget *figure, QStringList fileNames)
 {
     QVector<double> qvTime;
     QVector <QVector <double> > qvVect;
-    QTextStream in(file);
     QString line;
     int pos;
     unsigned long ulMaxLi;
+    double dMinYAxis = 0.0, dMaxYAxis = 0.0, dMinXAxis = 0.0, dMaxXAxis = 0.0;
 
-    this->customPlot = customPlot;
-    this->lswLegend = lswLegend;
+    this->lswLegend = figure->lswLegend();
 
-    legendList.clear();
-    typeList.clear();
-    do {
-        line = in.readLine(); //read one line at a time
-        if (line.isEmpty()) {
-            return false; // if here means "reached end of file"
+    figure->customPlot()->clearGraphs();
+    figure->customPlot()->legend->setVisible(false);
+    figure->customPlot()->plotLayout()->setColumnStretchFactor (1, 0.001);
+
+    for ( const auto& fileName : fileNames  )
+    {
+        QFile file (fileName);
+        if (!file.open(QFile::ReadOnly | QFile::Text))
+            continue;
+
+        legendList.clear();
+        typeList.clear();
+
+        QTextStream in(&file);
+        do {
+            line = in.readLine(); //read one line at a time
+            if (line.isEmpty()) {
+                file.close();
+                return false; // if here means "reached end of file"
+            }
+            if (line.startsWith(HEADER_PREFIX) == false)
+                break;
+            if ((pos = line.indexOf(LEGENDS_TAG)) >= 0) {
+                legendList = line.mid(pos + QString(LEGENDS_TAG).length()).split(" ", QString::SkipEmptyParts);
+            } else if ((pos = line.indexOf(TYPES_TAG)) >= 0) {
+                typeList = line.mid(pos + QString(TYPES_TAG).length()).split(" ", QString::SkipEmptyParts);
+            }
+        } while (true);
+
+        // connect some interaction slots:
+        connect(this->lswLegend,
+                SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
+                this,
+                SLOT(currentItemChanged(QListWidgetItem *, QListWidgetItem *)));
+        connect(this->lswLegend,
+                SIGNAL(itemSelectionChanged()),
+                this,
+                SLOT(itemSelectionChanged()));
+
+        qvVect.clear();
+        for (ulMaxLi=1; ulMaxLi<ARRAY_DIM; ulMaxLi++) // reached certain num of lines break!
+        {
+            QVector <double> tempVector;
+
+            foreach( QString numStr, line.split(" ", QString::SkipEmptyParts) )
+            {	// unroll each line into current Time array and into current
+                bool bCheck = false; // flag to signalize double value found
+                double dVal = numStr.toDouble(&bCheck);
+                if( !bCheck ){
+                    continue;
+                } else {
+                    tempVector.push_back(dVal);
+                }
+            }
+            qvVect.push_back(tempVector);
+            dMinYAxis = fmin(dMinYAxis, *std::min_element(tempVector.constBegin() + 1, tempVector.constEnd()));
+            dMaxYAxis = fmax(dMaxYAxis, *std::max_element(tempVector.constBegin() + 1, tempVector.constEnd()));
+
+            line = in.readLine(); //read one line at a time
+            if (line.isEmpty()) {
+                break; // if here means "reached end of file"
+            }
         }
-        if (line.startsWith(HEADER_PREFIX) == false)
-            break;
-        if ((pos = line.indexOf(LEGENDS_TAG)) >= 0) {
-            legendList = line.mid(pos + QString(LEGENDS_TAG).length()).split(" ", QString::SkipEmptyParts);
-        } else if ((pos = line.indexOf(TYPES_TAG)) >= 0) {
-            typeList = line.mid(pos + QString(TYPES_TAG).length()).split(" ", QString::SkipEmptyParts);
-        }
-    } while (true);
-
-    // connect some interaction slots:
-    connect(this->lswLegend,
-            SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
-            this,
-            SLOT(currentItemChanged(QListWidgetItem *, QListWidgetItem *)));
-    connect(this->lswLegend,
-            SIGNAL(itemSelectionChanged()),
-            this,
-            SLOT(itemSelectionChanged()));
-
-    customPlot->clearGraphs();
-    customPlot->legend->setVisible(false);
-	customPlot->plotLayout()->setColumnStretchFactor (1, 0.001);
-
-    qvVect.clear();
-    double dMinYAxis = 0.0;
-    double dMaxYAxis = 0.0;
-
-    for (ulMaxLi=1; ulMaxLi<ARRAY_DIM; ulMaxLi++) // reached certain num of lines break!
-	{
-        QVector <double> tempVector;
-
-		foreach( QString numStr, line.split(" ", QString::SkipEmptyParts) )
-		{	// unroll each line into current Time array and into current
-			bool bCheck = false; // flag to signalize double value found
-			double dVal = numStr.toDouble(&bCheck);
-			if( !bCheck ){
-				continue;
-            } else {
-				tempVector.push_back(dVal);
-			}
-		}
-        qvVect.push_back(tempVector);
-        dMinYAxis = fmin(dMinYAxis, *std::min_element(tempVector.constBegin() + 1, tempVector.constEnd()));
-        dMaxYAxis = fmax(dMaxYAxis, *std::max_element(tempVector.constBegin() + 1, tempVector.constEnd()));
-
-        line = in.readLine(); //read one line at a time
-        if (line.isEmpty()) {
-            break; // if here means "reached end of file"
-        }
-    }
-	if (ulMaxLi > 0)
-	{
         const int iSzVet = qvVect.size(); // array Size
         const int iNumSignal = qvVect[0].size() - 1; // num of plots
 
-		if (iSzVet> 0 )
-		{
+        if (iSzVet> 0 )
+        {
 
             if (legendList.length() < iNumSignal) {
                 for (int iLegendIdx = legendList.length() + 1; iLegendIdx <= iNumSignal; iLegendIdx++) {
@@ -199,7 +203,7 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QListWidget *lswLegend, QFi
             qvTime.resize(iSzVet); // resize optimze time with memory alloc
             for (int jj=0; jj<iSzVet; jj++) {
                 qvTime[jj] = qvVect[jj][0]/1000.0 ;
-			}
+            }
 
 //            int iLogMaxYAxis = (int)log10(dMaxYAxis);
 //            double dMult = pow(10, (double)iLogMaxYAxis);
@@ -208,26 +212,28 @@ bool CDecorator::buildGraph(QCustomPlot *customPlot, QListWidget *lswLegend, QFi
 
             // add plots
             for (int iSignalIdx=0; iSignalIdx < iNumSignal; iSignalIdx++) {
-                addSignalToPlot(iSignalIdx, qvVect, qvTime, dMaxYAxis, customPlot);
+                addSignalToPlot(iSignalIdx, qvVect, qvTime, dMaxYAxis, figure->customPlot());
             }
 
-			// give the axes some labels:
-			customPlot->xAxis->setLabel("t [s]");
-			QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);
-			dateTicker->setDateTimeFormat("hh\rmm:ss\nzzz");
-			dateTicker->setDateTimeSpec(Qt::UTC);
-			customPlot->xAxis->setTicker(dateTicker);
-			customPlot->yAxis->setLabel("y");
+            // set axes ranges, so we see all data:
+            dMinXAxis = *std::min_element(qvTime.constBegin(), qvTime.constEnd());
+            dMaxXAxis = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
 
-			// set axes ranges, so we see all data:
-			double dMinXAxis = *std::min_element(qvTime.constBegin(), qvTime.constEnd());
-			double dMaxXAxis = *std::max_element(qvTime.constBegin(), qvTime.constEnd());
+        }
+    }
 
-			customPlot->xAxis->setRange(dMinXAxis-1,dMaxXAxis+1);
-            customPlot->yAxis->setRange(dMinYAxis, dMaxYAxis); // Y axis range
-			customPlot->setInteractions(QCP::iSelectLegend);
-		}
-	}
+    figure->customPlot()->xAxis->setRange(dMinXAxis-1,dMaxXAxis+1);
+    figure->customPlot()->yAxis->setRange(dMinYAxis, dMaxYAxis); // Y axis range
+    figure->customPlot()->setInteractions(QCP::iSelectLegend);
+
+    // give the axes some labels:
+    figure->customPlot()->xAxis->setLabel("t [s]");
+    QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);
+    dateTicker->setDateTimeFormat("hh\rmm:ss\nzzz");
+    dateTicker->setDateTimeSpec(Qt::UTC);
+    figure->customPlot()->xAxis->setTicker(dateTicker);
+    figure->customPlot()->yAxis->setLabel("y");
+
     return (ulMaxLi > 0);
 }
 
@@ -278,7 +284,7 @@ void CDecorator::showHideElements(void)
 
         graph->setVisible(!graph->visible());
     }
-    customPlot->replot();
+    //customPlot->replot();
 }
 
 void CDecorator::toggleSelection(void)

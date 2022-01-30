@@ -1,6 +1,7 @@
 #include <QString>
 #include <QFileInfo>
 #include <QMap>
+#include <QMetaEnum>
 #include <QDebug>
 #include <fstream>
 
@@ -13,48 +14,10 @@ CrunchLog::CrunchLog()
 
 }
 
-CrunchMsg *CrunchLog::newCrunchMsg(CrunchMsg::enumIdCAN id, QString filename)
-{
-    CrunchMsg *crunchMsg = nullptr;
-
-    switch (id) {
-    case CrunchMsg::ID_CAN_ARCO_CONTR:
-        crunchMsg = new CrunchMsg_0x6A0(filename);
-        break;
-    case CrunchMsg::ID_CAN_ARCO_INV_A:
-        crunchMsg = new CrunchMsg_0x5A0(filename);
-        break;
-    case CrunchMsg::ID_CAN_ARCO_INV_B:
-        crunchMsg = new CrunchMsg_0x5A1(filename);
-        break;
-    case CrunchMsg::ID_CAN_MAMMO_TO_INV_A:
-        crunchMsg = new CrunchMsg_0x201(filename);
-        break;
-    case CrunchMsg::ID_CAN_MAMMO_TO_INV_B:
-        crunchMsg = new CrunchMsg_0x202(filename);
-        break;
-    case CrunchMsg::ID_CAN_MAMMO_TO_INV_C:
-        crunchMsg = new CrunchMsg_0x203(filename);
-        break;
-    case CrunchMsg::ID_CAN_MAMMO_FROM_INV_A:
-        crunchMsg = new CrunchMsg_0x201(filename);
-        break;
-    case CrunchMsg::ID_CAN_MAMMO_FROM_INV_B:
-        crunchMsg = new CrunchMsg_0x202(filename);
-        break;
-    case CrunchMsg::ID_CAN_MAMMO_FROM_INV_C:
-        crunchMsg = new CrunchMsg_0x203(filename);
-        break;
-    }
-
-    return crunchMsg;
-}
-
 //--------------------------------------------------------
-void CrunchLog::processFile (QString strFileNameIn,
-                                  QList<CrunchMsg::enumIdCAN> iDs,
-                                  const unsigned long ulTimeStart,
-                                  const unsigned long ulTimeStop)
+QList<CrunchMsg::enumIdCAN> CrunchLog::processFile (QString strFileNameIn,
+                             const unsigned long ulTimeStart,
+                             const unsigned long ulTimeStop)
 {
     string strLine, strOut;
     int iMaxIterator = 0;
@@ -63,25 +26,24 @@ void CrunchLog::processFile (QString strFileNameIn,
     int iNumFound;
     uint32_t idCAN;
     unsigned int ulaData[6]={0,};
+    QList<CrunchMsg::enumIdCAN> iDsFound;
+    QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
 
     if (strFileNameIn.length() == 0 ){
-        return;
+        return iDsFound;
     }
 
     QFileInfo fi=strFileNameIn;
     QString filename = fi.absoluteFilePath();
 
-    QListIterator<CrunchMsg::enumIdCAN> idIterator(iDs);
-    while (idIterator.hasNext()) {
+    for (int k = 0; k < e.keyCount(); k++) {
         CrunchMsg *msg;
 
-        CrunchMsg::enumIdCAN id = idIterator.next();
-        if ((msg = newCrunchMsg(id, filename)) != nullptr)
-            crunchMsg[id] = msg;
+        if ((msg = CrunchMsg::newCrunchMsg((CrunchMsg::enumIdCAN)e.value(k), filename)) != nullptr)
+            crunchMsg[(CrunchMsg::enumIdCAN)e.value(k)] = msg;
     }
 
     infile.open (strFileNameIn.toStdString().c_str());
-//    outFile.open (ucaNameFileOut, std::ofstream::out | std::ofstream::trunc);
 
     while(iMaxIterator < 800*1000) //4E5: Max Matlab To get you all the lines.
     {
@@ -114,6 +76,8 @@ void CrunchLog::processFile (QString strFileNameIn,
                 if (crunchMsg.contains(id)) {
                     msg = crunchMsg[id];
                     msg->processMsg(fTime, ulaData);
+                    if (!iDsFound.contains(id))
+                        iDsFound << id;
                 }
             }
             iMaxIterator++;
@@ -130,4 +94,6 @@ void CrunchLog::processFile (QString strFileNameIn,
     }
 
     infile.close();
+
+    return iDsFound;
 }

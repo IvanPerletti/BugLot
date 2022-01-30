@@ -2147,7 +2147,7 @@ PlotWidget {
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -2185,31 +2185,7 @@ PlotWidget {
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item>
-           <widget class="QPushButton" name="SaveButton">
-            <property name="maximumSize">
-             <size>
-              <width>200</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select file to be used as output-preprocessed file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>SaveButton</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="SaveLabel">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_6"/>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_11">
@@ -2314,6 +2290,9 @@ PlotWidget {
             <width>16777215</width>
             <height>45</height>
            </size>
+          </property>
+          <property name="isWrapping" stdset="0">
+           <bool>false</bool>
           </property>
           <property name="spacing">
            <number>10</number>

@@ -16,8 +16,7 @@ CrunchMsg::CrunchMsg(QString filename, enumIdCAN idCAN)
 
 CrunchMsg::~CrunchMsg(void)
 {
-    if (outFile)
-    {
+    if (outFile) {
         if (outFile->isOpen())
             outFile->close();
         delete outFile;
@@ -178,6 +177,43 @@ void CrunchMsg::processMsg(float fTime, unsigned int *pPayload)
         stream << strOut.c_str();
         memcpy((void *)payloadPrev, (void *)pPayload, sizeof(payloadPrev));
     }
+}
+
+CrunchMsg *CrunchMsg::newCrunchMsg(CrunchMsg::enumIdCAN id, QString filename)
+{
+    CrunchMsg *crunchMsg = nullptr;
+
+    switch (id) {
+    case CrunchMsg::ID_CAN_ARCO_CONTR:
+        crunchMsg = new CrunchMsg_0x6A0(filename);
+        break;
+    case CrunchMsg::ID_CAN_ARCO_INV_A:
+        crunchMsg = new CrunchMsg_0x5A0(filename);
+        break;
+    case CrunchMsg::ID_CAN_ARCO_INV_B:
+        crunchMsg = new CrunchMsg_0x5A1(filename);
+        break;
+    case CrunchMsg::ID_CAN_MAMMO_TO_INV_A:
+        crunchMsg = new CrunchMsg_0x201(filename);
+        break;
+    case CrunchMsg::ID_CAN_MAMMO_TO_INV_B:
+        crunchMsg = new CrunchMsg_0x202(filename);
+        break;
+    case CrunchMsg::ID_CAN_MAMMO_TO_INV_C:
+        crunchMsg = new CrunchMsg_0x203(filename);
+        break;
+    case CrunchMsg::ID_CAN_MAMMO_FROM_INV_A:
+        crunchMsg = new CrunchMsg_0x201(filename);
+        break;
+    case CrunchMsg::ID_CAN_MAMMO_FROM_INV_B:
+        crunchMsg = new CrunchMsg_0x202(filename);
+        break;
+    case CrunchMsg::ID_CAN_MAMMO_FROM_INV_C:
+        crunchMsg = new CrunchMsg_0x203(filename);
+        break;
+    }
+
+    return crunchMsg;
 }
 
 //--------------------------------------------------------

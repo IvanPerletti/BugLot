@@ -9,7 +9,7 @@
 #include <QElapsedTimer>
 #include "qcustomplot.h"
 #include "legenditem.h"
-#include "CrunchLog.h"
+#include "figurewidget.h"
 
 class CDecorator : public QObject
 {
@@ -17,8 +17,8 @@ class CDecorator : public QObject
 
 public:
 	CDecorator();
-	void cleanGraph(QCustomPlot *customPlot);
-    bool buildGraph(QCustomPlot *customPlot, QListWidget *lswLegend, QFile *file);
+    void cleanGraph(FigureWidget *figure);
+    bool buildGraph(FigureWidget *figure, QStringList files);
     void showHideElements(void);
     void toggleSelection(void);
 
@@ -26,7 +26,6 @@ private:
 
     QStringList legendList;
     QStringList typeList;
-    QCustomPlot *customPlot;
     QListWidget *lswLegend;
 
     void addSignalToPlot(int iSignalIdx, QVector<QVector<double>> qvVect, QVector<double> qvTime, double dMaxYAxis, QCustomPlot *customPlot);

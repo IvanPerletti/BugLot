@@ -85,13 +85,9 @@ class MainWindow : public QMainWindow
 
 	void on_LoadFile_clicked();
 
-	void on_SaveButton_clicked();
-
 	void on_PulisciButton_clicked();
 
 	void on_pushButtonProcess_clicked();
-
-	void on_save();
 
 	void on_LoadFile();
 
@@ -106,8 +102,6 @@ class MainWindow : public QMainWindow
 	void on_timeEdit_2_timeChanged(const QTime &time);
 
 	void on_timeEdit_3_timeChanged(const QTime &time);
-
-    void on_tabWidget_currentChanged(int index);
 
 private:
 	Ui::MainWindow *ui;
