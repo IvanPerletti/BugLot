@@ -19,6 +19,13 @@ public:
     QCustomPlot *customPlot(void);
     QListWidget *lswLegend(void);
 
+private slots:
+    void on_pbnHide_clicked();
+
+    void on_pbnShow_clicked();
+
+    void on_pbnReset_clicked();
+
 private:
     Ui::FigureWidget *ui;
 };

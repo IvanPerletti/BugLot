@@ -19,8 +19,6 @@ public:
 	CDecorator();
     void cleanGraph(FigureWidget *figure);
     bool buildGraph(FigureWidget *figure, QStringList files);
-    void showHideElements(void);
-    void toggleSelection(void);
 
 private:
 

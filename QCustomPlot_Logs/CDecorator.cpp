@@ -273,22 +273,3 @@ void CDecorator::itemSelectionChanged()
         ;
     }
 }
-
-void CDecorator::showHideElements(void)
-{
-    QListWidgetItem *item;
-    QList<QListWidgetItem *> selItems = lswLegend->selectedItems();
-
-    foreach(item, selItems) {
-        QCPGraph *graph = ((LegendItem *)lswLegend->itemWidget(item))->plottable();
-
-        graph->setVisible(!graph->visible());
-    }
-    //customPlot->replot();
-}
-
-void CDecorator::toggleSelection(void)
-{
-    for (int i=0; i<lswLegend->count(); i++)
-        lswLegend->item(i)->setSelected(!lswLegend->item(i)->isSelected());
-}

@@ -60,7 +60,7 @@ class MainWindow : public QMainWindow
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
-    void setupPlotLogs(FigureWidget *figure);
+    bool setupPlotLogs(FigureWidget *figure, QStringList fileNames);
 	void setupPlayground(QCustomPlot *customPlot);
 
 	void bracketDataSlot();
@@ -69,7 +69,6 @@ class MainWindow : public QMainWindow
 	QTimer *timer;
 
 	private slots:
-	void plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me);
 	void onMouseDuobleClick(QMouseEvent *event);
 	void showPointToolTip(QMouseEvent *event);
 
@@ -121,6 +120,7 @@ private:
 	double dTimeA;
 	double dTimeB;
 	void setShortCutKeys();
+    QList <FigureWidget *> figureList;
 };
 
 #endif // MAINWINDOW_H

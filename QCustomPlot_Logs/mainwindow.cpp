@@ -22,15 +22,20 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 	setGeometry(400, 250, 542, 390);
+
 	timer = new QTimer(this);
 	// setup signal and slot
 	connect(timer, SIGNAL(timeout()), this, SLOT(MyTimerSlot()));
 	timer->start(1000);    // msec
+
 	ulTimeStart = 0;
 	ulTimeStop = ( 23*3600 + 59*60 )* 1000;
 	qDebug()<<"Setup";
+
 	ui->pushButtonProcess->setEnabled(true);
     setShortCutKeys();
+
+    figureList.clear();
 
     QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
     for (int k = 0; k < e.keyCount(); k++)
@@ -124,20 +129,9 @@ void MainWindow::setShortCutKeys()
 			SLOT(on_pushButtonZoomMeno_clicked()));
 }
 
-void MainWindow::setupPlotLogs(FigureWidget *figure)
+bool MainWindow::setupPlotLogs(FigureWidget *figure, QStringList fileNames)
 {
-    QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
-    QStringList files;
-
-    for (int i = 0; i < ui->lswIDs->count(); i++) {
-        if (ui->lswIDs->item(i)->checkState() == Qt::Checked) {
-            strFileNameOut = strFileNameIn;
-            strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", e.value(i)));
-            files.append(strFileNameOut);
-        }
-    }
-
-    cDecorator.buildGraph(figure, files);
+    cDecorator.buildGraph(figure, fileNames);
 
     double dMinXAxis = figure->customPlot()->xAxis->range().lower;
     double dMaxXAxis = figure->customPlot()->xAxis->range().upper;
@@ -149,11 +143,6 @@ void MainWindow::setupPlotLogs(FigureWidget *figure)
 //			   SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)));
 
 	// connect some interaction slots:
-//	connect(ui->customPlot,
-//			SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)),
-//			this,
-//			SLOT(plotterLegendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
-
     connect(figure->customPlot(),
             SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)),
             this,
@@ -168,42 +157,10 @@ void MainWindow::setupPlotLogs(FigureWidget *figure)
             SIGNAL(mouseDoubleClick(QMouseEvent*)),
             this,
             SLOT(onMouseDuobleClick(QMouseEvent*)));
-}
-//-----------------------------------------------------------------------------
-/**
- * @brief plotterLegendClick - Slot signal Once I clicked on Legend
- * @param l  	ptr to legend
- * @param ai	Legend Item ptr
- * @param me	Mouse event to capture
- */
-void MainWindow::plotterLegendClick(QCPLegend *l, QCPAbstractLegendItem *ai, QMouseEvent *me)
-{
-	Q_UNUSED(me);
 
-	if(NULL != l && NULL != ai)
-	{
-//		for (int i=0; i<ui->customPlot->graphCount(); ++i)
-//		{
-//			QCPGraph *graph = ui->customPlot->graph(i);
-//			if( graph->visible() )
-//			{
-//				QCPPlottableLegendItem *item = ui->customPlot->legend->itemWithPlottable(graph);
-//				QPen qpGraphPen = l->parentPlot()->graph(i)->pen ();
-
-//				if (item->selected() || graph->selected()){
-//					qpGraphPen.setStyle(Qt::DotLine);
-//					qpGraphPen.setWidth(4);
-//				}
-//				else
-//				{
-//					qpGraphPen.setStyle(Qt::SolidLine);
-//					qpGraphPen.setWidth(2);
-//				}
-//				l->parentPlot()->graph(i)->setPen(qpGraphPen);
-//			}
-//		}
-	}
+    return true;
 }
+
 //------------------------------------------------------------------------------
 void MainWindow::onMouseDuobleClick(QMouseEvent *event)
 {
@@ -463,20 +420,32 @@ void MainWindow::on_PulisciButton_clicked()
 
 void MainWindow::on_pushButtonProcess_clicked()
 {
-    FigureWidget *figure = new FigureWidget(NULL);
-    ui->vrlFigure->addWidget(figure);
+    QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
+    QStringList fileNames;
 
-//    if (iDs.count() == 0) {
-//        return;
-//    }
+    for (int i = 0; i < ui->lswIDs->count(); i++) {
+        if (ui->lswIDs->item(i)->checkState() == Qt::Checked) {
+            strFileNameOut = strFileNameIn;
+            strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", e.value(i)));
+            fileNames.append(strFileNameOut);
+        }
+    }
 
-	demoName.append("GmmScope");
-    cDecorator.cleanGraph(figure);
-    setupPlotLogs(figure);
-    if (customPlotVariable==true){
-        figure->customPlot()->replot();
-	}
-	ui->tabWidget->setCurrentIndex(1);
+    if (!fileNames.isEmpty()) {
+        FigureWidget *figure = new FigureWidget(NULL);
+        figureList.append(figure);
+
+        ui->vrlFigure->addWidget(figure);
+
+        demoName.append("GmmScope");
+
+        setupPlotLogs(figure, fileNames);
+        if (customPlotVariable==true){
+            figure->customPlot()->replot();
+        }
+
+        ui->tabWidget->setCurrentIndex(1);
+    }
 }
 
 void MainWindow::on_pushButtonZoomLeft_clicked()
@@ -515,15 +484,21 @@ void MainWindow::on_pushButtonZoomRight_clicked()
 
 void MainWindow::on_pushButtonDiretta_clicked()
 {
-	if (TimerFlag == true)
-	{
-		// set button text
-		TimerFlag = false;
-	}
-	else{
-		//        set other buuton text
-		TimerFlag = true;
-	}
+    if (!figureList.isEmpty()) {
+        FigureWidget *figure = figureList.takeLast();
+        ui->vrlFigure->removeWidget(figure);
+        delete figure;
+    }
+
+//	if (TimerFlag == true)
+//	{
+//		// set button text
+//		TimerFlag = false;
+//	}
+//	else{
+//		//        set other buuton text
+//		TimerFlag = true;
+//	}
 }
 //--------------------------------------------------------------------------
 
