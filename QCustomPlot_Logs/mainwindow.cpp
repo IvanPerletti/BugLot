@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
         listWidgetItem->setCheckState(Qt::Unchecked);
         ui->lswIDs->addItem (listWidgetItem);
     }
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 
@@ -238,7 +239,7 @@ void MainWindow::MyTimerSlot()
 		on_LoadFile();
 		//double minFinale = ui->lineEditMin->text().toDouble() ;
 		//double interval = ui->lineEditInterval->text().toDouble();
-		customPlotVariable = false;
+
 		on_pushButtonProcess_clicked();
 		const int iTimWinDispl = 10000; // time win to be displayed
 		ui->lineEditMin->setText(QString::number(dLastTimeVal-iTimWinDispl));
@@ -292,11 +293,14 @@ void MainWindow::on_dial_valueChanged(int Msec)
 	double dDelta = Msec*(dInterval)/200;
 	dRangeX0 += dDelta;
 	dRangeX1 += dDelta;
-    //ui->customPlot->xAxis->setRange(dRangeX0,dRangeX1);
-    //ui->customPlot->replot();
+    foreach (FigureWidget *figure, figureList) {
+        figure->customPlot()->xAxis->setRange(dRangeX0,dRangeX1);
+        figure->customPlot()->replot();
+    }
 	//    ui->lineEditInterval->setText(QString::number(rangeX1-rangeX0));
 	//    ui->lineEditMin->setText(QString::number(rangeX0)); Ba
 }
+
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomPiu_clicked()
 {
@@ -309,12 +313,15 @@ void MainWindow::on_pushButtonZoomPiu_clicked()
 	double finalInterval = interval - 2*newInterval;
 	ui->lineEditInterval->setText(QString::number(finalInterval, 'd', 3));
 
-	// double newRangeX1 = newRangeX0 + finalInterval;
-	// ui->customPlot->xAxis->setRange(newRangeX0, newRangeX1 );
-	// ui->customPlot->replot();
+    double newRangeX1 = newRangeX0 + finalInterval;
+    foreach (FigureWidget *figure, figureList) {
+        figure->customPlot()->xAxis->setRange(newRangeX0, newRangeX1 );
+        figure->customPlot()->replot();
+    }
 	on_UpgradePlot();
 	ui->dial->setValue(0);
 }
+
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomMeno_clicked()
 {
@@ -327,12 +334,49 @@ void MainWindow::on_pushButtonZoomMeno_clicked()
 	double finalInterval = dInterval + 2*dNewInterval;
 	ui->lineEditInterval->setText(QString::number(finalInterval, 'd', 3));
 
-	//double newRangeX1 = newRangeX0 + finalInterval;
-
-	// ui->customPlot->xAxis->setRange(newRangeX0, newRangeX1 );
-	// ui->customPlot->replot();
+    double newRangeX1 = dNewRangeX0 + finalInterval;
+    foreach (FigureWidget *figure, figureList) {
+        figure->customPlot()->xAxis->setRange(dNewRangeX0, newRangeX1 );
+        figure->customPlot()->replot();
+    }
 	on_UpgradePlot();
 	ui->dial->setValue(0);
+}
+
+//----------------------------------------------------------------------------
+void MainWindow::on_pushButtonZoomLeft_clicked()
+{
+    double rangeX0 = ui->lineEditMin->text().toDouble();
+    double interval = ui->lineEditInterval->text().toDouble();
+
+    double delta = (interval)/10;
+    rangeX0 -= delta;
+    interval -= delta;
+    ui->lineEditMin->setText(QString::number(rangeX0));
+    ui->lineEditInterval->setText(QString::number(interval));
+
+    foreach (FigureWidget *figure, figureList) {
+        figure->customPlot()->xAxis->setRange(rangeX0,rangeX0+interval);
+        figure->customPlot()->replot();
+    }
+}
+
+//----------------------------------------------------------------------------
+void MainWindow::on_pushButtonZoomRight_clicked()
+{
+    double rangeX0 = ui->lineEditMin->text().toDouble();
+    double interval = ui->lineEditInterval->text().toDouble();
+
+    double delta = (interval)/10;
+    rangeX0 += delta;
+    interval += delta;
+    ui->lineEditMin->setText(QString::number(rangeX0));
+    ui->lineEditInterval->setText(QString::number(interval));
+
+    foreach (FigureWidget *figure, figureList) {
+        figure->customPlot()->xAxis->setRange(rangeX0,rangeX0+interval);
+        figure->customPlot()->replot();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -440,44 +484,23 @@ void MainWindow::on_pushButtonProcess_clicked()
         demoName.append("GmmScope");
 
         setupPlotLogs(figure, fileNames);
-        if (customPlotVariable==true){
-            figure->customPlot()->replot();
-        }
-
         ui->tabWidget->setCurrentIndex(1);
+        if (figureList.count() > 1)
+            alignXRange();
     }
 }
 
-void MainWindow::on_pushButtonZoomLeft_clicked()
+void MainWindow::alignXRange(void)
 {
-	double rangeX0 = ui->lineEditMin->text().toDouble();
-	double interval = ui->lineEditInterval->text().toDouble();
+   QCPRange xRange(figureList.at(0)->customPlot()->xAxis->range().lower, figureList.at(0)->customPlot()->xAxis->range().upper);
+   FigureWidget *figure;
 
-	double delta = (interval)/10;
-	rangeX0 -= delta;
-	interval -= delta;
-	ui->lineEditMin->setText(QString::number(rangeX0));
-	ui->lineEditInterval->setText(QString::number(interval));
-
-    //ui->customPlot->xAxis->setRange(rangeX0,rangeX0+interval);
-    //ui->customPlot->replot();
-}
-
-//----------------------------------------------------------------------------
-
-void MainWindow::on_pushButtonZoomRight_clicked()
-{
-	double rangeX0 = ui->lineEditMin->text().toDouble();
-	double interval = ui->lineEditInterval->text().toDouble();
-
-	double delta = (interval)/10;
-	rangeX0 += delta;
-	interval += delta;
-	ui->lineEditMin->setText(QString::number(rangeX0));
-	ui->lineEditInterval->setText(QString::number(interval));
-
-    //ui->customPlot->xAxis->setRange(rangeX0,rangeX0+interval);
-    //ui->customPlot->replot();
+   foreach (figure, figureList)
+       xRange.expand(figure->customPlot()->xAxis->range());
+   foreach (figure, figureList) {
+       figure->customPlot()->xAxis->setRange(xRange);
+       figure->customPlot()->replot();
+   }
 }
 
 //--------------------------------------------------------------------------

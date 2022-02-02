@@ -113,7 +113,6 @@ private:
 	QString strFileNameIn;
 	QString strFileNameExtractLog;
 	bool TimerFlag = false;
-	bool customPlotVariable = true;
 	double dLastTimeVal; // last value of Time
 	unsigned long ulTimeStart; // starting time [ms]
 	unsigned long ulTimeStop; // ending time [ms]
@@ -121,6 +120,8 @@ private:
 	double dTimeB;
 	void setShortCutKeys();
     QList <FigureWidget *> figureList;
+
+    void alignXRange(void);
 };
 
 #endif // MAINWINDOW_H
