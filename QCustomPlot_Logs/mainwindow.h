@@ -47,6 +47,7 @@
 #include "qcustomplot.h" // the header file of QCustomPlot. Don't forget to add it to your project, if you use an IDE, so it gets compiled.
 #include "zoomplot.h"
 #include "figurewidget.h"
+#include "Drivers/IAnimationShow.h"
 
 namespace Ui {
 	class MainWindow;
@@ -61,9 +62,6 @@ class MainWindow : public QMainWindow
 	~MainWindow();
 
     bool setupPlotLogs(FigureWidget *figure, QStringList fileNames);
-	void setupPlayground(QCustomPlot *customPlot);
-
-	void bracketDataSlot();
 
 	private:
 	QTimer *timer;
@@ -74,51 +72,41 @@ class MainWindow : public QMainWindow
 
 	void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);
 
-	void MyTimerSlot();
-
-	void on_dial_valueChanged(int Msec);
-
-	void on_pushButtonZoomPiu_clicked();
-
-	void on_pushButtonZoomMeno_clicked();
-
 	void on_LoadFile_clicked();
 
 	void on_PulisciButton_clicked();
 
-	void on_pushButtonProcess_clicked();
-
 	void on_LoadFile();
 
-	void on_UpgradePlot();
-
-	void on_pushButtonZoomLeft_clicked();
-
+    void on_pushButtonZoomPiu_clicked();
+    void on_pushButtonZoomMeno_clicked();
+    void on_pushButtonZoomLeft_clicked();
 	void on_pushButtonZoomRight_clicked();
 
-	void on_pushButtonDiretta_clicked();
+    void on_pushButtonDiretta_clicked();
 
 	void on_timeEdit_2_timeChanged(const QTime &time);
-
 	void on_timeEdit_3_timeChanged(const QTime &time);
+
+    void on_pbnRemoveFigure_clicked();
+
+    void on_pbnAddFigure_clicked();
+
+    void on_pushButton_clicked();
 
 private:
 	Ui::MainWindow *ui;
-	QString demoName;
-	QTimer dataTimer;
-	QCPItemTracer *itemDemoPhaseTracer;
-	int currentDemoIndex;
-	double *y1;
-	QString strFileNameOut;
+
 	QString strFileNameIn;
-	QString strFileNameExtractLog;
-	bool TimerFlag = false;
-	double dLastTimeVal; // last value of Time
+
 	unsigned long ulTimeStart; // starting time [ms]
 	unsigned long ulTimeStop; // ending time [ms]
-	double dTimeA;
-	double dTimeB;
-	void setShortCutKeys();
+
+    double xMin;
+    double xInterval;
+
+    IAnimationShow  iAnimation;
+    void setShortCutKeys();
     QList <FigureWidget *> figureList;
 
     void alignXRange(void);

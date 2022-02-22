@@ -32,7 +32,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	ulTimeStop = ( 23*3600 + 59*60 )* 1000;
 	qDebug()<<"Setup";
 
-	ui->pushButtonProcess->setEnabled(true);
     setShortCutKeys();
 
     figureList.clear();
@@ -40,58 +39,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
     for (int k = 0; k < e.keyCount(); k++)
     {
-        QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswIDs);
+        QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswID);
         listWidgetItem->setText(QString().sprintf("0x%X", e.value(k)));
         auto currentFlags = listWidgetItem->flags();
         listWidgetItem->setFlags(currentFlags & (~Qt::ItemIsEnabled));
         listWidgetItem->setCheckState(Qt::Unchecked);
-        ui->lswIDs->addItem (listWidgetItem);
+        ui->lswID->addItem (listWidgetItem);
     }
-    ui->tabWidget->setCurrentIndex(0);
+    ui->stwMain->setCurrentIndex(0);
 }
 
-
 //-----------------------------------------------------------------------------
-
-void MainWindow::bracketDataSlot()
-{
-	double secs = QCPAxisTickerDateTime::dateTimeToKey(QDateTime::currentDateTime());
-
-	// update data to make phase move:
-	int n = 500;
-	double phase = secs*5;
-	double k = 3;
-	QVector<double> x(n), y(n);
-	for (int i=0; i<n; ++i)
-	{
-		x[i] = i/(double)(n-1)*34 - 17;
-		y[i] = qExp(-x[i]*x[i]/20.0)*qSin(k*x[i]+phase);
-	}
-    //ui->customPlot->graph()->setData(x, y);
-
-	itemDemoPhaseTracer->setGraphKey((8*M_PI+fmod(M_PI*1.5-phase, 6*M_PI))/k);
-
-    //ui->customPlot->replot();
-
-	// calculate frames per second:
-	double key = secs;
-	static double lastFpsKey;
-	static int frameCount;
-	++frameCount;
-	if (key-lastFpsKey > 2) // average fps over 2 seconds
-	{
-		lastFpsKey = key;
-		frameCount = 0;
-	}
-}
-//-----------------------------------------------------------------------------
-
-void MainWindow::setupPlayground(QCustomPlot *customPlot)
-{
-	Q_UNUSED(customPlot)
-}
-//-----------------------------------------------------------------------------
-
 MainWindow::~MainWindow()
 {
 	delete ui;
@@ -136,12 +94,9 @@ bool MainWindow::setupPlotLogs(FigureWidget *figure, QStringList fileNames)
 
     double dMinXAxis = figure->customPlot()->xAxis->range().lower;
     double dMaxXAxis = figure->customPlot()->xAxis->range().upper;
-    dLastTimeVal = dMaxXAxis; // used for "OnAir option"
 
-    ui->lineEditMin->setText(QString::number(dMinXAxis));
-    ui->lineEditInterval->setText(QString::number(dMaxXAxis-dMinXAxis));
-//	disconnect(ui->customPlot,
-//			   SIGNAL(legendClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)));
+    xMin = dMinXAxis;
+    xInterval = dMaxXAxis-dMinXAxis;
 
 	// connect some interaction slots:
     connect(figure->customPlot(),
@@ -183,9 +138,6 @@ void MainWindow::onMouseDuobleClick(QMouseEvent *event)
 //			ui->lneTimeB->setText(msgB);
 //		}
 	}
-	double dDeltaTime = dTimeB - dTimeA;
-	QString msg = QString ("d: %1 s").arg (dDeltaTime);
-	ui->lneDeltaTime->setText(msg);
 }
 //------------------------------------------------------------------------------
 /**
@@ -227,133 +179,56 @@ void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *ite
 		}
 	}
 }
-//-----------------------------------------------------------------------------
-/**
- * @brief MainWindow::MyTimerSlot  Slot for On Air option - temporized event
- */
-void MainWindow::MyTimerSlot()
-{
-	//    Qui entriamo ogni 500ms
-	if(TimerFlag == true)
-	{
-		on_LoadFile();
-		//double minFinale = ui->lineEditMin->text().toDouble() ;
-		//double interval = ui->lineEditInterval->text().toDouble();
-
-		on_pushButtonProcess_clicked();
-		const int iTimWinDispl = 10000; // time win to be displayed
-		ui->lineEditMin->setText(QString::number(dLastTimeVal-iTimWinDispl));
-		ui->lineEditInterval->setText(QString::number(iTimWinDispl));
-		on_UpgradePlot();
-	}
-}
-
-
-
-void MainWindow::on_UpgradePlot()
-{
-	if(   //  ui->lineEditMin->text().isEmpty()    ||
-		  ui->lineEditInterval->text().isEmpty()   ){
-		QMessageBox::warning(this,"","insert interval!!!");
-	}
-	else
-	{
-
-		double minFinale = ui->lineEditMin->text().toDouble() ;
-		double interval = ui->lineEditInterval->text().toDouble();
-		// ui->lineEditMin->setMaxLength(minFinale);
-
-		if(minFinale<=0){
-			QMessageBox::warning(this,"alt","insert superior extreme");
-
-		}
-		if (interval<=0) {
-			QMessageBox::warning(this,"alt","insert correct interval");
-
-		}
-		//        if (minFinale < min1-1 || maxFinale > max1+1) {
-		//            QMessageBox::warning(this,"attenzione","range non corretti");
-		//        }
-
-        //ui->customPlot->xAxis->setRange(minFinale, minFinale+interval);
-        //ui->customPlot->replot();
-	}
-}
-//------------------------------------------------------------------------------------------------
-
-
-void MainWindow::on_dial_valueChanged(int Msec)
-{
-	ui->lcdNumber->display(Msec);
-
-	double dRangeX0 = ui->lineEditMin->text().toDouble();
-	double dInterval = ui->lineEditInterval->text().toDouble();
-	double dRangeX1 = dRangeX0 + dInterval;
-
-	double dDelta = Msec*(dInterval)/200;
-	dRangeX0 += dDelta;
-	dRangeX1 += dDelta;
-    foreach (FigureWidget *figure, figureList) {
-        figure->customPlot()->xAxis->setRange(dRangeX0,dRangeX1);
-        figure->customPlot()->replot();
-    }
-	//    ui->lineEditInterval->setText(QString::number(rangeX1-rangeX0));
-	//    ui->lineEditMin->setText(QString::number(rangeX0)); Ba
-}
 
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomPiu_clicked()
 {
-	double rangeX0 = ui->lineEditMin->text().toDouble();
-	double interval = ui->lineEditInterval->text().toDouble();
+    double rangeX0 = xMin;
+    double interval = xInterval;
 	double newInterval = interval*0.1;
 	double newRangeX0 = rangeX0 + newInterval;
-	ui->lineEditMin->setText(QString::number(newRangeX0, 'd', 3));
+    xMin = newRangeX0;
 
 	double finalInterval = interval - 2*newInterval;
-	ui->lineEditInterval->setText(QString::number(finalInterval, 'd', 3));
+    xInterval = finalInterval;
 
     double newRangeX1 = newRangeX0 + finalInterval;
     foreach (FigureWidget *figure, figureList) {
         figure->customPlot()->xAxis->setRange(newRangeX0, newRangeX1 );
         figure->customPlot()->replot();
     }
-	on_UpgradePlot();
-	ui->dial->setValue(0);
 }
 
 //------------------------------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomMeno_clicked()
 {
-	double dRangeX0 = ui->lineEditMin->text().toDouble();
-	double dInterval = ui->lineEditInterval->text().toDouble();
+    double dRangeX0 = xMin;
+    double dInterval = xInterval;
 	double dNewInterval = dInterval*0.1;
 	double dNewRangeX0 = dRangeX0 - dNewInterval;
-	ui->lineEditMin->setText(QString::number(dNewRangeX0, 'd', 3));
+    xMin = dNewRangeX0;
 
 	double finalInterval = dInterval + 2*dNewInterval;
-	ui->lineEditInterval->setText(QString::number(finalInterval, 'd', 3));
+    xInterval = finalInterval;
 
     double newRangeX1 = dNewRangeX0 + finalInterval;
     foreach (FigureWidget *figure, figureList) {
         figure->customPlot()->xAxis->setRange(dNewRangeX0, newRangeX1 );
         figure->customPlot()->replot();
     }
-	on_UpgradePlot();
-	ui->dial->setValue(0);
 }
 
 //----------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomLeft_clicked()
 {
-    double rangeX0 = ui->lineEditMin->text().toDouble();
-    double interval = ui->lineEditInterval->text().toDouble();
+    double rangeX0 = xMin;
+    double interval = xInterval;
 
     double delta = (interval)/10;
     rangeX0 -= delta;
     interval -= delta;
-    ui->lineEditMin->setText(QString::number(rangeX0));
-    ui->lineEditInterval->setText(QString::number(interval));
+    xMin = rangeX0;
+    xInterval = interval;;
 
     foreach (FigureWidget *figure, figureList) {
         figure->customPlot()->xAxis->setRange(rangeX0,rangeX0+interval);
@@ -364,14 +239,14 @@ void MainWindow::on_pushButtonZoomLeft_clicked()
 //----------------------------------------------------------------------------
 void MainWindow::on_pushButtonZoomRight_clicked()
 {
-    double rangeX0 = ui->lineEditMin->text().toDouble();
-    double interval = ui->lineEditInterval->text().toDouble();
+    double rangeX0 = xMin;
+    double interval = xInterval;
 
     double delta = (interval)/10;
     rangeX0 += delta;
     interval += delta;
-    ui->lineEditMin->setText(QString::number(rangeX0));
-    ui->lineEditInterval->setText(QString::number(interval));
+    xMin = rangeX0;
+    xInterval = interval;
 
     foreach (FigureWidget *figure, figureList) {
         figure->customPlot()->xAxis->setRange(rangeX0,rangeX0+interval);
@@ -428,11 +303,11 @@ void MainWindow::on_LoadFile()
     QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
     for (int k = 0; k < e.keyCount(); k++)
     {
-        ui->lswIDs->item(k)->setCheckState(Qt::Unchecked);
-        auto currentFlags = ui->lswIDs->item(k)->flags();
+        ui->lswID->item(k)->setCheckState(Qt::Unchecked);
+        auto currentFlags = ui->lswID->item(k)->flags();
         if (iDsFound.contains((CrunchMsg::enumIdCAN)e.value(k))) {
-            ui->lswIDs->item(k)->setFlags(currentFlags | (Qt::ItemIsEnabled));
-            strFileNameOut = strFileNameIn;
+            ui->lswID->item(k)->setFlags(currentFlags | (Qt::ItemIsEnabled));
+            QString strFileNameOut = strFileNameIn;
             strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", e.value(k)));
             QFile file (strFileNameOut);
             if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -441,9 +316,11 @@ void MainWindow::on_LoadFile()
                 QString contents = file.readAll().constData();
                 ui->FinishTextEdit->appendPlainText(contents);
                 file.close();
+                iAnimation.showToLeft(ui->stwMain ,ui->stwMain->rect());
+                ui->stwMain->setCurrentIndex(1);
             }
         } else
-            ui->lswIDs->item(k)->setFlags(currentFlags & (~Qt::ItemIsEnabled));
+            ui->lswID->item(k)->setFlags(currentFlags & (~Qt::ItemIsEnabled));
     }
 }
 
@@ -455,39 +332,6 @@ void MainWindow::on_PulisciButton_clicked()
 {
 	ui->textEdit->setText("");
 	ui->FinishTextEdit->setPlainText("");
-}
-
-//------------------------------------------------------------------------------------------------
-/**
- * @brief filter the text in input and provide the lines of interest, where at every number of time link a sequence of binary number
- */
-
-void MainWindow::on_pushButtonProcess_clicked()
-{
-    QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
-    QStringList fileNames;
-
-    for (int i = 0; i < ui->lswIDs->count(); i++) {
-        if (ui->lswIDs->item(i)->checkState() == Qt::Checked) {
-            strFileNameOut = strFileNameIn;
-            strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", e.value(i)));
-            fileNames.append(strFileNameOut);
-        }
-    }
-
-    if (!fileNames.isEmpty()) {
-        FigureWidget *figure = new FigureWidget(NULL);
-        figureList.append(figure);
-
-        ui->vrlFigure->addWidget(figure);
-
-        demoName.append("GmmScope");
-
-        setupPlotLogs(figure, fileNames);
-        ui->tabWidget->setCurrentIndex(1);
-        if (figureList.count() > 1)
-            alignXRange();
-    }
 }
 
 void MainWindow::alignXRange(void)
@@ -507,21 +351,8 @@ void MainWindow::alignXRange(void)
 
 void MainWindow::on_pushButtonDiretta_clicked()
 {
-    if (!figureList.isEmpty()) {
-        FigureWidget *figure = figureList.takeLast();
-        ui->vrlFigure->removeWidget(figure);
-        delete figure;
-    }
-
-//	if (TimerFlag == true)
-//	{
-//		// set button text
-//		TimerFlag = false;
-//	}
-//	else{
-//		//        set other buuton text
-//		TimerFlag = true;
-//	}
+    iAnimation.showToRight(ui->stwMain ,ui->stwMain->rect());
+    ui->stwMain->setCurrentIndex(0);
 }
 //--------------------------------------------------------------------------
 
@@ -530,7 +361,6 @@ void MainWindow::on_timeEdit_2_timeChanged(const QTime &time)
 	int hour = time.hour();
 	int min =  time.minute();
 	int sec =  time.second();
-
 	ulTimeStart = ((hour*60*60) + (min*60) + (sec))*1000 ;
 }
 //--------------------------------------------------------------------------
@@ -540,4 +370,46 @@ void MainWindow::on_timeEdit_3_timeChanged(const QTime &time)
 	int min =  time.minute();
 	int sec =  time.second();
 	ulTimeStop = ((hour*60*60) + (min*60) + (sec))*1000 ;
+}
+
+void MainWindow::on_pbnRemoveFigure_clicked()
+{
+    if (!figureList.isEmpty()) {
+        FigureWidget *figure = figureList.takeLast();
+        ui->vrlFigure->removeWidget(figure);
+        delete figure;
+    }
+}
+
+void MainWindow::on_pbnAddFigure_clicked()
+{
+    QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
+    QStringList fileNames;
+
+    for (int i = 0; i < ui->lswID->count(); i++) {
+        if (ui->lswID->item(i)->checkState() == Qt::Checked) {
+            QString strFileNameOut = strFileNameIn;
+            strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", e.value(i)));
+            fileNames.append(strFileNameOut);
+        }
+    }
+
+    if (!fileNames.isEmpty()) {
+        FigureWidget *figure = new FigureWidget(NULL);
+        figureList.append(figure);
+
+        ui->vrlFigure->addWidget(figure);
+
+        setupPlotLogs(figure, fileNames);
+        iAnimation.showToLeft(ui->stwMain ,ui->stwMain->rect());
+        ui->stwMain->setCurrentIndex(1);
+        if (figureList.count() > 1)
+            alignXRange();
+    }
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    iAnimation.showToLeft(ui->stwMain ,ui->stwMain->rect());
+    ui->stwMain->setCurrentIndex(1);
 }

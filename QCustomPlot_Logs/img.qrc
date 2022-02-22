@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>bugLotIco.ico</file>
         <file>Icon.png</file>
+        <file>img/iconHome.png</file>
+        <file>img/iconClean.png</file>
+        <file>img/open.png</file>
+        <file>img/graph.png</file>
     </qresource>
 </RCC>
