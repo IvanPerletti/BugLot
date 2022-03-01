@@ -14939,7 +14939,7 @@ void QCustomPlot::mouseReleaseEvent(QMouseEvent *event)
 */
 void QCustomPlot::wheelEvent(QWheelEvent *event)
 {
-  emit mouseWheel(event);
+  //emit mouseWheel(event);
   // forward event to layerable under cursor:
   QList<QCPLayerable*> candidates = layerableListAt(event->pos(), false);
   for (int i=0; i<candidates.size(); ++i)
@@ -14950,6 +14950,7 @@ void QCustomPlot::wheelEvent(QWheelEvent *event)
       break;
   }
   event->accept(); // in case QCPLayerable reimplementation manipulates event accepted state. In QWidget event system, QCustomPlot wants to accept the event.
+  emit mouseWheel(event, this);
 }
 
 /*! \internal

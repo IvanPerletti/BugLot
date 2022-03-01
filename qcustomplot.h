@@ -3736,7 +3736,7 @@ signals:
   void mousePress(QMouseEvent *event);
   void mouseMove(QMouseEvent *event);
   void mouseRelease(QMouseEvent *event);
-  void mouseWheel(QWheelEvent *event);
+  void mouseWheel(QWheelEvent *event, QCustomPlot *customPlot);
   
   void plottableClick(QCPAbstractPlottable *plottable, int dataIndex, QMouseEvent *event);
   void plottableDoubleClick(QCPAbstractPlottable *plottable, int dataIndex, QMouseEvent *event);

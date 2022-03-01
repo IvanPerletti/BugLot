@@ -67,8 +67,9 @@ class MainWindow : public QMainWindow
 	QTimer *timer;
 
 	private slots:
-	void onMouseDuobleClick(QMouseEvent *event);
+    void onMouseDoubleClick(QMouseEvent *event);
 	void showPointToolTip(QMouseEvent *event);
+    void mouseWheel(QWheelEvent *event, QCustomPlot *customPlot);
 
 	void legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item);
 

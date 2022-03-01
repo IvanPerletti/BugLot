@@ -112,13 +112,18 @@ bool MainWindow::setupPlotLogs(FigureWidget *figure, QStringList fileNames)
     connect(figure->customPlot(),
             SIGNAL(mouseDoubleClick(QMouseEvent*)),
             this,
-            SLOT(onMouseDuobleClick(QMouseEvent*)));
+            SLOT(onMouseDoubleClick(QMouseEvent*)));
+
+    connect(figure->customPlot(),
+            SIGNAL(mouseWheel(QWheelEvent*,QCustomPlot*)),
+            this,
+            SLOT(mouseWheel(QWheelEvent*,QCustomPlot*)));
 
     return true;
 }
 
 //------------------------------------------------------------------------------
-void MainWindow::onMouseDuobleClick(QMouseEvent *event)
+void MainWindow::onMouseDoubleClick(QMouseEvent *event)
 {
 	if(event->button() == Qt::LeftButton)
 	{
@@ -412,4 +417,16 @@ void MainWindow::on_pushButton_clicked()
 {
     iAnimation.showToLeft(ui->stwMain ,ui->stwMain->rect());
     ui->stwMain->setCurrentIndex(1);
+}
+
+void MainWindow::mouseWheel(QWheelEvent *event, QCustomPlot *customPlot)
+{
+    FigureWidget *figure;   
+    QCPRange xRange(customPlot->xAxis->range().lower, customPlot->xAxis->range().upper);
+
+    foreach (figure, figureList) {
+        figure->customPlot()->xAxis->setRange(xRange);
+        figure->customPlot()->replot();
+    }
+
 }

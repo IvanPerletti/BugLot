@@ -224,7 +224,7 @@ bool CDecorator::buildGraph(FigureWidget *figure, QStringList fileNames)
 
     figure->customPlot()->xAxis->setRange(dMinXAxis-1,dMaxXAxis+1);
     figure->customPlot()->yAxis->setRange(dMinYAxis, dMaxYAxis); // Y axis range
-    figure->customPlot()->setInteractions(QCP::iSelectLegend);
+    figure->customPlot()->setInteractions(QCP::iSelectLegend | QCP::iRangeDrag | QCP::iRangeZoom);
 
     // give the axes some labels:
     figure->customPlot()->xAxis->setLabel("t [s]");
