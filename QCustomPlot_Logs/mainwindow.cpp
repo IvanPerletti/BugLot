@@ -312,8 +312,8 @@ void MainWindow::on_LoadFile()
         auto currentFlags = ui->lswID->item(k)->flags();
         if (iDsFound.contains((CrunchMsg::enumIdCAN)e.value(k))) {
             ui->lswID->item(k)->setFlags(currentFlags | (Qt::ItemIsEnabled));
-            QString strFileNameOut = strFileNameIn;
-            strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", e.value(k)));
+            QString strFileNameOut = fi.absolutePath() + "/" + fi.baseName();
+            strFileNameOut.append( QString().sprintf("_%03X.txt", e.value(k)));
             QFile file (strFileNameOut);
             if (!file.open(QFile::ReadOnly | QFile::Text)) {
                 QMessageBox::warning(this,"op","Cannot open file");

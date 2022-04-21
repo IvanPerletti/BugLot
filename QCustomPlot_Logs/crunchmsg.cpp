@@ -1,5 +1,6 @@
 #include <QFile>
 #include <QTextStream>
+#include <QtMath>
 #include <QDebug>
 #include "crunchmsg.h"
 
@@ -68,11 +69,13 @@ void CrunchMsg::intToStr(string *pStrOut, unsigned int uiVal, string sfx)
     pStrOut->append(sfx);
 }
 //--------------------------------------------------------
-void CrunchMsg::floatToStr(string *pStrOut, float fVal, string sfx)
+void CrunchMsg::floatToStr(string *pStrOut, float fVal, int iDec, string sfx)
 {
+    char s8aFormat[10]={0,};
     char s8aChar[16]={0,};
 
-    sprintf(s8aChar, "%.1f", fVal);
+    sprintf(s8aFormat, "%%.%df", iDec);
+    sprintf(s8aChar, s8aFormat, fVal);
     pStrOut->append(s8aChar);
     pStrOut->append(sfx);
 }
@@ -253,37 +256,38 @@ void CrunchMsg_0x6A0::processPayload(string *pStrOut, float fTime, unsigned int 
 //--------------------------------------------------------
 CrunchMsg_0x5A0::CrunchMsg_0x5A0(QString filename) : CrunchMsg(filename, ID_CAN_ARCO_INV_A)
 {
-    legendList << "Kv0" << "Kv+" << "Kv-" <<"mAGain" << "mA0" << "mA";
+    legendList << "Kv0" << "Kv+" << "Kv-" << "mARef10" << "mA10";
 }
 
 void CrunchMsg_0x5A0::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
 {
+    int8_t i8MaGain;
     structLog strLog;
+    float fKvFactor = 0.54f;
 
     memset((void *)&strLog, '\0', sizeof(structLog));
-    strLog.u8Kv0 = (uint8_t)pPayload[0];
-    strLog.u8KvPlus = (uint8_t)pPayload[1];
-    strLog.u8KvMinus = (uint8_t)pPayload[2];
-    strLog.u8MaGain = (uint8_t)pPayload[3];
-    strLog.u8Ma0 = (uint8_t)pPayload[4];
-    strLog.u8Ma = (uint8_t)pPayload[5];
+    strLog.fKv0 = (float)pPayload[0] * fKvFactor;
+    strLog.fKvPlus = (float)pPayload[1] * fKvFactor;
+    strLog.fKvMinus = (float)pPayload[2] * fKvFactor;
+    i8MaGain = (int8_t)pPayload[3];
+    strLog.fMa0 = (float)pPayload[4] * qPow(10, i8MaGain);
+    strLog.fMa = (float)pPayload[5] * qPow(10, i8MaGain);
 
     pStrOut->clear();
 
     floatToStr(pStrOut, fTime);
 
-    intToStr(pStrOut, strLog.u8Kv0);
-    intToStr(pStrOut, strLog.u8KvPlus);
-    intToStr(pStrOut, strLog.u8KvMinus);
-    intToStr(pStrOut, strLog.u8MaGain);
-    intToStr(pStrOut, strLog.u8Ma0);
-    intToStr(pStrOut, strLog.u8Ma, "\n");
+    floatToStr(pStrOut, strLog.fKv0, 2);
+    floatToStr(pStrOut, strLog.fKvPlus, 2);
+    floatToStr(pStrOut, strLog.fKvMinus, 2);
+    floatToStr(pStrOut, strLog.fMa0, (i8MaGain < 0) ? 2 : 0);
+    floatToStr(pStrOut, strLog.fMa, (i8MaGain < 0) ? 2 : 0, "\n");
 }
 
 //--------------------------------------------------------
 CrunchMsg_0x5A1::CrunchMsg_0x5A1(QString filename) : CrunchMsg(filename, ID_CAN_ARCO_INV_B)
 {
-    legendList << "FilGain" << "Fil0" << "Fil";
+    legendList << "FilGain" << "FilRef" << "Fil";
     typeList << TYPE_INT << TYPE_INT << TYPE_INT;
     legendList << "B0" << "B1" << "B2" << "B3" << "B4" << "B5" << "B6" << "B7";
     typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_BIT;

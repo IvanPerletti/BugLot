@@ -51,7 +51,7 @@ protected:
     void unpackBit8(string * pstrOut, unsigned char u8Val, int iNbit = 8, unsigned char u8Mask = 0xFF);
     void unpackBit32(string * pstrOut, unsigned int uiVal, int iNbit = 32);
     void intToStr(string *pStrOut, unsigned int uiVal, string sfx = " ");
-    void floatToStr(string *pStrOut, float fVal, string sfx = " ");
+    void floatToStr(string *pStrOut, float fVal, int iDec = 1, string sfx = " ");
     unsigned long unpackTimeString(const char * u8aData);
     bool decodeTimeString(const char * u8aData, unsigned long &ulTime);
     void removeCharsUntil(string * strProcessed, string strMatchToFind);
@@ -89,12 +89,11 @@ public:
 private:
     typedef struct
     {
-        uint8_t  u8Kv0        ;
-        uint8_t  u8KvPlus     ;
-        uint8_t  u8KvMinus    ;
-        uint8_t  u8MaGain     ;
-        uint8_t  u8Ma0        ;
-        uint8_t  u8Ma         ;
+        float    fKv0        ;
+        float    fKvPlus     ;
+        float    fKvMinus    ;
+        float    fMa0        ;
+        float    fMa         ;
     } structLog;
 };
 
