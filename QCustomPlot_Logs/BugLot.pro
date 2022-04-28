@@ -9,7 +9,6 @@ TARGET = BugLot
 TEMPLATE = app
 
 SOURCES += access.cpp \
-    Drivers/ClickableLabel.cpp \
     Drivers/IAnimationShow.cpp \
 	ISettings.cpp \
     ITimePerform.cpp \
@@ -23,7 +22,6 @@ SOURCES += access.cpp \
 	CDecorator.cpp
 
 HEADERS  += access.h \
-        Drivers/ClickableLabel.h \
         Drivers/IAnimationShow.h \
 	ISettings.h \
     ITimePerform.h \

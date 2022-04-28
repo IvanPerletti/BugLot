@@ -2143,6 +2143,9 @@ PlotWidget {
         <height>600</height>
        </size>
       </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
       <widget class="QWidget" name="stwMainPage1">
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
@@ -2319,7 +2322,7 @@ PlotWidget {
             <property name="minimumSize">
              <size>
               <width>600</width>
-              <height>29</height>
+              <height>34</height>
              </size>
             </property>
             <property name="toolTip">
