@@ -262,13 +262,13 @@ void MainWindow::on_pushButtonZoomRight_clicked()
 //------------------------------------------------------------------------------
 void MainWindow::on_LoadFile_clicked()
 {
-	QString selFilter="Text files (*.txt)";
+    QString selFilter="Text files (*.txt)";
 	strFileNameIn.clear();
 	QString strPrevPath = iSettings.load(ISettings::SET_CURR_PATH).toString();
     strFileNameIn = QFileDialog::getOpenFileName(this,
                                                  "Open Full Log",
                                                  strPrevPath,
-                                                 "Text files (*.txt);;All files (*.*)",
+                                                 "Text files (*.txt);;Log files (*.log);;All files (*.*)",
                                                  &selFilter);
 	QFileInfo fileInfo(strFileNameIn);
 	strPrevPath = fileInfo.absolutePath();
@@ -393,8 +393,9 @@ void MainWindow::on_pbnAddFigure_clicked()
 
     for (int i = 0; i < ui->lswID->count(); i++) {
         if (ui->lswID->item(i)->checkState() == Qt::Checked) {
-            QString strFileNameOut = strFileNameIn;
-            strFileNameOut.replace(".txt", QString().sprintf("_%03X.txt", e.value(i)));
+            QFileInfo fi=strFileNameIn;
+            QString strFileNameOut = fi.absolutePath() + "/" + fi.baseName();
+            strFileNameOut.append( QString().sprintf("_%03X.txt", e.value(i)));
             fileNames.append(strFileNameOut);
         }
     }
