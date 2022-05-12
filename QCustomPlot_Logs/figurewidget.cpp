@@ -58,3 +58,4 @@ void FigureWidget::on_pbnReset_clicked()
     }
     ui->customPlot->replot();
 }
+

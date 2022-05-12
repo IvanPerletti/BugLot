@@ -21,7 +21,7 @@ public:
 
 private:
     Ui::LegendItem *ui;
-
+    QColor m_Color;
     QCPGraph *graph;
 };
 

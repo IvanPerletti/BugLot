@@ -7,24 +7,30 @@ LegendItem::LegendItem(QCPGraph *graph,
                        QColor color,
                        QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::LegendItem)
+    ui(new Ui::LegendItem),
+    m_Color(color)
 {
     ui->setupUi(this);
     ui->lblName->setText(strName);
     ui->lblFactor->setText(strFactor);
-    ui->hlnPlot->setStyleSheet(QString::asprintf("background-color: rgb(%d,%d,%d); border: 5px solid;", color.red(), color.green(), color.blue()));
-
+    ui->hlnPlot->setStyleSheet(QString::asprintf("background-color: rgb(%d,%d,%d); border: 5px solid;", m_Color.red(), m_Color.green(), m_Color.blue()));
+    ui->lblFactor->setMinimumWidth(ui->lblFactor->sizeHint().width());
+    ui->lblName->setMinimumWidth(ui->lblName->sizeHint().width());
+    setAsCurrent(false);
     this->graph = graph;
 }
 
 void LegendItem::setAsCurrent(bool current)
 {
-    if (current) {
-        ui->hlnPlot->setStyleSheet(QString::asprintf("border: 10px solid;"));
-        ui->hlnPlot->setLineWidth(10);
-    } else {
-        ui->hlnPlot->setStyleSheet(QString::asprintf("border: 2px solid;"));
-        ui->hlnPlot->setLineWidth(6);
+    char u8aStrBg[] = "border: %dpx solid rgba(255,255,255, 255);border-bottom: %dpx solid rgba(255,255,255,255 );";
+    QString strBgColor = QString::asprintf("background-color: rgb(%d,%d,%d);", m_Color.red(), m_Color.green(), m_Color.blue());
+    if (current)
+    {
+        ui->hlnPlot->setStyleSheet(QString::asprintf( u8aStrBg, 0, 0) + strBgColor);
+    }
+    else
+    {
+        ui->hlnPlot->setStyleSheet(QString::asprintf( u8aStrBg, 3, 3) + strBgColor);
     }
 }
 

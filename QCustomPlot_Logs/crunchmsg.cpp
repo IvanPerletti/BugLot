@@ -10,7 +10,7 @@ CrunchMsg::CrunchMsg(QString filename, enumIdCAN idCAN)
     QFileInfo fi = filename;
     this->idCAN = idCAN;
     QString id_filename = fi.absolutePath() + "/" + fi.baseName();
-    id_filename.append( QString().sprintf("_%03X.txt", (int)idCAN));
+    id_filename.append( QString().sprintf("_%03X.i1", (int)idCAN));
     outFile = new QFile(id_filename);
 
     memset((void *)payloadPrev, '\0', sizeof(payloadPrev));

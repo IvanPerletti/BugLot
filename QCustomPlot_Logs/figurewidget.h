@@ -26,6 +26,7 @@ private slots:
 
     void on_pbnReset_clicked();
 
+
 private:
     Ui::FigureWidget *ui;
 };

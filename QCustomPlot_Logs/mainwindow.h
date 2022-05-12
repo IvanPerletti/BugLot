@@ -95,6 +95,8 @@ class MainWindow : public QMainWindow
 
     void on_pushButton_clicked();
 
+    void on_pbnVeiwConsole_clicked();
+
 private:
 	Ui::MainWindow *ui;
 
