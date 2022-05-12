@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include <QtMath>
 #include <QDebug>
@@ -6,10 +7,10 @@
 
 CrunchMsg::CrunchMsg(QString filename, enumIdCAN idCAN)
 {
-    QString id_filename(filename);
-
+    QFileInfo fi = filename;
     this->idCAN = idCAN;
-    id_filename.replace(".txt", QString().sprintf("_%03X.txt", (int)idCAN));
+    QString id_filename = fi.absolutePath() + "/" + fi.baseName();
+    id_filename.append( QString().sprintf("_%03X.txt", (int)idCAN));
     outFile = new QFile(id_filename);
 
     memset((void *)payloadPrev, '\0', sizeof(payloadPrev));

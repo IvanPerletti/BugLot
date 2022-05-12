@@ -82,8 +82,10 @@ void CDecorator::addSignalToPlot(int iSignalIdx, QVector<QVector<double>> qvVect
     } else if (typeList.at(iSignalIdx) == TYPE_INT) {
         int iFactor = 1;
         double dMax = *std::max_element(qvDataArranged.constBegin(), qvDataArranged.constEnd());
-        while ((dMax * iFactor * 10) < dMaxYAxis) {
-            iFactor *= 10;
+        if (dMax != 0.0) {
+            while ((dMax * iFactor * 10) < dMaxYAxis) {
+                iFactor *= 10;
+            }
         }
         for ( int jj=0; jj<iSzVet; jj++ ) {
             qvDataArranged[jj] *= iFactor;
