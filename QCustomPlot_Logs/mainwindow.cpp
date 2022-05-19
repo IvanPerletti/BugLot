@@ -270,11 +270,20 @@ void MainWindow::on_LoadFile_clicked()
                                                  strPrevPath,
                                                  "Log files (*.log);;Text files (*.txt);;All files (*.*)",
                                                  &selFilter);
-    QFileInfo fileInfo(strFileNameIn);
-    strPrevPath = fileInfo.absolutePath();
-    iSettings.save(ISettings::SET_CURR_PATH, strPrevPath);
-    on_LoadFile();
-    qDebug()<<"File loaded";
+    if (strFileNameIn != NULL) {
+        QFileInfo fileInfo(strFileNameIn);
+        strPrevPath = fileInfo.absolutePath();
+        iSettings.save(ISettings::SET_CURR_PATH, strPrevPath);
+
+        while (!figureList.isEmpty()) {
+            FigureWidget *figure = figureList.takeLast();
+            ui->vrlFigure->removeWidget(figure);
+            delete figure;
+        }
+
+        on_LoadFile();
+        qDebug()<<"File loaded";
+    }
 }
 //------------------------------------------------------------------------------
 void MainWindow::on_LoadFile()
@@ -291,7 +300,6 @@ void MainWindow::on_LoadFile()
 
     QFile file(strFileNameIn);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this,"op","file not open");
         return;
     }
     QTextStream in(&file);
