@@ -14,6 +14,7 @@
 #include "ISettings.h"
 #include "ITimePerform.h"
 #include "figurewidget.h"
+#include "msgIditem.h"
 //-----------------------------------------------------------------------------
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -40,11 +41,15 @@ MainWindow::MainWindow(QWidget *parent) :
     for (int k = 0; k < e.keyCount(); k++)
     {
         QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->lswID);
-        listWidgetItem->setText(QString().sprintf("0x%X", e.value(k)));
-        auto currentFlags = listWidgetItem->flags();
-        listWidgetItem->setFlags(currentFlags & (~Qt::ItemIsEnabled));
-        listWidgetItem->setCheckState(Qt::Unchecked);
         ui->lswID->addItem (listWidgetItem);
+
+        MsgIdItem *msgIdItem = new MsgIdItem();
+        QSize sizeHint = msgIdItem->sizeHint ();
+        listWidgetItem->setSizeHint ( sizeHint );
+        msgIdItem->pushButton()->setText(QString().sprintf("0x%X", e.value(k)));
+        msgIdItem->pushButton()->setEnabled(false);
+
+        ui->lswID->setItemWidget (listWidgetItem, msgIdItem);
     }
     ui->stwMain->setCurrentIndex(0);
 }
@@ -288,16 +293,6 @@ void MainWindow::on_LoadFile_clicked()
 //------------------------------------------------------------------------------
 void MainWindow::on_LoadFile()
 {
-    QString strStyle =
-           "QCheckBox::indicator {        "
-           "    color: #b1b1b1;           "
-           "    background-color: #323232;"
-           "    border: 1px solid #b1b1b1;"
-           "    width: 30px;              "
-           "    height: 30px;             "
-           " }                            ";
-
-
     QFile file(strFileNameIn);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         return;
@@ -326,10 +321,9 @@ void MainWindow::on_LoadFile()
     QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
     for (int k = 0; k < e.keyCount(); k++)
     {
-        ui->lswID->item(k)->setCheckState(Qt::Unchecked);
-        auto currentFlags = ui->lswID->item(k)->flags();
+        ((MsgIdItem *)ui->lswID->itemWidget(ui->lswID->item(k)))->pushButton()->setChecked(false);
         if (iDsFound.contains((CrunchMsg::enumIdCAN)e.value(k))) {
-            ui->lswID->item(k)->setFlags(currentFlags | (Qt::ItemIsEnabled));
+            ((MsgIdItem *)ui->lswID->itemWidget(ui->lswID->item(k)))->pushButton()->setEnabled(true);
             QString strFileNameOut = fi.absolutePath() + "/" + fi.baseName();
             strFileNameOut.append( QString().sprintf("_%03X.i1", e.value(k)));
             QFile file (strFileNameOut);
@@ -343,7 +337,7 @@ void MainWindow::on_LoadFile()
                 ui->stwMain->setCurrentIndex(1);
             }
         } else
-            ui->lswID->item(k)->setFlags(currentFlags & (~Qt::ItemIsEnabled));
+            ((MsgIdItem *)ui->lswID->itemWidget(ui->lswID->item(k)))->pushButton()->setEnabled(false);
     }
 }
 
@@ -410,7 +404,7 @@ void MainWindow::on_pbnAddFigure_clicked()
     QStringList fileNames;
 
     for (int i = 0; i < ui->lswID->count(); i++) {
-        if (ui->lswID->item(i)->checkState() == Qt::Checked) {
+        if (((MsgIdItem *)ui->lswID->itemWidget(ui->lswID->item(i)))->pushButton()->isChecked()) {
             QFileInfo fi=strFileNameIn;
             QString strFileNameOut = fi.absolutePath() + "/" + fi.baseName();
             strFileNameOut.append( QString().sprintf("_%03X.i1", e.value(i)));
@@ -430,6 +424,9 @@ void MainWindow::on_pbnAddFigure_clicked()
         if (figureList.count() > 1)
             alignXRange();
     }
+
+    for (int i = 0; i < ui->lswID->count(); i++)
+        ((MsgIdItem *)ui->lswID->itemWidget(ui->lswID->item(i)))->pushButton()->setChecked(false);
 }
 
 void MainWindow::on_pushButton_clicked()

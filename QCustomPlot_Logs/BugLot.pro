@@ -19,7 +19,8 @@ SOURCES += access.cpp \
 		   mainwindow.cpp \
 		 ../qcustomplot.cpp \
 	CrunchLog.cpp \
-	CDecorator.cpp
+	CDecorator.cpp \
+    msgIditem.cpp
 
 HEADERS  += access.h \
         Drivers/IAnimationShow.h \
@@ -31,12 +32,14 @@ HEADERS  += access.h \
 		  mainwindow.h \
 		 ../qcustomplot.h \
 	CrunchLog.h \
-	CDecorator.h
+	CDecorator.h \
+    msgIditem.h
 
 FORMS    += access.ui \
 			figurewidget.ui \
 			legenditem.ui \
-			mainwindow.ui
+			mainwindow.ui \
+			msgIditem.ui
 
 INCLUDEPATH += $$PWD/..
 
