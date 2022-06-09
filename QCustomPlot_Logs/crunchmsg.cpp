@@ -207,13 +207,13 @@ CrunchMsg *CrunchMsg::newCrunchMsg(CrunchMsg::enumIdCAN id, QString filename)
         crunchMsg = new CrunchMsg_0x203(filename);
         break;
     case CrunchMsg::ID_CAN_MAMMO_FROM_INV_A:
-        crunchMsg = new CrunchMsg_0x201(filename);
+        crunchMsg = new CrunchMsg_0x181(filename);
         break;
     case CrunchMsg::ID_CAN_MAMMO_FROM_INV_B:
-        crunchMsg = new CrunchMsg_0x202(filename);
+        crunchMsg = new CrunchMsg_0x182(filename);
         break;
     case CrunchMsg::ID_CAN_MAMMO_FROM_INV_C:
-        crunchMsg = new CrunchMsg_0x203(filename);
+        crunchMsg = new CrunchMsg_0x183(filename);
         break;
     }
 
@@ -381,7 +381,7 @@ void CrunchMsg_0x202::processPayload(string *pStrOut, float fTime, unsigned int 
 }
 
 //--------------------------------------------------------
-CrunchMsg_0x203::CrunchMsg_0x203(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_B)
+CrunchMsg_0x203::CrunchMsg_0x203(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_C)
 {
     legendList << "Req";
     typeList << TYPE_BIT;
@@ -396,10 +396,11 @@ void CrunchMsg_0x203::processPayload(string *pStrOut, float fTime, unsigned int 
     floatToStr(pStrOut, fTime);
 
     unpackBit8(pStrOut, (1 << 0), 1);
+    pStrOut->append("\n");
 }
 
 //--------------------------------------------------------
-CrunchMsg_0x181::CrunchMsg_0x181(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_A)
+CrunchMsg_0x181::CrunchMsg_0x181(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_FROM_INV_A)
 {
     legendList << "Kv" << "mA" << "mAs";
     typeList << TYPE_INT << TYPE_INT << TYPE_INT;
@@ -433,7 +434,7 @@ void CrunchMsg_0x181::processPayload(string *pStrOut, float fTime, unsigned int 
 }
 
 //--------------------------------------------------------
-CrunchMsg_0x182::CrunchMsg_0x182(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_A)
+CrunchMsg_0x182::CrunchMsg_0x182(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_FROM_INV_B)
 {
     legendList << "Fil";
     typeList << TYPE_INT;
@@ -469,7 +470,7 @@ void CrunchMsg_0x182::processPayload(string *pStrOut, float fTime, unsigned int 
 }
 
 //--------------------------------------------------------
-CrunchMsg_0x183::CrunchMsg_0x183(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_TO_INV_A)
+CrunchMsg_0x183::CrunchMsg_0x183(QString filename) : CrunchMsg(filename, ID_CAN_MAMMO_FROM_INV_C)
 {
     legendList << "Kv" << "mA" << "mAs" << "Ms";
     typeList << TYPE_INT << TYPE_INT << TYPE_INT << TYPE_INT;

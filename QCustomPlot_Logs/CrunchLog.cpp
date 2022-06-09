@@ -25,7 +25,7 @@ QList<CrunchMsg::enumIdCAN> CrunchLog::processFile (QString strFileNameIn,
     float fTime = 0;
     int iNumFound;
     uint32_t idCAN;
-    unsigned int ulaData[6]={0,};
+    unsigned int ulaData[PAYLOAD_SIZE]={0,};
     QList<CrunchMsg::enumIdCAN> iDsFound;
     QMetaEnum e = QMetaEnum::fromType<CrunchMsg::enumIdCAN>();
 
@@ -55,7 +55,7 @@ QList<CrunchMsg::enumIdCAN> CrunchLog::processFile (QString strFileNameIn,
             break;
         }
 
-        iNumFound = sscanf( strLine.data() , "%02d:%02d:%02d.%03d;%X:%X.%X.%X.%X.%X.%X",
+        iNumFound = sscanf( strLine.data() , "%02d:%02d:%02d.%03d;%X:%X.%X.%X.%X.%X.%X.%X.%X",
                                     &l_hour	,&l_min	,&l_sec	,&l_ms	,
                                     &idCAN ,
                                     &ulaData[0],
@@ -63,9 +63,12 @@ QList<CrunchMsg::enumIdCAN> CrunchLog::processFile (QString strFileNameIn,
                                     &ulaData[2],
                                     &ulaData[3],
                                     &ulaData[4],
-                                    &ulaData[5]);
+                                    &ulaData[5],
+                                    &ulaData[6],
+                                    &ulaData[7]
+                );
 
-        if (iNumFound == 11)
+        if (iNumFound > 5)
         {
             fTime = (float)(l_ms + (l_sec + l_min*60 + l_hour * 3600)*1000);
             if ( fTime >= ulTimeStart || fTime <= ulTimeStop )

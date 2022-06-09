@@ -39,7 +39,7 @@ private:
 #define TYPE_INT        "I"
 #define TYPE_BIT        "B"
 
-#define PAYLOAD_SIZE    6
+#define PAYLOAD_SIZE    8
 
 protected:
     enumIdCAN idCAN;
