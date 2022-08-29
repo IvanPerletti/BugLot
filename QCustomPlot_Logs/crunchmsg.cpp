@@ -81,6 +81,17 @@ void CrunchMsg::floatToStr(string *pStrOut, float fVal, int iDec, string sfx)
     pStrOut->append(sfx);
 }
 //--------------------------------------------------------
+void CrunchMsg::doubleToStr(string *pStrOut, double dVal, int iDec, string sfx)
+{
+    char s8aFormat[10]={0,};
+    char s8aChar[16]={0,};
+
+    sprintf(s8aFormat, "%%.%dlf", iDec);
+    sprintf(s8aChar, s8aFormat, dVal);
+    pStrOut->append(s8aChar);
+    pStrOut->append(sfx);
+}
+//--------------------------------------------------------
 unsigned long CrunchMsg::unpackTimeString(const char * u8aData)
 {
     unsigned long  ulTime;
@@ -175,7 +186,7 @@ void CrunchMsg::processMsg(float fTime, unsigned int *pPayload)
     if (memcmp((void *)payloadPrev, (void *)pPayload, sizeof(payloadPrev))) {
         string strOut;
 
-        processPayload(&strOut, (fTime - 0.1), payloadPrev);
+        processPayload(&strOut, ((double)fTime - 0.1), payloadPrev);
         stream << strOut.c_str();
         processPayload(&strOut, fTime, pPayload);
         stream << strOut.c_str();
@@ -233,7 +244,7 @@ CrunchMsg_0x6A0::CrunchMsg_0x6A0(QString filename) : CrunchMsg(filename, ID_CAN_
     legendList << "O_GEN_READY_ACQ_FL" << "O_READY_ACQ_RAD_FL" << "I_GEN_EXON" << "O_PID_EXON";
 }
 
-void CrunchMsg_0x6A0::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+void CrunchMsg_0x6A0::processPayload(string *pStrOut, double fTime, unsigned int *pPayload)
 {
     structLog strLog;
     unsigned long ulBitMaskNew;
@@ -248,7 +259,7 @@ void CrunchMsg_0x6A0::processPayload(string *pStrOut, float fTime, unsigned int 
 
     pStrOut->clear();
 
-    floatToStr(pStrOut, fTime);
+    doubleToStr(pStrOut, fTime);
 
     unpackBit32(pStrOut, strLog.ulBitMask, 19);
     pStrOut->append("\n");
@@ -260,7 +271,7 @@ CrunchMsg_0x5A0::CrunchMsg_0x5A0(QString filename) : CrunchMsg(filename, ID_CAN_
     legendList << "Kv0" << "Kv+" << "Kv-" << "mARef10" << "mA10";
 }
 
-void CrunchMsg_0x5A0::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+void CrunchMsg_0x5A0::processPayload(string *pStrOut, double fTime, unsigned int *pPayload)
 {
     int8_t i8MaGain;
     structLog strLog;
@@ -276,7 +287,7 @@ void CrunchMsg_0x5A0::processPayload(string *pStrOut, float fTime, unsigned int 
 
     pStrOut->clear();
 
-    floatToStr(pStrOut, fTime);
+    doubleToStr(pStrOut, fTime);
 
     floatToStr(pStrOut, strLog.fKv0, 2);
     floatToStr(pStrOut, strLog.fKvPlus, 2);
@@ -295,7 +306,7 @@ CrunchMsg_0x5A1::CrunchMsg_0x5A1(QString filename) : CrunchMsg(filename, ID_CAN_
     legendList << "Focus" << "Fluo" << "Exp" << "Status";
     typeList << TYPE_INT << TYPE_INT << TYPE_INT << TYPE_INT;}
 
-void CrunchMsg_0x5A1::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+void CrunchMsg_0x5A1::processPayload(string *pStrOut, double fTime, unsigned int *pPayload)
 {
     structLog strLog;
 
@@ -309,7 +320,7 @@ void CrunchMsg_0x5A1::processPayload(string *pStrOut, float fTime, unsigned int 
 
     pStrOut->clear();
 
-    floatToStr(pStrOut, fTime);
+    doubleToStr(pStrOut, fTime);
 
     intToStr(pStrOut, strLog.u8FilGain);
     intToStr(pStrOut, strLog.u8Fil0);
@@ -333,7 +344,7 @@ CrunchMsg_0x201::CrunchMsg_0x201(QString filename) : CrunchMsg(filename, ID_CAN_
     typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT;
 }
 
-void CrunchMsg_0x201::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+void CrunchMsg_0x201::processPayload(string *pStrOut, double fTime, unsigned int *pPayload)
 {
     structLog strLog;
 
@@ -344,7 +355,7 @@ void CrunchMsg_0x201::processPayload(string *pStrOut, float fTime, unsigned int 
 
     pStrOut->clear();
 
-    floatToStr(pStrOut, fTime);
+    doubleToStr(pStrOut, fTime);
 
     intToStr(pStrOut, strLog.u16Kv);
     intToStr(pStrOut, strLog.u16MaS);
@@ -361,7 +372,7 @@ CrunchMsg_0x202::CrunchMsg_0x202(QString filename) : CrunchMsg(filename, ID_CAN_
     typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT;
 }
 
-void CrunchMsg_0x202::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+void CrunchMsg_0x202::processPayload(string *pStrOut, double fTime, unsigned int *pPayload)
 {
     structLog strLog;
 
@@ -372,7 +383,7 @@ void CrunchMsg_0x202::processPayload(string *pStrOut, float fTime, unsigned int 
 
     pStrOut->clear();
 
-    floatToStr(pStrOut, fTime);
+    doubleToStr(pStrOut, fTime);
 
     intToStr(pStrOut, strLog.u16Ma);
     intToStr(pStrOut, strLog.u16Fil);
@@ -387,13 +398,13 @@ CrunchMsg_0x203::CrunchMsg_0x203(QString filename) : CrunchMsg(filename, ID_CAN_
     typeList << TYPE_BIT;
 }
 
-void CrunchMsg_0x203::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+void CrunchMsg_0x203::processPayload(string *pStrOut, double fTime, unsigned int *pPayload)
 {
     (void)pPayload;
 
     pStrOut->clear();
 
-    floatToStr(pStrOut, fTime);
+    doubleToStr(pStrOut, fTime);
 
     unpackBit8(pStrOut, (1 << 0), 1);
     pStrOut->append("\n");
@@ -408,7 +419,7 @@ CrunchMsg_0x181::CrunchMsg_0x181(QString filename) : CrunchMsg(filename, ID_CAN_
     typeList << TYPE_BIT << TYPE_BIT << TYPE_BIT << TYPE_INT << TYPE_BIT;
 }
 
-void CrunchMsg_0x181::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+void CrunchMsg_0x181::processPayload(string *pStrOut, double fTime, unsigned int *pPayload)
 {
     structLog strLog;
 
@@ -421,7 +432,7 @@ void CrunchMsg_0x181::processPayload(string *pStrOut, float fTime, unsigned int 
 
     pStrOut->clear();
 
-    floatToStr(pStrOut, fTime);
+    doubleToStr(pStrOut, fTime);
 
     intToStr(pStrOut, strLog.u16Kv);
     intToStr(pStrOut, strLog.u16Ma);
@@ -444,7 +455,7 @@ CrunchMsg_0x182::CrunchMsg_0x182(QString filename) : CrunchMsg(filename, ID_CAN_
     typeList << TYPE_INT << TYPE_INT << TYPE_INT << TYPE_INT;
 }
 
-void CrunchMsg_0x182::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+void CrunchMsg_0x182::processPayload(string *pStrOut, double fTime, unsigned int *pPayload)
 {
     structLog strLog;
 
@@ -458,7 +469,7 @@ void CrunchMsg_0x182::processPayload(string *pStrOut, float fTime, unsigned int 
 
     pStrOut->clear();
 
-    floatToStr(pStrOut, fTime);
+    doubleToStr(pStrOut, fTime);
 
     intToStr(pStrOut, strLog.u16Fil);
     unpackBit8(pStrOut, strLog.ulBitState, 3);
@@ -476,7 +487,7 @@ CrunchMsg_0x183::CrunchMsg_0x183(QString filename) : CrunchMsg(filename, ID_CAN_
     typeList << TYPE_INT << TYPE_INT << TYPE_INT << TYPE_INT;
 }
 
-void CrunchMsg_0x183::processPayload(string *pStrOut, float fTime, unsigned int *pPayload)
+void CrunchMsg_0x183::processPayload(string *pStrOut, double fTime, unsigned int *pPayload)
 {
     structLog strLog;
 
@@ -488,7 +499,7 @@ void CrunchMsg_0x183::processPayload(string *pStrOut, float fTime, unsigned int 
 
     pStrOut->clear();
 
-    floatToStr(pStrOut, fTime);
+    doubleToStr(pStrOut, fTime);
 
     intToStr(pStrOut, strLog.u16Kv);
     intToStr(pStrOut, strLog.u16Ma);

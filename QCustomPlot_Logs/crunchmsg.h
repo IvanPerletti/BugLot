@@ -29,7 +29,7 @@ public:
     CrunchMsg(QString, enumIdCAN idCAN);
     virtual ~CrunchMsg();
     void processMsg(float fTime, unsigned int *pPayload);
-    virtual void processPayload(string *pStrOut, float fTime, unsigned int *pPayload) = 0;
+    virtual void processPayload(string *pStrOut, double fTime, unsigned int *pPayload) = 0;
     static CrunchMsg *newCrunchMsg(CrunchMsg::enumIdCAN id, QString filename);
 
 private:
@@ -52,6 +52,7 @@ protected:
     void unpackBit32(string * pstrOut, unsigned int uiVal, int iNbit = 32);
     void intToStr(string *pStrOut, unsigned int uiVal, string sfx = " ");
     void floatToStr(string *pStrOut, float fVal, int iDec = 1, string sfx = " ");
+    void doubleToStr(string *pStrOut, double dVal, int iDec = 1, string sfx = " ");
     unsigned long unpackTimeString(const char * u8aData);
     bool decodeTimeString(const char * u8aData, unsigned long &ulTime);
     void removeCharsUntil(string * strProcessed, string strMatchToFind);
@@ -65,7 +66,7 @@ class CrunchMsg_0x6A0 : public CrunchMsg
 {
 public:
     CrunchMsg_0x6A0(QString);
-    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+    void processPayload(string *pStrOut, double fTime, unsigned int *pPayload);
 
 private:
     typedef struct
@@ -84,7 +85,7 @@ class CrunchMsg_0x5A0 : public CrunchMsg
 {
 public:
     CrunchMsg_0x5A0(QString);
-    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+    void processPayload(string *pStrOut, double fTime, unsigned int *pPayload);
 
 private:
     typedef struct
@@ -101,7 +102,7 @@ class CrunchMsg_0x5A1 : public CrunchMsg
 {
 public:
     CrunchMsg_0x5A1(QString);
-    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+    void processPayload(string *pStrOut, double fTime, unsigned int *pPayload);
 
 private:
 
@@ -127,7 +128,7 @@ class CrunchMsg_0x201 : public CrunchMsg
 {
 public:
     CrunchMsg_0x201(QString);
-    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+    void processPayload(string *pStrOut, double fTime, unsigned int *pPayload);
 
 private:
 #define ENABLE_BIT          (1 << 0)
@@ -146,7 +147,7 @@ class CrunchMsg_0x202 : public CrunchMsg
 {
 public:
     CrunchMsg_0x202(QString);
-    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+    void processPayload(string *pStrOut, double fTime, unsigned int *pPayload);
 
 private:
 #define BRAKE_BIT           (1 << 0)
@@ -165,7 +166,7 @@ class CrunchMsg_0x203 : public CrunchMsg
 {
 public:
     CrunchMsg_0x203(QString);
-    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+    void processPayload(string *pStrOut, double fTime, unsigned int *pPayload);
 
 private:
 };
@@ -174,7 +175,7 @@ class CrunchMsg_0x181 : public CrunchMsg
 {
 public:
     CrunchMsg_0x181(QString);
-    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+    void processPayload(string *pStrOut, double fTime, unsigned int *pPayload);
 
 private:
 #define FAULT_BIT_SHIFT     3
@@ -194,7 +195,7 @@ class CrunchMsg_0x182 : public CrunchMsg
 {
 public:
     CrunchMsg_0x182(QString);
-    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+    void processPayload(string *pStrOut, double fTime, unsigned int *pPayload);
 
 private:
 
@@ -213,7 +214,7 @@ class CrunchMsg_0x183 : public CrunchMsg
 {
 public:
     CrunchMsg_0x183(QString);
-    void processPayload(string *pStrOut, float fTime, unsigned int *pPayload);
+    void processPayload(string *pStrOut, double fTime, unsigned int *pPayload);
 
 private:
     typedef struct
